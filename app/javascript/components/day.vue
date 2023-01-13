@@ -31,10 +31,7 @@ export default defineComponent({
       return meta ? meta.getAttribute('content') : ''
     },
     currentSchedule() {
-      if (!this.schedule) {
-        return this.scheduleToMark[this.date.schedule]
-      } 
-      return this.scheduleToMark[this.schedule]
+      return this.scheduleToMark[this.date.schedule]
     },
     changeSchedule(scheduleMark) {
       if (scheduleMark === "指定なし") {
@@ -56,9 +53,10 @@ export default defineComponent({
       .catch((error) => {
         console.warn(error)
       })
+      this.$emit('delete', this.date)
     },
     updateCalendar(schedule) {
-      const dateState = {date: this.date.date, schedule: this.markToSchedule[schedule]}
+      const dateState = {year: this.date.year, month: this.date.month, date: this.date.date, schedule: this.markToSchedule[schedule]}
       fetch(`days/${this.date.year}/${this.date.month}`, {
       method: 'POST',
       headers: {
@@ -72,10 +70,12 @@ export default defineComponent({
       .catch((error) => {
         console.warn(error)
       })
+      this.$emit('update', dateState)
     },
   },
   components: {
     Popper,
   },
+  emits: ['update', 'delete']
 })
 </script>

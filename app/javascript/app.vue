@@ -33,7 +33,7 @@
             v-for='date in week.value'
             :key='date.date'>
             <div class="calendar__day-label">{{ date.date }}</div>
-            <Day v-bind:date="date" v-if="date.date > 0"></Day>
+            <Day v-bind:date="date" v-if="date.date" v-on:update="updateDay" v-on:delete="deleteDay"> 0"></Day>
         </td>
       </tr>
     </tbody>
@@ -396,6 +396,29 @@ export default defineComponent({
           break
         }
       }
+    },
+    updateDay(day) {
+      const date = new Date(day.year, day.month - 1, day.date)
+      const formatedDay = this.formatUpdatedDay(date)
+      const newDay = { date: formatedDay, schedule: day.schedule }
+      for (let calendarDay of this.calendarDays) {
+        if (calendarDay.date === formatedDay) {
+          this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1, newDay)
+        }
+        break
+      }
+      this.calendarDays.push(newDay)
+    },
+    deleteDay(day) {
+      const date = new Date(day.year, day.month - 1, day.date)
+      const formatedDay = this.formatUpdatedDay(date)
+      for (let calendarDay of this.calendarDays) {
+        if (calendarDay.date === formatedDay) {
+          this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1)
+          break
+        }
+      }
+      
     },
   },
   components: {
