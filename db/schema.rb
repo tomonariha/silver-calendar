@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_26_152140) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_21_061802) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,6 +33,26 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_26_152140) do
     t.index ["calendar_id"], name: "index_days_on_calendar_id"
   end
 
+  create_table "settings", force: :cascade do |t|
+    t.bigint "calendar_id"
+    t.date "period_start_at"
+    t.date "period_end_at"
+    t.integer "total_working_days"
+    t.integer "minimum_working_day_of_a_week"
+    t.integer "minimum_days_off_of_a_week"
+    t.boolean "evenly_spaced"
+    t.string "schedule_of_sunday"
+    t.string "schedule_of_monday"
+    t.string "schedule_of_tuesday"
+    t.string "schedule_of_wednesday"
+    t.string "schedule_of_thursday"
+    t.string "schedule_of_friday"
+    t.string "schedule_of_saturday"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["calendar_id"], name: "index_settings_on_calendar_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -47,4 +67,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_26_152140) do
 
   add_foreign_key "calendars", "users"
   add_foreign_key "days", "calendars"
+  add_foreign_key "settings", "calendars"
 end

@@ -1,0 +1,1 @@
+json.array! @settings

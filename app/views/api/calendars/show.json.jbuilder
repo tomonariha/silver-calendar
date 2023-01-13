@@ -1,1 +1,1 @@
-json.array! @calendars
+json.array! @days

@@ -17,8 +17,8 @@ export default defineComponent({
   data() {
     return {
       schedule: "",
-      scheduleMarks: ["●","▲","△","□"],
-      markToSchedule: { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" },
+      scheduleMarks: ["●" , "▲" , "△" , "□", "指定なし"],
+      markToSchedule: { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" , "指定なし":"" },
       scheduleToMark: { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" },
     }
   },
@@ -31,17 +31,32 @@ export default defineComponent({
       return meta ? meta.getAttribute('content') : ''
     },
     currentSchedule() {
-      if (!this.schedule) {
-        return this.scheduleToMark[this.date.schedule]
-      } 
-      return this.scheduleToMark[this.schedule]
+      return this.scheduleToMark[this.date.schedule]
     },
     changeSchedule(scheduleMark) {
+      if (scheduleMark === "指定なし") {
+        this.deleteDate()
+      } else {
+        this.updateCalendar(scheduleMark)
+      }
       this.schedule = this.markToSchedule[scheduleMark]
-      this.updateCalendar(this.schedule)
     },
-    updateCalendar(state) {
-      const dateState = {date:this.date.date, schedule:state}
+    deleteDate() {
+      fetch(`days/${this.date.year}/${this.date.month}/${this.date.date}`, {
+      method: 'DELETE',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': this.token(),
+      },
+      credentials: 'same-origin'
+      })
+      .catch((error) => {
+        console.warn(error)
+      })
+      this.$emit('delete', this.date)
+    },
+    updateCalendar(schedule) {
+      const dateState = {year: this.date.year, month: this.date.month, date: this.date.date, schedule: this.markToSchedule[schedule]}
       fetch(`days/${this.date.year}/${this.date.month}`, {
       method: 'POST',
       headers: {
@@ -55,10 +70,12 @@ export default defineComponent({
       .catch((error) => {
         console.warn(error)
       })
+      this.$emit('update', dateState)
     },
   },
   components: {
     Popper,
   },
+  emits: ['update', 'delete']
 })
 </script>
