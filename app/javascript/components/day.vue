@@ -50,10 +50,12 @@ export default defineComponent({
       },
       credentials: 'same-origin'
       })
+      .then(() => {
+        this.$emit('delete', this.date)
+      })
       .catch((error) => {
         console.warn(error)
       })
-      this.$emit('delete', this.date)
     },
     updateCalendar(schedule) {
       const dateState = {year: this.date.year, month: this.date.month, date: this.date.date, schedule: this.markToSchedule[schedule]}
@@ -67,10 +69,12 @@ export default defineComponent({
       body: JSON.stringify(dateState),
       credentials: 'same-origin'
       })
+      .then(() => {
+        this.$emit('update', dateState)
+      })
       .catch((error) => {
         console.warn(error)
       })
-      this.$emit('update', dateState)
     },
   },
   components: {
