@@ -150,11 +150,13 @@ export default defineComponent({
       body: JSON.stringify(setting),
       credentials: 'same-origin'
       })
+      .then(() => {
+        setting['id'] = this.settingId
+        this.$emit('update', setting)
+      })
       .catch((error) => {
         console.warn(error)
-      })
-      setting['id'] = this.settingId
-      this.$emit('update', setting)
+      })  
     },
     reflectSetting(setting) {
       const startDay = new Date(setting.period_start_at)
@@ -188,10 +190,12 @@ export default defineComponent({
       },
       credentials: 'same-origin'
       })
+      .then(() => {
+        this.$emit('delete', settingId)
+      })
       .catch((error) => {
         console.warn(error)
       })
-      this.$emit('delete', settingId)
     },
     createSetting() {
       const startDay = new Date(this.year, (this.selectedStartMonth - 1), this.selectedStartDay)
