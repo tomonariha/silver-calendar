@@ -5,11 +5,15 @@ inherit_gem:
 
 Metrics/BlockLength:
   Exclude:
-    - test/**/*
+    - spec/**/*
 
 Metrics/ClassLength:
   Exclude:
-    - test/**/*
+    - spec/**/*
+
+Lint/UselessAssignment:
+  Exclude:
+    - spec/**/*
 
 AllCops:
   Exclude:
