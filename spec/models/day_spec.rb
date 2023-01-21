@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Day, type: :model do
   it 'is valid with a calendar_id, date, schedule' do
-    expect(FactoryBot.build(:day)).to be_valid
+    expect(FactoryBot.create(:day)).to be_valid
   end
 
   it 'is invalid without calendar_id' do
