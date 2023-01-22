@@ -11,7 +11,7 @@ class DaysController < ApplicationController
 
   def update
     day = @calendar.days.find_or_create_by(date: @target_day)
-    Day.update!(day.id, schedule: params[:schedule])
+    day.update!(schedule: params[:schedule])
   end
 
   private

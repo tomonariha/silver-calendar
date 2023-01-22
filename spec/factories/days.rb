@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :day do
-    date { '2023-1-1' }
+    date { Date.new(2023, 1, 1) }
     schedule { 'off' }
-    calendar
+    association :calendar
   end
 end
