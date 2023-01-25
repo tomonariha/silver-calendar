@@ -6,32 +6,32 @@
   </div>
   <button v-on:click="resetSettingParams()">new</button>
   <br>
-  <select v-model="selectedStartMonth">
+  <select id="start_month_select" v-model="selectedStartMonth">
     <option v-for="month in 12" :key="month">
       {{ month }}
     </option>
   </select>
-  <select v-model="selectedStartDay">
+  <select id="start_day_select" v-model="selectedStartDay">
     <option v-for="date in this.lastDate(this.selectedStartMonth)" :key="date">
       {{ date }}
     </option>
   </select>
   <br>
-  <select v-model="selectedEndMonth">
+  <select id="end_month_select" v-model="selectedEndMonth">
     <option v-for="month in 12" :key="month">
       {{ month }}
     </option>
   </select>
-  <select v-model="selectedEndDay">
+  <select id="end_day_select" v-model="selectedEndDay">
     <option v-for="date in this.lastDate(this.selectedEndMonth)" :key="date">
       {{ date }}
     </option>
   </select>
   <div>この期間の勤務日数:
-      <input type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+      <input id="specified_total_days" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
   </div>
-  <label for="checkSpecifiedTotalDays">指定しない</label>
-  <input type="checkbox" id="checkSpecifiedTotalDays" v-model="notSpecifiedTotalDays" />
+  <label for="check_specified_total_days">指定しない</label>
+  <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays" />
   <div>{{ this.weekdayJp[this.weekdayNumber] }}曜日の予定</div>
   <button @click='previousWeekday'>前</button>
   <button @click='nextWeekday'>後</button>

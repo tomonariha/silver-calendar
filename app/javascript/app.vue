@@ -31,9 +31,14 @@
       <tr class="calendar__week">
         <td class="calendar__day" 
             v-for='date in week.value'
-            :key='date.date'>
+            :key='date.date'
+            :id="'day' + date.date">
             <div class="calendar__day-label">{{ date.date }}</div>
-            <Day v-bind:date="date" v-if="date.date" v-on:update="updateDay" v-on:delete="deleteDay"> 0"></Day>
+            <Day v-bind:date="date" 
+                 v-if="date.date"
+                 v-on:update="updateDay"
+                 v-on:delete="deleteDay">
+            </Day>
         </td>
       </tr>
     </tbody>

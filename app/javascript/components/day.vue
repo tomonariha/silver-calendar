@@ -1,6 +1,6 @@
 <template>
   <Popper arrow>
-    <button>{{ currentSchedule() }}</button>
+    <button class="calendar__day-body">{{ currentSchedule() }}</button>
     <template #content>
       <div v-for="scheduleMark in scheduleMarks" :key="scheduleMark">
         <button v-on:click="changeSchedule(scheduleMark)">{{ scheduleMark }}</button>
