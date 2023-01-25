@@ -52,6 +52,13 @@ RSpec.describe "Calendars", type: :system do
     end
   end
 
+  scenario "user delete setting", js: true do
+    click_button "条件の入力"
+    expect(page).to have_content("2023-01-01 〜 2023-01-31")
+    click_button "この条件を削除"
+    expect(page).to_not have_content("2023-01-01 〜 2023-01-31")
+  end
+
   scenario "user apply setting to calendar", js: true do
     click_button "適用"
     within "#day3" do
