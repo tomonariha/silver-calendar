@@ -147,8 +147,9 @@ export default defineComponent({
     },
     rangeOfYears() {
       let rangeOfYears = []
-      const pastYear = this.getCurrentYear() - 10
-      const futureYear = this.getCurrentYear() + 10
+      const yearRangeNumber = 10
+      const pastYear = this.getCurrentYear() - yearRangeNumber
+      const futureYear = this.getCurrentYear() + yearRangeNumber
       for (let year = pastYear;year < futureYear;year++) {
         rangeOfYears.push(year)
       }
