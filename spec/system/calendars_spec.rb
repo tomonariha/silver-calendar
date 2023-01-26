@@ -65,4 +65,11 @@ RSpec.describe "Calendars", type: :system do
       expect(find('.calendar__day-body')).to have_content("●")
     end
   end
+
+  scenario "user move to specified year and month", js: true do
+    select "2022", from: 'specifiy_calendar_year'
+    select "12", from: 'specifiy_calendar_month'
+    click_button "後"
+    expect(find('.calendar-nav__year--month')).to have_content("2023年1月")
+  end
 end

@@ -7,13 +7,18 @@
                v-on:close="closeModal"
                v-on:update="updateSetting"
                v-on:create="createSetting"
-               v-on:delete="deleteSetting"
-        >
+               v-on:delete="deleteSetting">
         </Modal>
       </div>
     </div>
   <button class="calendar-nav__previous" @click='previousMonth'>前</button>
   <button class="calendar-nav__next" @click='nextMonth'>後</button>
+  <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
+    <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
+  </select>
+  <select id='specifiy_calendar_month' v-model.number="calendarMonth">
+    <option v-for="month in 12" :key="month">{{ month }}</option>
+  </select>
   <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 total:{{totalWorkingDays}}</div>
   <table class="calendar">
     <thead class="calendar__header">
@@ -139,6 +144,15 @@ export default defineComponent({
     },
     unAutoAdjusted() {
       return !this.autoAdjusted
+    },
+    rangeOfYears() {
+      let rangeOfYears = []
+      const pastYear = this.getCurrentYear() - 10
+      const futureYear = this.getCurrentYear() + 10
+      for (let year = pastYear;year < futureYear;year++) {
+        rangeOfYears.push(year)
+      }
+      return rangeOfYears
     }
   },
   mounted() {
@@ -423,7 +437,6 @@ export default defineComponent({
           break
         }
       }
-      
     },
   },
   components: {
