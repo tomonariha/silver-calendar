@@ -58,6 +58,13 @@ gem 'devise-i18n'
 gem 'html2slim'
 gem 'slim-rails'
 gem 'vite_rails'
+gem 'dotenv-rails'
+
+gem 'google-api-client'
+gem 'google-apis-calendar_v3', '~> 0.15.0'
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
