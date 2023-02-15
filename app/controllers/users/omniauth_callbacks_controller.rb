@@ -7,9 +7,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def callback_from(provider)
     provider = provider.to_s
-
-    @user = User.from_omniauth(request.env['omniauth.auth'])
-
+    auth = request.env['omniauth.auth']
+    @user = User.from_omniauth(auth)
+    @user.store_credentials_in_cache(auth)
     if @user.persisted?
       flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.capitalize)
       sign_in_and_redirect @user, event: :authentication

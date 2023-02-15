@@ -17,26 +17,39 @@ class CalendarClient
     )
   end
 
-  def create_event
-    event = Google::Apis::CalendarV3::Event.new(
-      summary: "summary",
-      start: Google::Apis::CalendarV3::EventDateTime.new(
-        date: Date.today
-      ),
-      end: Google::Apis::CalendarV3::EventDateTime.new(
-        date: Date.today
-      ),
-      description: "description"
-    )
+  def insert_events(calendar_days, google_calendar_id)
+    if calendar_days.empty?
+      return
+    end
+    events = []
+    calendar_days.map do |day|
+      
+      date = day.date
+      event = Google::Apis::CalendarV3::Event.new(
+        summary: "#{day.schedule}",
+        start: Google::Apis::CalendarV3::EventDateTime.new(
+          date: date
+        ),
+        end: Google::Apis::CalendarV3::EventDateTime.new(
+          date: date
+        ),
+        description: "今日の予定"
+      )
+      events << event
+    end
+
     authorize
-    @service.insert_event('primary', event)
+
+    @service.batch do |service|
+      events.each do |event|
+        service.insert_event(google_calendar_id, event)
+      end
+    end
   end
 
-  def delete_calendar
-    calendar_id = Rails.cache.read("#{@user.uid}calendar_id")
+  def delete_calendar(calendar)
     authorize
-    @service.delete_calendar(calendar_id)
-    delete_calendar_id_from_cache
+    @service.delete_calendar(calendar.google_calendar_id)
   end
 
   def get_event
@@ -52,35 +65,12 @@ class CalendarClient
          #                         fields: 'items(id,summary,start),next_page_token')
   end
 
-  def create_calendar
-    calendar = Google::Apis::CalendarV3::Calendar.new(summary: '検証用', descrition: 'テスト')
+  def create_calendar(calendar)
+    new_calendar = Google::Apis::CalendarV3::Calendar.new(summary: "WDD #{calendar.year}年", descrition: 'テスト')
     authorize
-    result = @service.insert_calendar(calendar)
-    Rails.cache.write("#{@user.uid}calendar_id", result.id)
-  end
-
-  def batch_test
-    calendar_id = Rails.cache.read("#{@user.uid}calendar_id")
-    events = []
-    (1..100).map do |i|
-      event = Google::Apis::CalendarV3::Event.new(
-        summary: "batch_test",
-        start: Google::Apis::CalendarV3::EventDateTime.new(
-          date: Date.parse("2022-11-01") + i.day
-        ),
-        end: Google::Apis::CalendarV3::EventDateTime.new(
-          date: Date.parse("2022-11-01") + i.day
-        ),
-        description: "description"
-      )
-      events << event
-    end
-    authorize
-    @service.batch do |service|
-      events.each do |event|
-        service.insert_event(calendar_id, event)
-      end
-    end
+    result = @service.insert_calendar(new_calendar)
+    calendar.update!(google_calendar_id: result.id)
+    result
   end
 
   private

@@ -14,4 +14,11 @@ class User < ApplicationRecord
       user.password = Devise.friendly_token[0,20]
     end
   end
+
+  def store_credentials_in_cache(auth)
+    expires_at = auth.credentials.expires_at
+    Rails.cache.write("#{uid}expires_at", expires_at)
+    Rails.cache.write(uid, auth.credentials.token)
+    Rails.cache.write(uid + id.to_s, auth.credentials.refresh_token)
+  end
 end

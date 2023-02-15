@@ -214,6 +214,7 @@ export default defineComponent({
         schedule_of_friday: this.scheduleOfFriday,
         schedule_of_saturday: this.scheduleOfSaturday,
       }
+      debugger
       fetch(`api/calendars/${this.year}/settings`, {
       method: 'POST',
       headers: {
