@@ -6,12 +6,10 @@
       <button class="calendar_year__body">{{ calendar.year }}</button>
       <template #content>
         <button v-on:click='insertGoogleCalendar(calendar.year)'>Googleカレンダーにカレンダーを追加する</button>
+        <button v-on:click='deleteGoogleCalendar(calendar.year)'>Googleカレンダーとの連携を解除する</button>
       </template> 
     </Popper>
   </div>
-  <br>
-  <p>連携済みのカレンダー</p>
-  <button v-on:click='deleteGoogleCalendar'>Googleカレンダーとの連携を解除する</button>
   <br>
   <button v-on:click="$emit('close')">閉じる</button>
 </template>
@@ -34,7 +32,7 @@ export default defineComponent({
       return meta ? meta.getAttribute('content') : ''
     },
     insertGoogleCalendar(year) {
-      fetch(`api/calendars/${year}/alignment`, {
+      fetch(`api/alignment/calendars/${year}`, {
       method: 'POST',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -49,8 +47,8 @@ export default defineComponent({
         console.warn(error)
       })
     },
-    deleteGoogleCalendar() {
-      fetch(`api/calendars/${this.year}/alignment/${this.calendar_id}`, {
+    deleteGoogleCalendar(year) {
+      fetch(`api/alignment/calendars/${year}`, {
       method: 'DELETE',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',

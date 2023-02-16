@@ -29,7 +29,7 @@ class Api::AlignmentController < ApplicationController
   end
 
   def set_calendar
-    @calendar = current_user.calendars.find_by(year: params[:calendar_year])
+    @calendar = current_user.calendars.find_by(year: params[:year])
   end
 
   def set_calendar_client
