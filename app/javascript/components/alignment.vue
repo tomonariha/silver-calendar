@@ -5,8 +5,11 @@
     <Popper arrow>
       <button class="calendar_year__body">{{ calendar.year }}</button>
       <template #content>
-        <button v-on:click='insertGoogleCalendar(calendar.year)'>Googleカレンダーにカレンダーを追加する</button>
-        <button v-on:click='deleteGoogleCalendar(calendar.year)'>Googleカレンダーとの連携を解除する</button>
+        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['create'])">Googleカレンダーにカレンダーを追加する</button>
+        <br>
+        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['delete'])">Googleカレンダーとの連携を解除する</button>
+        <br>
+        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['update'])">Googleカレンダーを更新する</button>
       </template> 
     </Popper>
   </div>
@@ -23,7 +26,12 @@ export default defineComponent({
   data() {
     return {
       year: this.getCurrentYear(),
-      calendars: []
+      calendars: [],
+      requestMethods: { 
+                        'create': 'POST',
+                        'delete': 'DELETE',
+                        'update': 'PUT'
+                      }
     }
   },
   methods: {
@@ -31,25 +39,9 @@ export default defineComponent({
       const meta = document.querySelector('meta[name="csrf-token"]')
       return meta ? meta.getAttribute('content') : ''
     },
-    insertGoogleCalendar(year) {
+    fetchGoogleCalendar(year, method) {
       fetch(`api/alignment/calendars/${year}`, {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
-      },
-      credentials: 'same-origin'
-      })
-      .then(() => {
-        
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    deleteGoogleCalendar(year) {
-      fetch(`api/alignment/calendars/${year}`, {
-      method: 'DELETE',
+      method: method,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-Token': this.token(),

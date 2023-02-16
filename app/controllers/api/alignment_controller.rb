@@ -16,6 +16,15 @@ class Api::AlignmentController < ApplicationController
     @client.delete_calendar(@calendar)
     redirect_to root_path, notice: '削除しました'
   end
+  
+  def update
+    #Googleカレンダーに追加したカレンダーを削除し新しくカレンダーを作り直す
+    #個別に日程の予定を更新するにはevent_idが必要で処理が冗長になるため
+    @client.delete_calendar(@calendar)
+    result = @client.create_calendar(@calendar)
+    calendar_days = @calendar.days
+    @client.insert_events(calendar_days, result.id)
+  end
 
   def get_event
     @client.get_event

@@ -23,7 +23,6 @@ class CalendarClient
     end
     events = []
     calendar_days.map do |day|
-      
       date = day.date
       event = Google::Apis::CalendarV3::Event.new(
         summary: "#{day.schedule}",
@@ -50,6 +49,7 @@ class CalendarClient
   def delete_calendar(calendar)
     authorize
     @service.delete_calendar(calendar.google_calendar_id)
+    calendar.update!(google_calendar_id: nil)
   end
 
   def get_event
