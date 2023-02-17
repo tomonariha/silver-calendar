@@ -1,17 +1,11 @@
 <template>
   <p>連携機能</p>
-  <p>googleカレンダー</p>
+  <p>Googleカレンダー</p>
   <div v-for="calendar in calendars" :key="calendar.year">
-    <Popper arrow>
-      <button class="calendar_year__body">{{ calendar.year }}</button>
-      <template #content>
-        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['create'])">Googleカレンダーにカレンダーを追加する</button>
-        <br>
-        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['delete'])">Googleカレンダーとの連携を解除する</button>
-        <br>
-        <button v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['update'])">Googleカレンダーを更新する</button>
-      </template> 
-    </Popper>
+    <button class="calendar_year__body">{{ calendar.year }}</button>
+    <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['create'])">追加</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['delete'])">削除</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['update'])">更新</button>
   </div>
   <br>
   <button v-on:click="$emit('close')">閉じる</button>
@@ -19,7 +13,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Popper from 'vue3-popper'
 
 export default defineComponent({
   name: 'alignment',
@@ -79,12 +72,12 @@ export default defineComponent({
         console.warn(error)
       })
     },
+    notExistsGoogleId(google_calendar_id) {
+      return !google_calendar_id
+    },
   },
   mounted() {
     this.fetchCalendars()
-  },
-  components: {
-    Popper,
   },
   emits: ['close']
 })
