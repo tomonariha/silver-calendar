@@ -4,8 +4,8 @@ class Api::AlignmentsController < ApplicationController
   before_action :set_user, :set_calendar, :set_calendar_client
 
   def create
-    #resultにはGoogleカレンダーからのレスポンスが入る。
-    #Googleカレンダーに新しく作ったカレンダーのIDを取得するための処理。
+    # resultにはGoogleカレンダーからのレスポンスが入る。
+    # Googleカレンダーに新しく作ったカレンダーのIDを取得するための処理。
     result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
     @client.insert_events(calendar_days, result.id)
@@ -16,20 +16,20 @@ class Api::AlignmentsController < ApplicationController
     @client.delete_calendar(@calendar)
     redirect_to root_path, notice: '削除しました'
   end
-  
+
   def update
-    #Googleカレンダーに追加したカレンダーを削除し新しくカレンダーを作り直す
-    #個別に日程の予定を更新するにはevent_idが必要で処理が冗長になるため
+    # Googleカレンダーに追加したカレンダーを削除し新しくカレンダーを作り直す
+    # 個別に日程の予定を更新するにはevent_idが必要で処理が冗長になるため
     @client.delete_calendar(@calendar)
     result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
     @client.insert_events(calendar_days, result.id)
   end
-
-  def get_event
-    @client.get_event
-    redirect_to root_path, notice: '予定を取得しました'
-  end
+  # Googleカレンダーからの予定取得用
+  # def get_event
+  # @client.get_event
+  # redirect_to root_path, notice: '予定を取得しました'
+  # end
 
   private
 

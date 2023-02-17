@@ -18,21 +18,20 @@ class CalendarClient
   end
 
   def insert_events(calendar_days, google_calendar_id)
-    if calendar_days.empty?
-      return
-    end
+    return if calendar_days.empty?
+
     events = []
     calendar_days.map do |day|
       date = day.date
       event = Google::Apis::CalendarV3::Event.new(
-        summary: "#{day.schedule}",
+        summary: day.schedule.to_s,
         start: Google::Apis::CalendarV3::EventDateTime.new(
-          date: date
+          date:
         ),
         end: Google::Apis::CalendarV3::EventDateTime.new(
-          date: date
+          date:
         ),
-        description: "今日の予定"
+        description: '今日の予定'
       )
       events << event
     end
@@ -52,24 +51,25 @@ class CalendarClient
     calendar.update!(google_calendar_id: nil)
   end
 
-  def get_event
-    page_token = nil
-    now = Time.now.iso8601
-    authorize
-    result = @service.list_events('primary')
-    #result = @service.list_events('primary', 
-     #                             single_events: true,
-      #                            order_by: 'startTime',
-       #                           time_min: now,
-        #                          page_token: page_token,
-         #                         fields: 'items(id,summary,start),next_page_token')
-  end
+  # Googleカレンダーからの予定取得用
+  # def get_event
+  # page_token = nil
+  # now = Time.now.iso8601
+  # authorize
+  # result = @service.list_events('primary')
+  # result = @service.list_events('primary',
+  #                             single_events: true,
+  #                            order_by: 'startTime',
+  #                           time_min: now,
+  #                          page_token: page_token,
+  #                         fields: 'items(id,summary,start),next_page_token')
+  # end
 
   def create_calendar(calendar)
     new_calendar = Google::Apis::CalendarV3::Calendar.new(summary: "WDD #{calendar.year}年", descrition: 'テスト')
     authorize
     result = @service.insert_calendar(new_calendar)
-    #GoogleカレンダーからのレスポンスでカレンダーIDを取得しDBへ保存
+    # GoogleカレンダーからのレスポンスでカレンダーIDを取得しDBへ保存
     calendar.update!(google_calendar_id: result.id)
     result
   end

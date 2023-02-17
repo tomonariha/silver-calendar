@@ -55,10 +55,10 @@ gem 'bootsnap', require: false
 
 gem 'devise'
 gem 'devise-i18n'
+gem 'dotenv-rails'
 gem 'html2slim'
 gem 'slim-rails'
 gem 'vite_rails'
-gem 'dotenv-rails'
 
 gem 'google-api-client'
 gem 'google-apis-calendar_v3', '~> 0.15.0'
