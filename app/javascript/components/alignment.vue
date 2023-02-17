@@ -2,7 +2,7 @@
   <p>連携機能</p>
   <p>Googleカレンダー</p>
   <div v-for="calendar in calendars" :key="calendar.year">
-    <button class="calendar_year__body">{{ calendar.year }}</button>
+    <div class="calendar_year__body">{{ calendar.year }}</div>
     <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['create'])">追加</button>
     <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['delete'])">削除</button>
     <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['update'])">更新</button>

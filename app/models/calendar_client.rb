@@ -69,6 +69,7 @@ class CalendarClient
     new_calendar = Google::Apis::CalendarV3::Calendar.new(summary: "WDD #{calendar.year}年", descrition: 'テスト')
     authorize
     result = @service.insert_calendar(new_calendar)
+    #GoogleカレンダーからのレスポンスでカレンダーIDを取得しDBへ保存
     calendar.update!(google_calendar_id: result.id)
     result
   end
