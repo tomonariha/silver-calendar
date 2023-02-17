@@ -40,7 +40,7 @@ export default defineComponent({
       return meta ? meta.getAttribute('content') : ''
     },
     fetchGoogleCalendar(year, method) {
-      fetch(`api/alignment/calendars/${year}`, {
+      fetch(`api/calendars/${year}/alignment`, {
       method: method,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',

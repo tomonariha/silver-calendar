@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::AlignmentController < ApplicationController
+class Api::AlignmentsController < ApplicationController
   before_action :set_user, :set_calendar, :set_calendar_client
 
   def create
@@ -38,7 +38,7 @@ class Api::AlignmentController < ApplicationController
   end
 
   def set_calendar
-    @calendar = current_user.calendars.find_by(year: params[:year])
+    @calendar = current_user.calendars.find_by(year: params[:calendar_year])
   end
 
   def set_calendar_client
