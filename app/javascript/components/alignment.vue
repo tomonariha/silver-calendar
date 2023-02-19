@@ -1,6 +1,8 @@
 <template>
   <p>連携機能</p>
-  <p>Googleカレンダー</p>
+  <p>Googleカレンダー</p>{{user}}
+  <button v-if="notAlignedGoogle(user)" v-on:click="redirectOAuth">Sign in with Google</button>
+  <div v-else>認証済</div>
   <div v-for="calendar in calendars" :key="calendar.year">
     <div class="calendar_year__body">{{ calendar.year }}</div>
     <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar.year, this.requestMethods['create'])">追加</button>
@@ -18,6 +20,7 @@ export default defineComponent({
   name: 'alignment',
   data() {
     return {
+      user: {},
       year: this.getCurrentYear(),
       calendars: [],
       requestMethods: { 
@@ -75,9 +78,35 @@ export default defineComponent({
     notExistsGoogleId(google_calendar_id) {
       return !google_calendar_id
     },
+    notAlignedGoogle(user) {
+      return !user.uid && !user.provider
+    },
+    fetchUser() {
+      fetch('api/users', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': this.token()
+      },
+      credentials: 'same-origin'
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((json) => {
+        this.user = json.user
+      })
+      .catch((error) => {
+        console.warn(error)
+      })
+    },
+    redirectOAuth() {
+      window.location.href = '/users/auth/google_oauth2'
+    }
   },
   mounted() {
     this.fetchCalendars()
+    this.fetchUser()
   },
   emits: ['close']
 })
