@@ -11,6 +11,10 @@ Metrics/ClassLength:
   Exclude:
     - spec/**/*
 
+Metrics/MethodLength:
+  Exclude:
+    - app/models/calendar_client.rb
+
 Lint/UselessAssignment:
   Exclude:
     - spec/**/*

@@ -44,11 +44,10 @@ class Setting < ApplicationRecord
   def periods_should_not_overlap
     return unless period_start_at && period_end_at
 
-    calendar_of_this_year = Calendar.find_by(year: calendar.year)
+    calendar_of_this_year = Calendar.find(calendar_id)
     return unless calendar_of_this_year
 
-    settings = Setting.where(calendar_id: calendar_of_this_year.id)
-
+    settings = calendar_of_this_year.settings
     settings.each do |setting|
       next if setting.id == id
 

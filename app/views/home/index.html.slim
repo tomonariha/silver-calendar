@@ -1,2 +1,3 @@
 h1 #{current_user.email}のカレンダー
+= button_to 'ログアウト', destroy_user_session_path, method: :delete
 #app(data-user-id="#{current_user.id}")

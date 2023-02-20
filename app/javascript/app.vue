@@ -1,5 +1,5 @@
 <template>
-  <button v-on:click="openModal()">条件の入力</button>
+  <button v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Modal v-bind:year="calendarYear"
@@ -51,12 +51,20 @@
   <button v-show="unAutoAdjusted" v-on:click="autoAdjust">適用</button>
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
+  <button v-on:click="openAlignmentModal">連携</button>
+    <div id=overlay  v-show="showAlinmentContent">
+      <div id=content>
+        <Alignment v-on:close="closeAlignmentModal">
+        </Alignment>
+      </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Modal from './components/setting_modal.vue' 
 import Day from './components/day.vue' 
+import Alignment from './components/alignment.vue'
 
 export default defineComponent({
   name: 'Calendar',
@@ -74,6 +82,7 @@ export default defineComponent({
       today: this.getCurrentDay(),
       loaded: null,
       showContent: false,
+      showAlinmentContent: false,
       adjastedCalendar: [],
       totalWorkingDays: 0,
       autoAdjusted: false,
@@ -231,6 +240,12 @@ export default defineComponent({
     },
     closeModal() {
       this.showContent = false
+    },
+    openAlignmentModal() {
+      this.showAlinmentContent = true
+    },
+    closeAlignmentModal() {
+      this.showAlinmentContent = false
     },
     autoAdjust() {
       this.adjustedCalendar = []
@@ -443,6 +458,7 @@ export default defineComponent({
   components: {
     Modal,
     Day,
+    Alignment,
   },
 })
 </script>

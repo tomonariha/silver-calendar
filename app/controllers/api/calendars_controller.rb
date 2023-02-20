@@ -14,4 +14,8 @@ class Api::CalendarsController < ApplicationController
       @day.update!(schedule:)
     end
   end
+
+  def index
+    @calendars = User.find(current_user.id).calendars
+  end
 end
