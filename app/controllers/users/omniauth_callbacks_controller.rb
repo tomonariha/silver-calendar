@@ -18,7 +18,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     @user.store_credentials_in_cache(auth)
-  
+
     if @user.persisted?
       flash[:notice] = I18n.t('devise.omniauth_callbacks.success', kind: provider.capitalize)
       sign_in_and_redirect @user, event: :authentication
@@ -29,7 +29,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def registration_provider_uid(user, auth)
-    user.uid =  auth.uid
+    user.uid = auth.uid
     user.provider = auth.provider
     user.save!
   end

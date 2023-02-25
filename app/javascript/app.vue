@@ -54,7 +54,11 @@
   <button v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlinmentContent">
       <div id=content>
-        <Alignment v-on:close="closeAlignmentModal">
+        <Alignment v-bind:calendars="calendarsIndex"
+                   v-on:close="closeAlignmentModal"
+                   v-on:create="createAlignment"
+                   v-on:delete="deleteAlignment"
+                   v-on:update="updateAlignment">
         </Alignment>
       </div>
     </div>
@@ -86,6 +90,7 @@ export default defineComponent({
       adjastedCalendar: [],
       totalWorkingDays: 0,
       autoAdjusted: false,
+      calendarsIndex: [],
     }
   },
   props: {
@@ -167,6 +172,7 @@ export default defineComponent({
   },
   mounted() {
     this.fetchCalendarAndSettings()
+    this.fetchCalendarsIndex()
   },
   methods: {
     token() {
@@ -385,7 +391,7 @@ export default defineComponent({
       this.autoAdjusted = false
     },
     cancelAutoAdjust() {
-      this.adjustedCalendar = []
+      this.adjustedCalendar = [],
       this.fetchCalendar()
       this.autoAdjusted = false
     },
@@ -450,6 +456,52 @@ export default defineComponent({
       for (let calendarDay of this.calendarDays) {
         if (calendarDay.date === formatedDay) {
           this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1)
+          break
+        }
+      }
+    },
+    fetchCalendarsIndex() {
+      this.calendarsIndex = []
+      fetch('api/calendars', {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': this.token()
+      },
+      credentials: 'same-origin'
+      })
+      .then((response) => {
+        return response.json()
+      })
+      .then((json) => {
+        json.forEach((r) => {
+          this.calendarsIndex.push(r)
+        })
+      })
+      .catch((error) => {
+        console.warn(error)
+      })
+    },
+    createAlignment(calendar) {
+      for (let calendarIndex of this.calendarsIndex) {
+        if (calendarIndex.year === calendar.year) {
+          calendarIndex.google_calendar_id = calendar.google_calendar_id
+          break
+        }
+      }
+    },
+    deleteAlignment(calendar) {
+      for (let calendarIndex of this.calendarsIndex) {
+        if (calendarIndex.year === calendar.year) {
+          calendarIndex.google_calendar_id = null
+          break
+        }
+      }
+    },
+    updateAlignment(calendar) {
+      for (let calendarIndex of this.calendarsIndex) {
+        if (calendarIndex.year === calendar.year) {
+          calendarIndex.google_calendar_id = calendar.google_calendar_id
           break
         }
       }
