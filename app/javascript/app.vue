@@ -2,13 +2,13 @@
   <button v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
-        <Modal v-bind:year="calendarYear"
+        <Setting v-bind:year="calendarYear"
                v-bind:settings="settings"
                v-on:close="closeModal"
                v-on:update="updateSetting"
                v-on:create="createSetting"
                v-on:delete="deleteSetting">
-        </Modal>
+        </Setting>
       </div>
     </div>
   <button class="calendar-nav__previous" @click='previousMonth'>前</button>
@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Modal from './components/setting_modal.vue' 
+import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 
@@ -518,7 +518,7 @@ export default defineComponent({
     },
   },
   components: {
-    Modal,
+    Setting,
     Day,
     Alignment,
   },
