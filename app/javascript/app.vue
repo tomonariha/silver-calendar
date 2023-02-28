@@ -332,6 +332,11 @@ export default defineComponent({
         })
         this.loaded = true
       })
+      .then(()=> {
+        this.settings.sort((a, b)=>
+          a.period_start_at > b.period_start_at ? 1 : -1
+        )
+      })
       .catch((error) => {
         console.warn(error)
       })

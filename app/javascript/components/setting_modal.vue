@@ -31,7 +31,7 @@
     </option>
   </select>
   <div>この期間の勤務日数:
-      <input id="specified_total_days" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+    <input id="specified_total_days" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
   </div>
   <label for="check_specified_total_days">指定しない</label>
   <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays" />
