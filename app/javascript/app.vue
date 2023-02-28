@@ -392,7 +392,7 @@ export default defineComponent({
     },
     cancelAutoAdjust() {
       this.adjustedCalendar = [],
-      this.fetchCalendar()
+      this.fetchCalendarAndSettings()
       this.autoAdjusted = false
     },
     saveAdjustedCalendar() {
