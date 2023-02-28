@@ -478,6 +478,11 @@ export default defineComponent({
           this.calendarsIndex.push(r)
         })
       })
+      .then(()=> {
+        this.calendarsIndex.sort((a, b)=>
+          a.year - b.year
+        )
+      })
       .catch((error) => {
         console.warn(error)
       })
