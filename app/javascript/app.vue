@@ -535,7 +535,7 @@ export default defineComponent({
 }
 #content{
   z-index:2;
-  width:50%;
+  width:70%;
   padding: 1em;
   background:#fff;
 }

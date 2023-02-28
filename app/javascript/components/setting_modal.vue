@@ -1,8 +1,11 @@
 <template>
   <p>モーダル</p>
-  <div v-for="setting in settings" :key="setting.id">
+  <div v-for="setting in slicedSettings" :key="setting.id">
     <button v-on:click="reflectSetting(setting)">{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</button>
-    <button v-on:click="deleteSetting(setting.id)">この条件を削除</button>
+    <button v-on:click="deleteSetting(setting.id)">削除</button>
+  </div>
+  <div v-for="pageNumber in totalPages" :key="pageNumber">
+    <button v-on:click="this.currentPage = pageNumber">{{ pageNumber }}</button>
   </div>
   <button v-on:click="resetSettingParams()">new</button>
   <br>
@@ -103,6 +106,8 @@ export default defineComponent({
         6: "土",
       },
       errors: [],
+      currentPage: 1,
+      pageLimit: 5,
     }
   },
   props: {
@@ -112,6 +117,14 @@ export default defineComponent({
   computed: {
     specifiedTotalDays() {
       return !this.notSpecifiedTotalDays
+    },
+    slicedSettings() {
+      let start = (this.currentPage -1) * this.pageLimit
+      let end = start + this.pageLimit
+      return this.settings.slice(start, end)
+    },
+    totalPages(){
+      return Math.ceil(this.settings.length / this.pageLimit)
     },
   },
   methods: {
