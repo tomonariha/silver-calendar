@@ -1,5 +1,5 @@
 <template>
-  <p>モーダル</p>
+  <p>条件の設定</p>
   <div v-for="setting in slicedSettings" :key="setting.id">
     <button v-on:click="reflectSetting(setting)">{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</button>
     <button v-on:click="deleteSetting(setting.id)">削除</button>
