@@ -1,13 +1,16 @@
 <template>
-  <p>連携機能</p>{{authenticatedGoogle}}
+  <p>連携機能</p>
   <p>Googleカレンダー</p>
   <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
   <p v-else>認証済</p>
-  <div v-for="calendar in calendars" :key="calendar.year">
+  <div v-for="calendar in slicedCalendars" :key="calendar.year">
     <div class="calendar_year__body">{{ calendar.year }}</div>
     <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['create'])">追加</button>
     <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['delete'])">削除</button>
     <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['update'])">更新</button>
+  </div>
+  <div v-for="pageNumber in totalPages" :key="pageNumber">
+    <button v-on:click="this.currentPage = pageNumber">{{ pageNumber }}</button>
   </div>
   <br>
   <button v-on:click="$emit('close')">閉じる</button>
@@ -26,7 +29,9 @@ export default defineComponent({
                         'create': 'POST',
                         'delete': 'DELETE',
                         'update': 'PUT'
-                      }
+                      },
+      currentPage: 1,
+      pageLimit: 5,
     }
   },
   props: {
@@ -35,6 +40,14 @@ export default defineComponent({
   computed: {
     notAuthenticatedGoogle() {
       return !this.authenticatedGoogle
+    },
+    slicedCalendars() {
+      let start = (this.currentPage -1) * this.pageLimit
+      let end = start + this.pageLimit
+      return this.calendars.slice(start, end)
+    },
+    totalPages(){
+      return Math.ceil(this.calendars.length / this.pageLimit)
     },
   },
   methods: {
