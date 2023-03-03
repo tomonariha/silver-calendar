@@ -19,22 +19,24 @@
   <select id='specifiy_calendar_month' v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
-  <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 total:{{totalWorkingDays}}</div>
-  <table class="calendar">
-    <thead class="calendar__header">
-      <tr>
-        <th class="calendar__header-day">日</th>
-        <th class="calendar__header-day">月</th>
-        <th class="calendar__header-day">火</th>
-        <th class="calendar__header-day">水</th>
-        <th class="calendar__header-day">木</th>
-        <th class="calendar__header-day">金</th>
-        <th class="calendar__header-day">土</th>
-      </tr>
-    </thead>
-    <tbody v-for="week in calendarWeeks" :key="week.id">
-      <tr class="calendar__week">
-        <td class="calendar__day" 
+  <div v-if="monthly">
+    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 total:{{totalWorkingDays}}</div>
+    <button v-on:click="this.monthly=false">年間カレンダー</button>
+    <table class="calendar">
+      <thead class="calendar__header">
+        <tr>
+          <th class="calendar__header-day">日</th>
+          <th class="calendar__header-day">月</th>
+          <th class="calendar__header-day">火</th>
+          <th class="calendar__header-day">水</th>
+          <th class="calendar__header-day">木</th>
+          <th class="calendar__header-day">金</th>
+          <th class="calendar__header-day">土</th>
+        </tr>
+      </thead>
+      <tbody v-for="week in calendarWeeks" :key="week.id">
+        <tr class="calendar__week">
+          <td class="calendar__day" 
             v-for='date in week.value'
             :key='date.date'
             :id="'day' + date.date">
@@ -44,10 +46,42 @@
                  v-on:update="updateDay"
                  v-on:delete="deleteDay">
             </Day>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else>
+    <div class="calendar-nav__year">{{ calendarYear }}年 total:{{totalWorkingDays}}</div>
+    <div v-for="month in 12" :key="month">{{ calendarMonth = month }}月
+      <div v-on:click="toMonthlyCalendar(month)"> 
+        <table class="calendar">
+          <thead class="calendar__header">
+            <tr>
+              <th class="calendar__header-day">日</th>
+              <th class="calendar__header-day">月</th>
+              <th class="calendar__header-day">火</th>
+              <th class="calendar__header-day">水</th>
+              <th class="calendar__header-day">木</th>
+              <th class="calendar__header-day">金</th>
+              <th class="calendar__header-day">土</th>
+            </tr>
+          </thead>
+          <tbody v-for="week in calendarWeeks" :key="week.id">
+            <tr class="calendar__week">
+              <td class="calendar__day" 
+                v-for='date in week.value'
+                :key='date.date'
+                :id="'day' + date.date">
+                <div class="calendar__day-label">{{ date.date }}</div>
+                <div>{{ scheduleToMark[date.schedule] }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   <button v-show="unAutoAdjusted" v-on:click="autoAdjust">適用</button>
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
@@ -91,6 +125,7 @@ export default defineComponent({
       totalWorkingDays: 0,
       autoAdjusted: false,
       calendarsIndex: [],
+      monthly: false,
     }
   },
   props: {
@@ -168,7 +203,7 @@ export default defineComponent({
         rangeOfYears.push(year)
       }
       return rangeOfYears
-    }
+    },
   },
   mounted() {
     this.fetchCalendarAndSettings()
@@ -515,6 +550,10 @@ export default defineComponent({
           break
         }
       }
+    },
+    toMonthlyCalendar(month) {
+      this.calendarMonth = month
+      this.monthly = true
     },
   },
   components: {
