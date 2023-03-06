@@ -16,11 +16,11 @@
   <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
     <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
   </select>
-  <select id='specifiy_calendar_month' v-model.number="calendarMonth">
+  <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
   <div v-if="monthly">
-    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 total:{{ totalWorkingDays[this.calendarMonth] }}</div>
+    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
     <button v-on:click="this.monthly=false">年間カレンダー</button>
     <table class="calendar">
       <thead class="calendar__header">
@@ -52,8 +52,8 @@
     </table>
   </div>
   <div v-else>
-    <div class="calendar-nav__year">{{ calendarYear }}年 年合計{{ yearyTotal() }}</div>
-    <div v-for="month in 12" :key="month">{{ month }}月 月合計{{ totalWorkingDays[month] }}
+    <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
+    <div v-for="month in 12" :key="month">{{ month }}月 合計:{{ totalWorkingDays[month] }}
       <div v-on:click="toMonthlyCalendar(month)"> 
         <table class="calendar">
           <thead class="calendar__header">
@@ -175,7 +175,6 @@ export default defineComponent({
       if (this.calendarMonth === 1) {
         this.calendarMonth = 12
         this.calendarYear--
-        this.fetchCalendarAndSettings()
         this.cancelAutoAdjust()
       } else {
         this.calendarMonth--
@@ -187,7 +186,6 @@ export default defineComponent({
       if (this.calendarMonth === 12) {
         this.calendarMonth = 1
         this.calendarYear++
-        this.fetchCalendarAndSettings()
         this.cancelAutoAdjust()
       } else {
         this.calendarMonth++
@@ -517,7 +515,7 @@ export default defineComponent({
     },
     calendarDates(month) {
       const calendar = []
-      let total = 0
+      let monthlyTotalWorkingDays = 0
       if (this.firstWday(month) > 0) {
         for (let blank = 0; blank < this.firstWday(month); blank++) {
           calendar.push(null)
@@ -537,7 +535,7 @@ export default defineComponent({
             year: this.calendarYear,
             month: month
           })
-          total += this.countTotalWorkingDays(schedule) 
+          monthlyTotalWorkingDays += this.countTotalWorkingDays(schedule) 
         } else {
           calendar.push({
             date: date, 
@@ -547,7 +545,7 @@ export default defineComponent({
           })
         }
       }
-      this.totalWorkingDays[month] = total
+      this.totalWorkingDays[month] = monthlyTotalWorkingDays
       return calendar
     },
     countTotalWorkingDays(schedule) {
@@ -558,12 +556,12 @@ export default defineComponent({
       }
       return 0
     },
-    yearyTotal(){
-      let total = 0
+    yearyTotalWorkingDays(){
+      let totalWorkingDays = 0
       for (let i = 1; i <= 12; i++) {
-        total += this.totalWorkingDays[i]
+        totalWorkingDays += this.totalWorkingDays[i]
       }
-      return total
+      return totalWorkingDays
     },
   },
   components: {
