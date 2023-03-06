@@ -16,25 +16,27 @@
   <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
     <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
   </select>
-  <select id='specifiy_calendar_month' v-model.number="calendarMonth">
+  <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
-  <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 total:{{totalWorkingDays}}</div>
-  <table class="calendar">
-    <thead class="calendar__header">
-      <tr>
-        <th class="calendar__header-day">日</th>
-        <th class="calendar__header-day">月</th>
-        <th class="calendar__header-day">火</th>
-        <th class="calendar__header-day">水</th>
-        <th class="calendar__header-day">木</th>
-        <th class="calendar__header-day">金</th>
-        <th class="calendar__header-day">土</th>
-      </tr>
-    </thead>
-    <tbody v-for="week in calendarWeeks" :key="week.id">
-      <tr class="calendar__week">
-        <td class="calendar__day" 
+  <div v-if="monthly">
+    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
+    <button v-on:click="this.monthly=false">年間カレンダー</button>
+    <table class="calendar">
+      <thead class="calendar__header">
+        <tr>
+          <th class="calendar__header-day">日</th>
+          <th class="calendar__header-day">月</th>
+          <th class="calendar__header-day">火</th>
+          <th class="calendar__header-day">水</th>
+          <th class="calendar__header-day">木</th>
+          <th class="calendar__header-day">金</th>
+          <th class="calendar__header-day">土</th>
+        </tr>
+      </thead>
+      <tbody v-for="week in calendarWeeks(this.calendarMonth)" :key="week.id">
+        <tr class="calendar__week">
+          <td class="calendar__day" 
             v-for='date in week.value'
             :key='date.date'
             :id="'day' + date.date">
@@ -44,10 +46,42 @@
                  v-on:update="updateDay"
                  v-on:delete="deleteDay">
             </Day>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else>
+    <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
+    <div v-for="month in 12" :key="month">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+      <div v-on:click="toMonthlyCalendar(month)"> 
+        <table class="calendar">
+          <thead class="calendar__header">
+            <tr>
+              <th class="calendar__header-day">日</th>
+              <th class="calendar__header-day">月</th>
+              <th class="calendar__header-day">火</th>
+              <th class="calendar__header-day">水</th>
+              <th class="calendar__header-day">木</th>
+              <th class="calendar__header-day">金</th>
+              <th class="calendar__header-day">土</th>
+            </tr>
+          </thead>
+          <tbody v-for="week in calendarWeeks(month)" :key="week.id">
+            <tr class="calendar__week">
+              <td class="calendar__day" 
+                v-for='date in week.value'
+                :key='date.date'
+                :id="'day' + date.date">
+                <div class="calendar__day-label">{{ date.date }}</div>
+                <div>{{ scheduleToMark[date.schedule] }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   <button v-show="unAutoAdjusted" v-on:click="autoAdjust">適用</button>
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
@@ -88,74 +122,16 @@ export default defineComponent({
       showContent: false,
       showAlinmentContent: false,
       adjastedCalendar: [],
-      totalWorkingDays: 0,
+      totalWorkingDays: {},
       autoAdjusted: false,
       calendarsIndex: [],
+      monthly: true,
     }
   },
   props: {
     userId: { type: String, required: true }
   },
   computed: {
-    firstWday() {
-      const firstDay = new Date(this.calendarYear, this.calendarMonth - 1, 1)
-      return firstDay.getDay()
-    },
-    lastDate() {
-      const lastDay = new Date(this.calendarYear, this.calendarMonth, 0)
-      return lastDay.getDate()
-    },
-    calendarWeeks() {
-      const weeksAry = []
-      let value = []
-      let id = 1
-      let weekDay = 0
-      this.calendarDates.forEach(function (date, i, ary) {
-        !date ? (date = { weekDay: weekDay }) : (date.weekDay = weekDay)
-        value.push(date)
-        weekDay++
-        if (value.length === 7 || i === ary.length - 1) {
-          weeksAry.push({ id: id, value: value })
-          id++
-          value = []
-          weekDay = 0
-        }
-      })
-      return weeksAry
-    },
-    calendarDates() {
-      const calendar = []
-      this.totalWorkingDays = 0
-      if (this.firstWday > 0) {
-        for (let blank = 0; blank < this.firstWday; blank++) {
-          calendar.push(null)
-        }
-      }
-      for (let date = 1; date <= this.lastDate; date++) {
-        const result = this.calendarDays.filter((day) =>
-          day.date.includes(
-            `${this.calendarYear}-${this.formatMonth(this.calendarMonth)}-${this.formatDay(date)}`
-          )
-        )
-        if (result.length > 0) {
-          calendar.push({ 
-            date: date,
-            schedule: result[0].schedule,
-            year: this.calendarYear,
-            month: this.calendarMonth
-          })
-          this.countWorkingDays(result[0].schedule)
-        } else {
-          calendar.push({
-            date: date, 
-            schedule: null,
-            year: this.calendarYear,
-            month: this.calendarMonth
-          })
-        }
-      }
-      return calendar
-    },
     unAutoAdjusted() {
       return !this.autoAdjusted
     },
@@ -168,7 +144,7 @@ export default defineComponent({
         rangeOfYears.push(year)
       }
       return rangeOfYears
-    }
+    },
   },
   mounted() {
     this.fetchCalendarAndSettings()
@@ -199,7 +175,6 @@ export default defineComponent({
       if (this.calendarMonth === 1) {
         this.calendarMonth = 12
         this.calendarYear--
-        this.fetchCalendarAndSettings()
         this.cancelAutoAdjust()
       } else {
         this.calendarMonth--
@@ -211,7 +186,6 @@ export default defineComponent({
       if (this.calendarMonth === 12) {
         this.calendarMonth = 1
         this.calendarYear++
-        this.fetchCalendarAndSettings()
         this.cancelAutoAdjust()
       } else {
         this.calendarMonth++
@@ -351,13 +325,6 @@ export default defineComponent({
           }
         }
         this.calendarDays.push(d)
-      }
-    },
-    countWorkingDays(schedule) {
-      if (schedule === 'full-time') {
-        this.totalWorkingDays++
-      } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
-        this.totalWorkingDays += 0.5
       }
     },
     fetchCalendarAndSettings() {
@@ -515,6 +482,86 @@ export default defineComponent({
           break
         }
       }
+    },
+    toMonthlyCalendar(month) {
+      this.calendarMonth = month
+      this.monthly = true
+    },
+    firstWday(month) {
+      const firstDay = new Date(this.calendarYear, month - 1, 1)
+      return firstDay.getDay()
+    },
+    lastDate(month) {
+      const lastDay = new Date(this.calendarYear, month, 0)
+      return lastDay.getDate()
+    },
+    calendarWeeks(month) {
+      const weeksAry = []
+      let value = []
+      let id = 1
+      let weekDay = 0
+      this.calendarDates(month).forEach(function (date, i, ary) {
+        !date ? (date = { weekDay: weekDay }) : (date.weekDay = weekDay)
+        value.push(date)
+        weekDay++
+        if (value.length === 7 || i === ary.length - 1) {
+          weeksAry.push({ id: id, value: value })
+          id++
+          value = []
+          weekDay = 0
+        }
+      })
+      return weeksAry
+    },
+    calendarDates(month) {
+      const calendar = []
+      let monthlyTotalWorkingDays = 0
+      if (this.firstWday(month) > 0) {
+        for (let blank = 0; blank < this.firstWday(month); blank++) {
+          calendar.push(null)
+        }
+      }
+      for (let date = 1; date <= this.lastDate(month); date++) {
+        const result = this.calendarDays.filter((day) =>
+          day.date.includes(
+            `${this.calendarYear}-${this.formatMonth(month)}-${this.formatDay(date)}`
+          )
+        )
+        if (result.length > 0) {
+          const schedule = String(result[0].schedule)
+          calendar.push({ 
+            date: date,
+            schedule: schedule,
+            year: this.calendarYear,
+            month: month
+          })
+          monthlyTotalWorkingDays += this.countTotalWorkingDays(schedule) 
+        } else {
+          calendar.push({
+            date: date, 
+            schedule: null,
+            year: this.calendarYear,
+            month: month
+          })
+        }
+      }
+      this.totalWorkingDays[month] = monthlyTotalWorkingDays
+      return calendar
+    },
+    countTotalWorkingDays(schedule) {
+      if (schedule === 'full-time') {
+        return 1
+      } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
+        return 0.5
+      }
+      return 0
+    },
+    yearyTotalWorkingDays(){
+      let totalWorkingDays = 0
+      for (let i = 1; i <= 12; i++) {
+        totalWorkingDays += this.totalWorkingDays[i]
+      }
+      return totalWorkingDays
     },
   },
   components: {
