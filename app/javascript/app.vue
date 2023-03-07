@@ -53,7 +53,7 @@
   </div>
   <div v-else>
     <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
-    <div v-for="month in 12" :key="month">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+    <div class="calendar-month" v-for="month in 12" :key="month">{{ month }}月 合計:{{ totalWorkingDays[month] }}
       <div v-on:click="toMonthlyCalendar(month)"> 
         <table class="calendar">
           <thead class="calendar__header">
@@ -590,5 +590,8 @@ export default defineComponent({
   width:70%;
   padding: 1em;
   background:#fff;
+}
+.calendar-month{
+  display: inline-block;
 }
 </style>
