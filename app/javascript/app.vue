@@ -126,6 +126,7 @@ export default defineComponent({
       autoAdjusted: false,
       calendarsIndex: [],
       monthly: true,
+      errors: [],
     }
   },
   props: {
@@ -233,6 +234,7 @@ export default defineComponent({
         const startDate = new Date(setting.period_start_at)
         const endDate = new Date(setting.period_end_at)
         let availableDays = new Array()
+        let pool = new Array()
         const workingDaysRequired = setting.total_working_days
         let numberOfWorkingDays = 0
         const schedulesOfWeek = { 
@@ -265,8 +267,11 @@ export default defineComponent({
         for (let availableDay of availableDays) {
           const day = new Date(availableDay)
           const schedule = schedulesOfWeek[day.getDay()]
-          if (schedule === "None") { continue }
-          if ((numberOfWorkingDays >= workingDaysRequired) && !(schedule === "off")) {
+          if (schedule === "None") { 
+            pool.push(availableDay)
+            continue
+          }
+          if ((workingDaysRequired) && (numberOfWorkingDays >= workingDaysRequired) && !(schedule === "off")) {
             continue
           }
           this.insertSchedule(day, schedule)
@@ -274,6 +279,20 @@ export default defineComponent({
             numberOfWorkingDays++
           } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
             numberOfWorkingDays+=0.5
+          }
+        }
+        if (pool.length > 0) {
+          for (let poolInDay of pool) {
+            const day = new Date(poolInDay)
+            if (workingDaysRequired - numberOfWorkingDays === 0.5) {
+              this.insertSchedule(day, "morning")
+              numberOfWorkingDays+=0.5
+            } else if (workingDaysRequired - numberOfWorkingDays >= 1){
+              this.insertSchedule(day, "full-time")
+              numberOfWorkingDays++
+            } else {
+              break
+            }
           }
         }
       }
