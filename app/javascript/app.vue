@@ -19,6 +19,9 @@
   <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
+  <div v-for="message in lessThanNecessaryMessages" :key="message">
+    {{ message }}
+  </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
     <button v-on:click="this.monthly=false">年間カレンダー</button>
@@ -126,7 +129,7 @@ export default defineComponent({
       autoAdjusted: false,
       calendarsIndex: [],
       monthly: true,
-      errors: [],
+      lessThanNecessaryMessages: [],
     }
   },
   props: {
@@ -230,11 +233,12 @@ export default defineComponent({
     },
     autoAdjust() {
       this.adjustedCalendar = []
+      this.lessThanNecessaryMessages = []
       for (let setting of this.settings) {
         const startDate = new Date(setting.period_start_at)
         const endDate = new Date(setting.period_end_at)
         let availableDays = new Array()
-        let pool = new Array()
+        let anyDays = new Array()
         const workingDaysRequired = setting.total_working_days
         let numberOfWorkingDays = 0
         const schedulesOfWeek = { 
@@ -268,7 +272,7 @@ export default defineComponent({
           const day = new Date(availableDay)
           const schedule = schedulesOfWeek[day.getDay()]
           if (schedule === "None") { 
-            pool.push(availableDay)
+            anyDays.push(availableDay)
             continue
           }
           if ((workingDaysRequired) && (numberOfWorkingDays >= workingDaysRequired) && !(schedule === "off")) {
@@ -281,9 +285,9 @@ export default defineComponent({
           }
           this.insertSchedule(day, schedule)
         }
-        if (pool.length > 0) {
-          for (let poolInDay of pool) {
-            const day = new Date(poolInDay)
+        if (anyDays.length > 0) {
+          for (let anyDay of anyDays) {
+            const day = new Date(anyDay)
             if (workingDaysRequired - numberOfWorkingDays === 0.5) {
               this.insertSchedule(day, "morning")
               numberOfWorkingDays+=0.5
@@ -296,7 +300,7 @@ export default defineComponent({
           }
         }
         if (workingDaysRequired - numberOfWorkingDays > 0) {
-          this.errors.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません`)
+          this.lessThanNecessaryMessages.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません(${numberOfWorkingDays}/${workingDaysRequired})`)
         }
       }
       this.reflectAdjustedCalendar()
@@ -382,10 +386,12 @@ export default defineComponent({
     },
     determineAutoAdjust() {
       this.saveAdjustedCalendar()
+      this.lessThanNecessaryMessages = []
       this.autoAdjusted = false
     },
     cancelAutoAdjust() {
       this.adjustedCalendar = [],
+      this.lessThanNecessaryMessages = []
       this.fetchCalendarAndSettings()
       this.autoAdjusted = false
     },
