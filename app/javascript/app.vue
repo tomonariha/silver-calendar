@@ -274,12 +274,12 @@ export default defineComponent({
           if ((workingDaysRequired) && (numberOfWorkingDays >= workingDaysRequired) && !(schedule === "off")) {
             continue
           }
-          this.insertSchedule(day, schedule)
           if (schedule === 'full-time') {
             numberOfWorkingDays++
           } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
             numberOfWorkingDays+=0.5
           }
+          this.insertSchedule(day, schedule)
         }
         if (pool.length > 0) {
           for (let poolInDay of pool) {
@@ -295,6 +295,14 @@ export default defineComponent({
             }
           }
         }
+        if (workingDaysRequired - numberOfWorkingDays > 0) {
+          this.errors.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません`)
+        }
+        console.log(workingDaysRequired)
+        console.log(numberOfWorkingDays)
+        console.log(availableDays)
+        console.log(pool)
+        console.log(this.errors)
       }
       this.reflectAdjustedCalendar()
       this.autoAdjusted = true
@@ -436,8 +444,8 @@ export default defineComponent({
       for (let calendarDay of this.calendarDays) {
         if (calendarDay.date === formatedDay) {
           this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1, newDay)
+          break
         }
-        break
       }
       this.calendarDays.push(newDay)
     },
