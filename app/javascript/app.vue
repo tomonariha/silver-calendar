@@ -298,11 +298,6 @@ export default defineComponent({
         if (workingDaysRequired - numberOfWorkingDays > 0) {
           this.errors.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません`)
         }
-        console.log(workingDaysRequired)
-        console.log(numberOfWorkingDays)
-        console.log(availableDays)
-        console.log(pool)
-        console.log(this.errors)
       }
       this.reflectAdjustedCalendar()
       this.autoAdjusted = true
