@@ -1,18 +1,6 @@
 <template>
-  <button v-on:click="openModal">条件の入力</button>
-    <div id=overlay  v-show="showContent">
-      <div id=content>
-        <Setting v-bind:year="calendarYear"
-               v-bind:settings="settings"
-               v-on:close="closeModal"
-               v-on:update="updateSetting"
-               v-on:create="createSetting"
-               v-on:delete="deleteSetting">
-        </Setting>
-      </div>
-    </div>
-  <button class="calendar-nav__previous" @click='previousMonth'>前</button>
-  <button class="calendar-nav__next" @click='nextMonth'>後</button>
+  <button class="calendar-nav__previous" v-show="monthly" @click='previousMonth'>前</button>
+  <button class="calendar-nav__next" v-show="monthly" @click='nextMonth'>後</button>
   <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
     <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
   </select>
@@ -86,10 +74,22 @@
       </div>
     </div>
   </div>
-  <button v-show="unAutoAdjusted" v-on:click="adjustAndReflect">適用</button>
+  <button v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
+    <div id=overlay  v-show="showContent">
+      <div id=content>
+        <Setting v-bind:year="calendarYear"
+               v-bind:settings="settings"
+               v-on:close="closeModal"
+               v-on:update="updateSetting"
+               v-on:create="createSetting"
+               v-on:delete="deleteSetting"
+               v-on:reflect="adjustAndReflect">
+        </Setting>
+      </div>
+    </div>
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
-  <button v-on:click="openAlignmentModal">連携</button>
+  <button v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlinmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
@@ -232,14 +232,14 @@ export default defineComponent({
     closeAlignmentModal() {
       this.showAlinmentContent = false
     },
-    adjustAndReflect() {
+    adjustAndReflect(setting) {
       (async () => {
-        await this.autoAdjust()
+        await this.closeModal()
+        await this.autoAdjust(setting)
         await this.reflectAdjustedCalendar()
       })()
     },
-    autoAdjust() {
-      for (let setting of this.settings) {
+    autoAdjust(setting) {
         const startDate = new Date(setting.period_start_at)
         const endDate = new Date(setting.period_end_at)
         let availableDays = new Array()
@@ -307,7 +307,6 @@ export default defineComponent({
         if (workingDaysRequired - numberOfWorkingDays > 0) {
           this.lessThanNecessaryMessages.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません(${numberOfWorkingDays}/${workingDaysRequired})`)
         }
-      }
       this.autoAdjusted = true
     },
     insertSchedule(day, schedule) {
@@ -467,11 +466,15 @@ export default defineComponent({
     deleteDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
-      const calendarDays = this.whichCalendar()
+      this.deleteFromCalendarArray(this.calendarDays, formatedDay)
+      if (this.autoAdjusted) {
+        this.deleteFromCalendarArray(this.adjustedCalendar, formatedDay)
+      }
+    },
+    deleteFromCalendarArray(calendarDays, formatedDay) {
       for (let calendarDay of calendarDays) {
         if (calendarDay.date === formatedDay) {
           calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-          this.reflectAdjustedCalendar()
           return
         }
       }

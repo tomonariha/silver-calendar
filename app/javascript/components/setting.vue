@@ -1,8 +1,10 @@
 <template>
   <p>条件の設定</p>
   <div v-for="setting in slicedSettings" :key="setting.id">
-    <button v-on:click="reflectSetting(setting)">{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</button>
+    <span>{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</span>
+    <button v-on:click="editSetting(setting)">編集</button>
     <button v-on:click="deleteSetting(setting.id)">削除</button>
+    <button v-on:click="reflectSetting(setting)">適用</button>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
     <button v-on:click="this.currentPage = pageNumber">{{ pageNumber }}</button>
@@ -171,7 +173,7 @@ export default defineComponent({
         console.warn(error)
       })  
     },
-    reflectSetting(setting) {
+    editSetting(setting) {
       const startDay = new Date(setting.period_start_at)
       const endDay = new Date(setting.period_end_at)
       this.totalWorkingDays = setting.total_working_days
@@ -318,7 +320,10 @@ export default defineComponent({
         return true
       }
     },
+    reflectSetting(setting){
+      this.$emit('reflect', setting)
+    }
   },
-  emits: ['close', 'update', 'create', 'delete']
+  emits: ['close', 'update', 'create', 'delete', 'reflect']
 })
 </script>
