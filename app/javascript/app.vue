@@ -44,7 +44,8 @@
             :key='date.date'
             :id="'day' + date.date">
             <div class="calendar__day-label">{{ date.date }}</div>
-            <Day v-bind:date="date" 
+            <Day v-bind:date="date"
+                 v-bind:autoAdjusted="autoAdjusted"
                  v-if="date.date"
                  v-on:update="updateDay"
                  v-on:delete="deleteDay">
@@ -85,7 +86,7 @@
       </div>
     </div>
   </div>
-  <button v-show="unAutoAdjusted" v-on:click="autoAdjust">適用</button>
+  <button v-show="unAutoAdjusted" v-on:click="adjustAndReflect">適用</button>
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
   <button v-on:click="openAlignmentModal">連携</button>
@@ -124,7 +125,7 @@ export default defineComponent({
       loaded: null,
       showContent: false,
       showAlinmentContent: false,
-      adjastedCalendar: [],
+      adjustedCalendar: [],
       totalWorkingDays: {},
       autoAdjusted: false,
       calendarsIndex: [],
@@ -231,9 +232,13 @@ export default defineComponent({
     closeAlignmentModal() {
       this.showAlinmentContent = false
     },
+    adjustAndReflect() {
+      (async () => {
+        await this.autoAdjust()
+        await this.reflectAdjustedCalendar()
+      })()
+    },
     autoAdjust() {
-      this.adjustedCalendar = []
-      this.lessThanNecessaryMessages = []
       for (let setting of this.settings) {
         const startDate = new Date(setting.period_start_at)
         const endDate = new Date(setting.period_end_at)
@@ -303,7 +308,6 @@ export default defineComponent({
           this.lessThanNecessaryMessages.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません(${numberOfWorkingDays}/${workingDaysRequired})`)
         }
       }
-      this.reflectAdjustedCalendar()
       this.autoAdjusted = true
     },
     insertSchedule(day, schedule) {
@@ -409,6 +413,7 @@ export default defineComponent({
       .catch((error) => {
         console.warn(error)
       })
+      this.adjustedCalendar = []
     },
     updateSetting(updatedSetting) {
       updatedSetting.period_start_at = this.formatUpdatedDay(updatedSetting.period_start_at)
@@ -438,25 +443,36 @@ export default defineComponent({
         }
       }
     },
+    whichCalendar() {
+      if (this.autoAdjusted) {
+        return this.adjustedCalendar
+      } 
+      return this.calendarDays
+    },
     updateDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
       const newDay = { date: formatedDay, schedule: day.schedule }
-      for (let calendarDay of this.calendarDays) {
+      const calendarDays = this.whichCalendar()
+      for (let calendarDay of calendarDays) {
         if (calendarDay.date === formatedDay) {
-          this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1, newDay)
-          break
+          calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
+          this.reflectAdjustedCalendar()
+          return
         }
       }
-      this.calendarDays.push(newDay)
+      calendarDays.push(newDay)
+      this.reflectAdjustedCalendar()
     },
     deleteDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
-      for (let calendarDay of this.calendarDays) {
+      const calendarDays = this.whichCalendar()
+      for (let calendarDay of calendarDays) {
         if (calendarDay.date === formatedDay) {
-          this.calendarDays.splice(this.calendarDays.indexOf(calendarDay), 1)
-          break
+          calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
+          this.reflectAdjustedCalendar()
+          return
         }
       }
     },

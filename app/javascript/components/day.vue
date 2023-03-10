@@ -24,6 +24,7 @@ export default defineComponent({
   },
   props: { 
     date: { type: Object, required: true },
+    autoAdjusted: { type: Boolean, required: true },
   },
   methods: {
     token() {
@@ -42,6 +43,10 @@ export default defineComponent({
       this.schedule = this.markToSchedule[scheduleMark]
     },
     deleteDate() {
+      if (this.autoAdjusted) {
+        this.$emit('delete', this.date)
+        return
+      }
       fetch(`days/${this.date.year}/${this.date.month}/${this.date.date}`, {
       method: 'DELETE',
       headers: {
@@ -59,6 +64,10 @@ export default defineComponent({
     },
     updateCalendar(schedule) {
       const dateState = {year: this.date.year, month: this.date.month, date: this.date.date, schedule: this.markToSchedule[schedule]}
+      if (this.autoAdjusted) {
+        this.$emit('update', dateState)
+        return
+      }
       fetch(`days/${this.date.year}/${this.date.month}`, {
       method: 'POST',
       headers: {
