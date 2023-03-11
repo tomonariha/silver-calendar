@@ -7,8 +7,9 @@
   <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
-  <div v-for="message in lessThanNecessaryMessages" :key="message">
-    {{ message }}
+  <div v-show="autoAdjusted">
+    <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
+    <div v-else>{{workingDaysRequired}}</div>
   </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
@@ -130,7 +131,8 @@ export default defineComponent({
       autoAdjusted: false,
       calendarsIndex: [],
       monthly: true,
-      lessThanNecessaryMessages: [],
+      workingDaysRequired: null,
+      numberOfWorkingDays: 0,
     }
   },
   props: {
@@ -240,73 +242,62 @@ export default defineComponent({
       })()
     },
     autoAdjust(setting) {
-        const startDate = new Date(setting.period_start_at)
-        const endDate = new Date(setting.period_end_at)
-        let availableDays = new Array()
-        let anyDays = new Array()
-        const workingDaysRequired = setting.total_working_days
-        let numberOfWorkingDays = 0
-        const schedulesOfWeek = { 
-          0: setting.schedule_of_sunday,
-          1: setting.schedule_of_monday,
-          2: setting.schedule_of_tuesday,
-          3: setting.schedule_of_wednesday,
-          4: setting.schedule_of_thursday,
-          5: setting.schedule_of_friday,
-          6: setting.schedule_of_saturday,
-        }
-        for (let day = startDate; day <= endDate; day.setDate(day.getDate()+1)) {
-          const formatedDate = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate()
-          availableDays.push(formatedDate)
-        }
-        this.extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
-          const date = new Date(day.date)
-          availableDays.forEach(availableDay=> {
-            const availableDate = new Date(availableDay)
-            if (this.equalDays(availableDate, date)) {
-              if (day.schedule === 'full-time') {
-                numberOfWorkingDays++
-              } else if ((day.schedule === 'morning') || (day.schedule === 'afternoon')) {
-                numberOfWorkingDays+=0.5
-              }
-              availableDays.splice(availableDays.indexOf(availableDay), 1)
-            }
-          })
+      const startDate = new Date(setting.period_start_at)
+      const endDate = new Date(setting.period_end_at)
+      let availableDays = new Array()
+      let anyDays = new Array()
+      this.workingDaysRequired = setting.total_working_days
+      this.numberOfWorkingDays = 0
+      const schedulesOfWeek = { 
+        0: setting.schedule_of_sunday,
+        1: setting.schedule_of_monday,
+        2: setting.schedule_of_tuesday,
+        3: setting.schedule_of_wednesday,
+        4: setting.schedule_of_thursday,
+        5: setting.schedule_of_friday,
+        6: setting.schedule_of_saturday,
+      }
+      for (let day = startDate; day <= endDate; day.setDate(day.getDate()+1)) {
+        const formatedDate = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate()
+        availableDays.push(formatedDate)
+      }
+      this.extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
+        const date = new Date(day.date)
+        availableDays.forEach(availableDay=> {
+          const availableDate = new Date(availableDay)
+          if (this.equalDays(availableDate, date)) {
+            this.numberOfWorkingDays += this.countWorkingDays(day.schedule)
+            availableDays.splice(availableDays.indexOf(availableDay), 1)
+          }
         })
-        for (let availableDay of availableDays) {
-          const day = new Date(availableDay)
-          const schedule = schedulesOfWeek[day.getDay()]
-          if (schedule === "None") { 
-            anyDays.push(availableDay)
-            continue
-          }
-          if ((workingDaysRequired) && (numberOfWorkingDays >= workingDaysRequired) && !(schedule === "off")) {
-            continue
-          }
-          if (schedule === 'full-time') {
-            numberOfWorkingDays++
-          } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
-            numberOfWorkingDays+=0.5
-          }
-          this.insertSchedule(day, schedule)
+      })
+      for (let availableDay of availableDays) {
+        const day = new Date(availableDay)
+        const schedule = schedulesOfWeek[day.getDay()]
+        if (schedule === "None") { 
+          anyDays.push(availableDay)
+          continue
         }
-        if (anyDays.length > 0) {
-          for (let anyDay of anyDays) {
-            const day = new Date(anyDay)
-            if (workingDaysRequired - numberOfWorkingDays === 0.5) {
-              this.insertSchedule(day, "morning")
-              numberOfWorkingDays+=0.5
-            } else if (workingDaysRequired - numberOfWorkingDays >= 1){
-              this.insertSchedule(day, "full-time")
-              numberOfWorkingDays++
-            } else {
-              break
-            }
+        if ((this.workingDaysRequired) && (this.numberOfWorkingDays >= this.workingDaysRequired) && !(schedule === "off")) {
+          continue
+        }
+        this.numberOfWorkingDays += this.countWorkingDays(schedule)
+        this.insertSchedule(day, schedule)
+      }
+      if (anyDays.length > 0) {
+        for (let anyDay of anyDays) {
+          const day = new Date(anyDay)
+          if (this.workingDaysRequired - this.numberOfWorkingDays === 0.5) {
+            this.insertSchedule(day, "morning")
+            this.numberOfWorkingDays+=0.5
+          } else if (this.workingDaysRequired - this.numberOfWorkingDays >= 1){
+            this.insertSchedule(day, "full-time")
+            this.numberOfWorkingDays++
+          } else {
+            break
           }
         }
-        if (workingDaysRequired - numberOfWorkingDays > 0) {
-          this.lessThanNecessaryMessages.push(`${setting.period_start_at} ~ ${setting.period_end_at} までの期間で ${workingDaysRequired - numberOfWorkingDays}日分の勤務日数が足りません(${numberOfWorkingDays}/${workingDaysRequired})`)
-        }
+      }
       this.autoAdjusted = true
     },
     insertSchedule(day, schedule) {
@@ -442,40 +433,41 @@ export default defineComponent({
         }
       }
     },
-    whichCalendar() {
-      if (this.autoAdjusted) {
-        return this.adjustedCalendar
-      } 
-      return this.calendarDays
-    },
     updateDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
       const newDay = { date: formatedDay, schedule: day.schedule }
-      const calendarDays = this.whichCalendar()
-      for (let calendarDay of calendarDays) {
-        if (calendarDay.date === formatedDay) {
-          calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
-          this.reflectAdjustedCalendar()
-          return
-        }
-      }
-      calendarDays.push(newDay)
-      this.reflectAdjustedCalendar()
+      const diff = this.updateToCalendarArray(this.calendarDays, formatedDay, newDay)
+      if (this.autoAdjusted) {
+        this.numberOfWorkingDays += diff
+        this.updateToCalendarArray(this.adjustedCalendar, formatedDay, newDay)
+      } 
     },
     deleteDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
-      this.deleteFromCalendarArray(this.calendarDays, formatedDay)
+      const diff = this.deleteFromCalendarArray(this.calendarDays, formatedDay)
       if (this.autoAdjusted) {
+        this.numberOfWorkingDays -= diff
         this.deleteFromCalendarArray(this.adjustedCalendar, formatedDay)
       }
+    },
+    updateToCalendarArray(calendarDays, formatedDay, newDay){
+      for (let calendarDay of calendarDays) {
+        if (calendarDay.date === formatedDay) {
+          (this.countWorkingDays(calendarDay.schedule) - this.countWorkingDays(newDay.schedule)) 
+          calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
+          return (this.countWorkingDays(newDay.schedule) - this.countWorkingDays(calendarDay.schedule)) 
+        }
+      }
+      calendarDays.push(newDay)
+      return this.countWorkingDays(newDay.schedule)
     },
     deleteFromCalendarArray(calendarDays, formatedDay) {
       for (let calendarDay of calendarDays) {
         if (calendarDay.date === formatedDay) {
           calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-          return
+          return this.countWorkingDays(calendarDay.schedule)
         }
       }
     },
@@ -582,7 +574,7 @@ export default defineComponent({
             year: this.calendarYear,
             month: month
           })
-          monthlyTotalWorkingDays += this.countTotalWorkingDays(schedule) 
+          monthlyTotalWorkingDays += this.countWorkingDays(schedule) 
         } else {
           calendar.push({
             date: date, 
@@ -595,7 +587,7 @@ export default defineComponent({
       this.totalWorkingDays[month] = monthlyTotalWorkingDays
       return calendar
     },
-    countTotalWorkingDays(schedule) {
+    countWorkingDays(schedule) {
       if (schedule === 'full-time') {
         return 1
       } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
