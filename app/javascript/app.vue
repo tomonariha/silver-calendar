@@ -9,7 +9,7 @@
   </select>
   <div v-show="autoAdjusted">
     <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
-    <div v-else>{{workingDaysRequired}}</div>
+    <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
@@ -437,24 +437,24 @@ export default defineComponent({
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
       const newDay = { date: formatedDay, schedule: day.schedule }
-      const diff = this.updateToCalendarArray(this.calendarDays, formatedDay, newDay)
+      const diff = this.updateToCalendarArray(this.calendarDays, newDay)
       if (this.autoAdjusted) {
         this.numberOfWorkingDays += diff
-        this.updateToCalendarArray(this.adjustedCalendar, formatedDay, newDay)
+        this.updateToCalendarArray(this.adjustedCalendar, newDay)
       } 
     },
     deleteDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
       const formatedDay = this.formatUpdatedDay(date)
-      const diff = this.deleteFromCalendarArray(this.calendarDays, formatedDay)
+      const diffAmount = this.deleteFromCalendarArray(this.calendarDays, formatedDay)
       if (this.autoAdjusted) {
-        this.numberOfWorkingDays -= diff
+        this.numberOfWorkingDays -= diffAmount
         this.deleteFromCalendarArray(this.adjustedCalendar, formatedDay)
       }
     },
-    updateToCalendarArray(calendarDays, formatedDay, newDay){
+    updateToCalendarArray(calendarDays, newDay){
       for (let calendarDay of calendarDays) {
-        if (calendarDay.date === formatedDay) {
+        if (calendarDay.date === newDay.date) {
           (this.countWorkingDays(calendarDay.schedule) - this.countWorkingDays(newDay.schedule)) 
           calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
           return (this.countWorkingDays(newDay.schedule) - this.countWorkingDays(calendarDay.schedule)) 
