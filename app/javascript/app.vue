@@ -380,12 +380,10 @@ export default defineComponent({
     },
     determineAutoAdjust() {
       this.saveAdjustedCalendar()
-      this.lessThanNecessaryMessages = []
       this.autoAdjusted = false
     },
     cancelAutoAdjust() {
       this.adjustedCalendar = [],
-      this.lessThanNecessaryMessages = []
       this.fetchCalendarAndSettings()
       this.autoAdjusted = false
     },
