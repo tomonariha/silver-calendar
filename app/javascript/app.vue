@@ -12,8 +12,8 @@
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
   <div v-if="monthly">
-    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
-    <button v-on:click="this.monthly=false">年間カレンダー</button>
+    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
+    <button v-on:click="monthly=false">年間カレンダー</button>
     <table class="calendar">
       <thead class="calendar__header">
         <tr>
@@ -26,7 +26,7 @@
           <th class="calendar__header-day">土</th>
         </tr>
       </thead>
-      <tbody v-for="week in calendarWeeks(this.calendarMonth)" :key="week.id">
+      <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
         <tr class="calendar__week">
           <td class="calendar__day" 
             v-for='date in week.value'
@@ -91,7 +91,7 @@
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
   <button v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
-    <div id=overlay  v-show="showAlinmentContent">
+    <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
                    v-on:close="closeAlignmentModal"
@@ -103,109 +103,101 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup>
+import { reactive, ref, computed, defineProps, onMounted, nextTick } from 'vue'
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 
-export default defineComponent({
-  name: 'Calendar',
-  data() {
-    return {
-      schedules: ["●","▲","△","□"],
-      markToSchedule: { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" },
-      scheduleToMark: { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" },
-      calendarDays: [],
-      settings: [],
-      currentYear: this.getCurrentYear(),
-      currentMonth: this.getCurrentMonth(),
-      calendarYear: this.getCurrentYear(),
-      calendarMonth: this.getCurrentMonth(),
-      today: this.getCurrentDay(),
-      loaded: null,
-      showContent: false,
-      showAlinmentContent: false,
-      adjustedCalendar: [],
-      totalWorkingDays: {},
-      autoAdjusted: false,
-      calendarsIndex: [],
-      monthly: true,
-      workingDaysRequired: null,
-      numberOfWorkingDays: 0,
-    }
-  },
-  props: {
-    userId: { type: String, required: true }
-  },
-  computed: {
-    unAutoAdjusted() {
-      return !this.autoAdjusted
-    },
-    rangeOfYears() {
-      let rangeOfYears = []
-      const yearRangeNumber = 10
-      const pastYear = this.getCurrentYear() - yearRangeNumber
-      const futureYear = this.getCurrentYear() + yearRangeNumber
-      for (let year = pastYear;year < futureYear;year++) {
-        rangeOfYears.push(year)
-      }
-      return rangeOfYears
-    },
-  },
-  mounted() {
-    this.fetchCalendarAndSettings()
-    this.fetchCalendarsIndex()
-  },
-  methods: {
-    token() {
+const schedules = ["●","▲","△","□"]
+const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
+const calendarDays = ref([])
+const settings = ref([])
+const currentYear = getCurrentYear()
+const currentMonth = getCurrentMonth()
+const calendarYear = ref(getCurrentYear())
+const calendarMonth = ref(getCurrentMonth())
+const today = getCurrentDay()
+const loaded = ref(null)
+const showContent = ref(false)
+const showAlignmentContent = ref(false)
+const adjustedCalendar = ref([])
+const totalWorkingDays = ref({})
+const autoAdjusted = ref(false)
+const calendarsIndex= ref([])
+const monthly = ref(true)
+const workingDaysRequired = ref(null)
+const numberOfWorkingDays = ref(0)
+  
+const props = defineProps({ userId: String })
+//computed
+const unAutoAdjusted = computed(() => {
+        return !autoAdjusted.value
+      })
+const rangeOfYears = computed(() => {
+        let rangeOfYears = []
+        const yearRangeNumber = 10
+        const pastYear = getCurrentYear() - yearRangeNumber
+        const futureYear = getCurrentYear() + yearRangeNumber
+        for (let year = pastYear;year < futureYear;year++) {
+          rangeOfYears.push(year)
+        }
+        return rangeOfYears
+      })
+//compここまで
+onMounted(() => {
+  fetchCalendarAndSettings()
+  fetchCalendarsIndex()
+})
+  //methods
+    function token() {
       const meta = document.querySelector('meta[name="csrf-token"]')
       return meta ? meta.getAttribute('content') : ''
-    },
-    formatDay(day) {
+    }
+    function formatDay(day) {
       return day.toString().padStart(2, '0')
-    },
-    formatMonth(month) {
+    }
+    function formatMonth(month) {
       return month.toString().padStart(2, '0')
-    },
-    getCurrentYear() {
+    }
+    function getCurrentYear() {
       return new Date().getFullYear()
-    },
-    getCurrentMonth() {
+    }
+    function getCurrentMonth() {
       return new Date().getMonth() + 1
-    },
-    getCurrentDay() {
+    }
+    function getCurrentDay() {
       return new Date().getDate()
-    },
-    previousMonth() {
-      this.loaded = false
-      if (this.calendarMonth === 1) {
-        this.calendarMonth = 12
-        this.calendarYear--
-        this.cancelAutoAdjust()
+    }
+    function previousMonth() {
+      loaded.value = false
+      if (calendarMonth.value === 1) {
+        calendarMonth.value = 12
+        calendarYear.value--
+        cancelAutoAdjust()
       } else {
-        this.calendarMonth--
+        calendarMonth.value--
       }
-      this.$nextTick(() => (this.loaded = true))
-    },
-    nextMonth() {
-      this.loaded = false
-      if (this.calendarMonth === 12) {
-        this.calendarMonth = 1
-        this.calendarYear++
-        this.cancelAutoAdjust()
+      nextTick(() => (loaded.value = true))
+    }
+    function nextMonth() {
+      loaded.value = false
+      if (calendarMonth.value === 12) {
+        calendarMonth.value = 1
+        calendarYear.value++
+        cancelAutoAdjust()
       } else {
-        this.calendarMonth++
+        calendarMonth.value++
       }
-      this.$nextTick(() => (this.loaded = true))
-    },
-    fetchCalendar() {
-      this.calendarDays = []
-      fetch(`/api/calendars/${this.calendarYear}.json`, {
+      nextTick(() => (loaded.value = true))
+    }
+    function fetchCalendar() {
+      calendarDays.value = []
+      fetch(`/api/calendars/${calendarYear.value}.json`, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token()
+        'X-CSRF-Token': token()
       },
       credentials: 'same-origin'
       })
@@ -214,40 +206,40 @@ export default defineComponent({
       })
       .then((json) => {
         json.forEach((r) => {
-          this.calendarDays.push(r)
+          calendarDays.value.push(r)
         })
-        this.loaded = true
+        loaded.value = true
       })
       .catch((error) => {
         console.warn(error)
       })
-    },
-    openModal() {
-      this.showContent = true
-    },
-    closeModal() {
-      this.showContent = false
-    },
-    openAlignmentModal() {
-      this.showAlinmentContent = true
-    },
-    closeAlignmentModal() {
-      this.showAlinmentContent = false
-    },
-    adjustAndReflect(setting) {
+    }
+    function openModal() {
+      showContent.value = true
+    }
+    function closeModal() {
+      showContent.value = false
+    }
+    function openAlignmentModal() {
+      showAlignmentContent.value = true
+    }
+    function closeAlignmentModal() {
+      showAlignmentContent.value = false
+    }
+    function adjustAndReflect(setting) {
       (async () => {
-        await this.closeModal()
-        await this.autoAdjust(setting)
-        await this.reflectAdjustedCalendar()
+        await closeModal()
+        await autoAdjust(setting)
+        await reflectAdjustedCalendar()
       })()
-    },
-    autoAdjust(setting) {
+    }
+    function autoAdjust(setting) {
       const startDate = new Date(setting.period_start_at)
       const endDate = new Date(setting.period_end_at)
       let availableDays = new Array()
       let anyDays = new Array()
-      this.workingDaysRequired = setting.total_working_days
-      this.numberOfWorkingDays = 0
+      workingDaysRequired.value = setting.total_working_days
+      numberOfWorkingDays.value = 0
       const schedulesOfWeek = { 
         0: setting.schedule_of_sunday,
         1: setting.schedule_of_monday,
@@ -261,12 +253,12 @@ export default defineComponent({
         const formatedDate = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate()
         availableDays.push(formatedDate)
       }
-      this.extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
+      extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
         const date = new Date(day.date)
         availableDays.forEach(availableDay=> {
           const availableDate = new Date(availableDay)
-          if (this.equalDays(availableDate, date)) {
-            this.numberOfWorkingDays += this.countWorkingDays(day.schedule)
+          if (equalDays(availableDate, date)) {
+           numberOfWorkingDays.value += countWorkingDays(day.schedule)
             availableDays.splice(availableDays.indexOf(availableDay), 1)
           }
         })
@@ -278,42 +270,42 @@ export default defineComponent({
           anyDays.push(availableDay)
           continue
         }
-        if ((this.workingDaysRequired) && (this.numberOfWorkingDays >= this.workingDaysRequired) && !(schedule === "off")) {
+        if ((workingDaysRequired.value) && (numberOfWorkingDays.value >= workingDaysRequired.value) && !(schedule === "off")) {
           continue
         }
-        this.numberOfWorkingDays += this.countWorkingDays(schedule)
-        this.insertSchedule(day, schedule)
+        numberOfWorkingDays.value += countWorkingDays(schedule)
+        insertSchedule(day, schedule)
       }
       if (anyDays.length > 0) {
         for (let anyDay of anyDays) {
           const day = new Date(anyDay)
-          if (this.workingDaysRequired - this.numberOfWorkingDays === 0.5) {
-            this.insertSchedule(day, "morning")
-            this.numberOfWorkingDays+=0.5
-          } else if (this.workingDaysRequired - this.numberOfWorkingDays >= 1){
-            this.insertSchedule(day, "full-time")
-            this.numberOfWorkingDays++
+          if (workingDaysRequired.value - numberOfWorkingDays.value === 0.5) {
+            insertSchedule(day, "morning")
+            numberOfWorkingDays.value+=0.5
+          } else if (workingDaysRequired.value - numberOfWorkingDays.value >= 1){
+            insertSchedule(day, "full-time")
+            numberOfWorkingDays.value++
           } else {
             break
           }
         }
       }
-      this.autoAdjusted = true
-    },
-    insertSchedule(day, schedule) {
-      const formatedDate = day.getFullYear() + "-" + this.formatMonth(day.getMonth()+1) + "-" + this.formatDay(day.getDate())
-      this.adjustedCalendar.push({
+      autoAdjusted.value = true
+    }
+    function insertSchedule(day, schedule) {
+      const formatedDate = day.getFullYear() + "-" + formatMonth(day.getMonth()+1) + "-" + formatDay(day.getDate())
+      adjustedCalendar.value.push({
         date: formatedDate,
         schedule: schedule,
       })
-    },
-    fetchSettings() {
-      this.settings = []
-      fetch(`api/calendars/${this.calendarYear}/settings.json`, {
+    }
+    function fetchSettings() {
+      settings.value = []
+      fetch(`api/calendars/${calendarYear.value}/settings.json`, {
         method: 'GET',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-Token': this.token()
+          'X-CSRF-Token': token()
         },
         credentials: 'same-origin'
       })
@@ -322,40 +314,40 @@ export default defineComponent({
       })
       .then((json) => {
         json.forEach((r) => {
-          this.settings.push(r)
+          settings.value.push(r)
         })
-        this.loaded = true
+        loaded.value = true
       })
       .then(()=> {
-        this.settings.sort((a, b)=>
+        settings.value.sort((a, b)=>
           a.period_start_at > b.period_start_at ? 1 : -1
         )
       })
       .catch((error) => {
         console.warn(error)
       })
-    },
-    reflectAdjustedCalendar() {
+    }
+    function reflectAdjustedCalendar() {
       searchAdjustedDay:
-      for (let d of this.adjustedCalendar) {
-        for (let day of this.calendarDays) {
+      for (let d of adjustedCalendar.value) {
+        for (let day of calendarDays.value) {
           if (day.date === d.date) {
-            this.calendarDays.splice(this.calendarDays.indexOf(day), 1, d)
+            calendarDays.value.splice(calendarDays.value.indexOf(day), 1, d)
             continue searchAdjustedDay
           }
         }
-        this.calendarDays.push(d)
+        calendarDays.value.push(d)
       }
-    },
-    fetchCalendarAndSettings() {
+    }
+    function fetchCalendarAndSettings() {
       (async () => {
-        await this.fetchCalendar()
-        await this.fetchSettings()
+        await fetchCalendar()
+        await fetchSettings()
       })()
-    },
-    extractCalendarDaysWithinPeriod(startDate, endDate) {
+    }
+    function extractCalendarDaysWithinPeriod(startDate, endDate) {
       const calendar = new Array()
-      for (let day of this.calendarDays) {
+      for (let day of calendarDays.value) {
         const date = new Date(day) 
         if (date.getMonth() < startDate.getMonth()) {
           continue
@@ -372,110 +364,110 @@ export default defineComponent({
         calendar.push(day)
       }
       return calendar
-    },
-    equalDays(availableDate, date) {
+    }
+    function equalDays(availableDate, date) {
       if (availableDate.getMonth() !== date.getMonth()) { return false }
       if (availableDate.getDate() !== date.getDate()) { return false }
       return true
-    },
-    determineAutoAdjust() {
-      this.saveAdjustedCalendar()
-      this.autoAdjusted = false
-    },
-    cancelAutoAdjust() {
-      this.adjustedCalendar = [],
-      this.fetchCalendarAndSettings()
-      this.autoAdjusted = false
-    },
-    saveAdjustedCalendar() {
-      fetch(`api/calendars/${this.calendarYear}`, {
+    }
+    function determineAutoAdjust() {
+      saveAdjustedCalendar()
+      autoAdjusted.value = false
+    }
+    function cancelAutoAdjust() {
+      adjustedCalendar.value = [],
+      fetchCalendarAndSettings()
+      autoAdjusted.value = false
+    }
+    function saveAdjustedCalendar() {
+      fetch(`api/calendars/${calendarYear.value}`, {
       method: 'PUT',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
+        'X-CSRF-Token': token(),
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "calendar": this.adjustedCalendar }),
+      body: JSON.stringify({ "calendar": adjustedCalendar.value }),
       credentials: 'same-origin'
       })
       .catch((error) => {
         console.warn(error)
       })
-      this.adjustedCalendar = []
-    },
-    updateSetting(updatedSetting) {
-      updatedSetting.period_start_at = this.formatUpdatedDay(updatedSetting.period_start_at)
-      updatedSetting.period_end_at = this.formatUpdatedDay(updatedSetting.period_end_at)
-      for (let setting of this.settings) {
+      adjustedCalendar.value = []
+    }
+    function updateSetting(updatedSetting) {
+      updatedSetting.period_start_at = formatUpdatedDay(updatedSetting.period_start_at)
+      updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
+      for (let setting of settings.value) {
         if(setting.id === updatedSetting.id) {
-          this.settings.splice(this.settings.indexOf(setting), 1, updatedSetting)
+          settings.value.splice(settings.value.indexOf(setting), 1, updatedSetting)
           break
         }
       }
-    },
-    formatUpdatedDay(updatedDay) {
+    }
+    function formatUpdatedDay(updatedDay) {
       let day = new Date(updatedDay)
-      const formatedUpdatedDay = day.getFullYear() + "-" + this.formatMonth(day.getMonth() + 1) + "-" + this.formatDay(day.getDate())
+      const formatedUpdatedDay = day.getFullYear() + "-" + formatMonth(day.getMonth() + 1) + "-" + formatDay(day.getDate())
       return formatedUpdatedDay
-    },
-    createSetting(createdSetting) {
-      createdSetting.period_start_at = this.formatUpdatedDay(createdSetting.period_start_at)
-      createdSetting.period_end_at = this.formatUpdatedDay(createdSetting.period_end_at)
-      this.settings.push(createdSetting)
-    },
-    deleteSetting(settingId) {
-      for (let setting of this.settings) {
+    }
+    function createSetting(createdSetting) {
+      createdSetting.period_start_at = formatUpdatedDay(createdSetting.period_start_at)
+      createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
+      settings.value.push(createdSetting)
+    }
+    function deleteSetting(settingId) {
+      for (let setting of settings.value) {
         if (setting.id === settingId) {
-          this.settings.splice(this.settings.indexOf(setting), 1)
+          settings.value.splice(settings.value.indexOf(setting), 1)
           break
         }
       }
-    },
-    updateDay(day) {
+    }
+    function updateDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
-      const formatedDay = this.formatUpdatedDay(date)
+      const formatedDay = formatUpdatedDay(date)
       const newDay = { date: formatedDay, schedule: day.schedule }
-      const diff = this.updateToCalendarArray(this.calendarDays, newDay)
-      if (this.autoAdjusted) {
-        this.numberOfWorkingDays += diff
-        this.updateToCalendarArray(this.adjustedCalendar, newDay)
+      const diff = updateToCalendarArray(calendarDays.value, newDay)
+      if (autoAdjusted.value) {
+        numberOfWorkingDays.value += diff
+        updateToCalendarArray(adjustedCalendar.value, newDay)
       } 
-    },
-    deleteDay(day) {
+    }
+    function deleteDay(day) {
       const date = new Date(day.year, day.month - 1, day.date)
-      const formatedDay = this.formatUpdatedDay(date)
-      const diffAmount = this.deleteFromCalendarArray(this.calendarDays, formatedDay)
-      if (this.autoAdjusted) {
-        this.numberOfWorkingDays -= diffAmount
-        this.deleteFromCalendarArray(this.adjustedCalendar, formatedDay)
+      const formatedDay = formatUpdatedDay(date)
+      const diffAmount = deleteFromCalendarArray(calendarDays.value, formatedDay)
+      if (autoAdjusted.value) {
+       numberOfWorkingDays.value -= diffAmount
+        deleteFromCalendarArray(adjustedCalendar.value, formatedDay)
       }
-    },
-    updateToCalendarArray(calendarDays, newDay){
+    }
+    function updateToCalendarArray(calendarDays, newDay){
       for (let calendarDay of calendarDays) {
         if (calendarDay.date === newDay.date) {
-          (this.countWorkingDays(calendarDay.schedule) - this.countWorkingDays(newDay.schedule)) 
+          (countWorkingDays(calendarDay.schedule) - countWorkingDays(newDay.schedule)) 
           calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
-          return (this.countWorkingDays(newDay.schedule) - this.countWorkingDays(calendarDay.schedule)) 
+          return (countWorkingDays(newDay.schedule) - countWorkingDays(calendarDay.schedule)) 
         }
       }
       calendarDays.push(newDay)
-      return this.countWorkingDays(newDay.schedule)
-    },
-    deleteFromCalendarArray(calendarDays, formatedDay) {
+      return countWorkingDays(newDay.schedule)
+    }
+    function deleteFromCalendarArray(calendarDays, formatedDay) {
       for (let calendarDay of calendarDays) {
         if (calendarDay.date === formatedDay) {
           calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-          return this.countWorkingDays(calendarDay.schedule)
+          return countWorkingDays(calendarDay.schedule)
         }
       }
-    },
-    fetchCalendarsIndex() {
-      this.calendarsIndex = []
+    }
+    function fetchCalendarsIndex() {
+      calendarsIndex.value = []
       fetch('api/calendars', {
       method: 'GET',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token()
+        'X-CSRF-Token': token()
       },
       credentials: 'same-origin'
       })
@@ -484,60 +476,60 @@ export default defineComponent({
       })
       .then((json) => {
         json.forEach((r) => {
-          this.calendarsIndex.push(r)
+          calendarsIndex.value.push(r)
         })
       })
       .then(()=> {
-        this.calendarsIndex.sort((a, b)=>
+        calendarsIndex.value.sort((a, b)=>
           a.year - b.year
         )
       })
       .catch((error) => {
         console.warn(error)
       })
-    },
-    createAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
+    }
+    function createAlignment(calendar) {
+      for (let calendarIndex of calendarsIndex.value) {
         if (calendarIndex.year === calendar.year) {
           calendarIndex.google_calendar_id = calendar.google_calendar_id
           break
         }
       }
-    },
-    deleteAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
+    }
+    function deleteAlignment(calendar) {
+      for (let calendarIndex of calendarsIndex.value) {
         if (calendarIndex.year === calendar.year) {
           calendarIndex.google_calendar_id = null
           break
         }
       }
-    },
-    updateAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
+    }
+    function updateAlignment(calendar) {
+      for (let calendarIndex of calendarsIndex.value) {
         if (calendarIndex.year === calendar.year) {
           calendarIndex.google_calendar_id = calendar.google_calendar_id
           break
         }
       }
-    },
-    toMonthlyCalendar(month) {
-      this.calendarMonth = month
-      this.monthly = true
-    },
-    firstWday(month) {
-      const firstDay = new Date(this.calendarYear, month - 1, 1)
+    }
+    function toMonthlyCalendar(month) {
+      calendarMonth.value = month
+      monthly.value = true
+    }
+    function firstWday(month) {
+      const firstDay = new Date(calendarYear.value, month - 1, 1)
       return firstDay.getDay()
-    },
-    lastDate(month) {
-      const lastDay = new Date(this.calendarYear, month, 0)
+    }
+    function lastDate(month) {
+      const lastDay = new Date(calendarYear.value, month, 0)
       return lastDay.getDate()
-    },
-    calendarWeeks(month) {
+    }
+    function calendarWeeks(month) {
       const weeksAry = []
       let value = []
       let id = 1
       let weekDay = 0
-      this.calendarDates(month).forEach(function (date, i, ary) {
+      calendarDates(month).forEach(function (date, i, ary) {
         !date ? (date = { weekDay: weekDay }) : (date.weekDay = weekDay)
         value.push(date)
         weekDay++
@@ -549,19 +541,19 @@ export default defineComponent({
         }
       })
       return weeksAry
-    },
-    calendarDates(month) {
+    }
+    function calendarDates(month) {
       const calendar = []
       let monthlyTotalWorkingDays = 0
-      if (this.firstWday(month) > 0) {
-        for (let blank = 0; blank < this.firstWday(month); blank++) {
+      if (firstWday(month) > 0) {
+        for (let blank = 0; blank < firstWday(month); blank++) {
           calendar.push(null)
         }
       }
-      for (let date = 1; date <= this.lastDate(month); date++) {
-        const result = this.calendarDays.filter((day) =>
+      for (let date = 1; date <= lastDate(month); date++) {
+        const result = calendarDays.value.filter((day) =>
           day.date.includes(
-            `${this.calendarYear}-${this.formatMonth(month)}-${this.formatDay(date)}`
+            `${calendarYear.value}-${formatMonth(month)}-${formatDay(date)}`
           )
         )
         if (result.length > 0) {
@@ -569,44 +561,38 @@ export default defineComponent({
           calendar.push({ 
             date: date,
             schedule: schedule,
-            year: this.calendarYear,
+            year: calendarYear.value,
             month: month
           })
-          monthlyTotalWorkingDays += this.countWorkingDays(schedule) 
+          monthlyTotalWorkingDays += countWorkingDays(schedule) 
         } else {
           calendar.push({
             date: date, 
             schedule: null,
-            year: this.calendarYear,
+            year: calendarYear.value,
             month: month
           })
         }
       }
-      this.totalWorkingDays[month] = monthlyTotalWorkingDays
+      totalWorkingDays.value[month] = monthlyTotalWorkingDays
       return calendar
-    },
-    countWorkingDays(schedule) {
+    }
+    function countWorkingDays(schedule) {
       if (schedule === 'full-time') {
         return 1
       } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
         return 0.5
       }
       return 0
-    },
-    yearyTotalWorkingDays(){
-      let totalWorkingDays = 0
+    }
+    function yearyTotalWorkingDays(){
+      let totalDays = 0
       for (let i = 1; i <= 12; i++) {
-        totalWorkingDays += this.totalWorkingDays[i]
+        totalDays += totalWorkingDays.value[i]
       }
-      return totalWorkingDays
-    },
-  },
-  components: {
-    Setting,
-    Day,
-    Alignment,
-  },
-})
+      return totalDays
+    }
+  //metここまで
 </script>
 
 <style>
