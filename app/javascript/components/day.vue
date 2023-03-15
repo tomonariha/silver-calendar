@@ -16,7 +16,7 @@ const dayOfSchedule = ref("")
 const scheduleMarks = [ "●", "▲", "△", "□", "指定なし"]
 const markToSchedule = { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" , "指定なし":"" }
 const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
-let props = defineProps({ 
+const props = defineProps({ 
     date: Object,
     autoAdjusted: Boolean})
 const emit = defineEmits(['update', 'delete'])
@@ -37,7 +37,7 @@ function changeSchedule(scheduleMark) {
     }
 function deleteDate() {
   const date = props.date
-      if (props.date.autoAdjusted) {
+      if (props.autoAdjusted) {
         emit('delete', date)
         return
       }
@@ -59,7 +59,7 @@ function deleteDate() {
 function updateCalendar(schedule) {
   const date = props.date
       const dateState = {year: date.year, month: date.month, date: date.date, schedule: markToSchedule[schedule]}
-      if (props.date.autoAdjusted) {
+      if (props.autoAdjusted) {
         emit('update', dateState)
         return
       }
