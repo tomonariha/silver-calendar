@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, defineProps, onMounted, nextTick } from 'vue'
+import { ref, computed, defineProps, onMounted, nextTick } from 'vue'
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
@@ -128,7 +128,6 @@ const calendarsIndex= ref([])
 const monthly = ref(true)
 const workingDaysRequired = ref(null)
 const numberOfWorkingDays = ref(0)
-  
 const props = defineProps({ userId: String })
 //computed
 const unAutoAdjusted = computed(() => {
