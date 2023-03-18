@@ -69,71 +69,55 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-const scheduleOfSunday = "off"
-const scheduleOfMonday = "None"
-const scheduleOfTuesday = "None"
-const scheduleOfWednesday = "None"
-const scheduleOfThursday = "None"
-const scheduleOfFriday = "None"
-const scheduleOfSaturday = "off"
-const schedules = ref([
-  scheduleOfSunday,
-  scheduleOfMonday,
-  scheduleOfTuesday,
-  scheduleOfWednesday,
-  scheduleOfThursday,
-  scheduleOfFriday,
-  scheduleOfSaturday
-])
-const selectedStartMonth = ref(1)
-const selectedStartDay = ref(1)
-const selectedEndMonth = ref(1)
-const selectedEndDay = ref(1)
-const settingId = ref("")
-const totalWorkingDays = ref(0)
-const notSpecifiedTotalDays = ref(true)
-const weekdayNumber = ref(0)
-const weekdayJp = {
-        0: "日",
-        1: "月",
-        2: "火",
-        3: "水",
-        4: "木",
-        5: "金",
-        6: "土",
-      }
-const errors = ref([])
-const currentPage = ref(1)
-const pageLimit = ref(5)
-const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
+
 const props = defineProps({ 
-    year: Number,
-    settings: Array})
-//computed
-const specifiedTotalDays = computed(() => {
-      return !notSpecifiedTotalDays.value
-    })
-const slicedSettings = computed(() => {
-  let start = (currentPage.value -1) * pageLimit.value
-  let end = start + pageLimit.value
-  return props.settings.slice(start, end) 
+  year: Number,
+  settings: Array
 })
-  
-const totalPages = computed(() => {
-  return Math.ceil(props.settings.length / pageLimit.value)
-})
-//ここまでcomp
- 
+const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
+const settingId = ref("")
+// CRUD
 function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta ? meta.getAttribute('content') : ''
 }
-function updatePageNumber(pageNumber) {
-  currentPage.value = pageNumber
-}
-function lastDate(selectedMonth) {
-  const lastDay = new Date(props.year, selectedMonth, 0)
-  return lastDay.getDate()
+function createSetting() {
+  const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
+  const endDay = new Date(props.year, (selectedEndMonth.value - 1), selectedEndDay.value)
+  if (totalDaysValidation(startDay, endDay)) { return }
+  if (periodValidation(startDay, endDay)) { return }
+  const setting = {
+    period_start_at: startDay.toDateString(),
+    period_end_at: endDay.toDateString(),
+    total_working_days: setTotalWorkingDays(),
+    schedule_of_sunday: schedules.value[0],
+    schedule_of_monday: schedules.value[1],
+    schedule_of_tuesday: schedules.value[2],
+    schedule_of_wednesday: schedules.value[3],
+    schedule_of_thursday: schedules.value[4],
+    schedule_of_friday: schedules.value[5],
+    schedule_of_saturday: schedules.value[6],
+  }
+  fetch(`api/calendars/${props.year}/settings`, {
+  method: 'POST',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(setting),
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    setting['id'] = json.id
+    emit('create', setting)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
 }
 function updateSetting(settingId) {
   const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
@@ -210,44 +194,6 @@ function deleteSetting(id) {
     console.warn(error)
   })
 }
-function createSetting() {
-  const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
-  const endDay = new Date(props.year, (selectedEndMonth.value - 1), selectedEndDay.value)
-  if (totalDaysValidation(startDay, endDay)) { return }
-  if (periodValidation(startDay, endDay)) { return }
-  const setting = {
-    period_start_at: startDay.toDateString(),
-    period_end_at: endDay.toDateString(),
-    total_working_days: setTotalWorkingDays(),
-    schedule_of_sunday: schedules.value[0],
-    schedule_of_monday: schedules.value[1],
-    schedule_of_tuesday: schedules.value[2],
-    schedule_of_wednesday: schedules.value[3],
-    schedule_of_thursday: schedules.value[4],
-    schedule_of_friday: schedules.value[5],
-    schedule_of_saturday: schedules.value[6],
-  }
-  fetch(`api/calendars/${props.year}/settings`, {
-  method: 'POST',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(setting),
-  credentials: 'same-origin'
-  })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    setting['id'] = json.id
-    emit('create', setting)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
-}
 function resetSettingParams() {
   schedules.value[0] = "off"
   schedules.value[1] = "None"
@@ -265,9 +211,54 @@ function resetSettingParams() {
   weekdayNumber.value = 0
   notSpecifiedTotalDays.value = true
 }
+function reflectSetting(setting){
+  emit('reflect', setting)
+}
+// フォーム：期間設定
+const selectedStartMonth = ref(1)
+const selectedStartDay = ref(1)
+const selectedEndMonth = ref(1)
+const selectedEndDay = ref(1)
+function lastDate(selectedMonth) {
+  const lastDay = new Date(props.year, selectedMonth, 0)
+  return lastDay.getDate()
+}
+// フォーム：勤務日数指定
+const totalWorkingDays = ref(0)
+const notSpecifiedTotalDays = ref(true)
+const specifiedTotalDays = computed(() => {
+  return !notSpecifiedTotalDays.value
+})
 function setTotalWorkingDays() {
   if (notSpecifiedTotalDays.value) { return null } 
   return totalWorkingDays.value
+}
+// フォーム：曜日毎の予定入力
+const scheduleOfSunday = "off"
+const scheduleOfMonday = "None"
+const scheduleOfTuesday = "None"
+const scheduleOfWednesday = "None"
+const scheduleOfThursday = "None"
+const scheduleOfFriday = "None"
+const scheduleOfSaturday = "off"
+const schedules = ref([
+  scheduleOfSunday,
+  scheduleOfMonday,
+  scheduleOfTuesday,
+  scheduleOfWednesday,
+  scheduleOfThursday,
+  scheduleOfFriday,
+  scheduleOfSaturday
+])
+const weekdayNumber = ref(0)
+const weekdayJp = {
+  0: "日",
+  1: "月",
+  2: "火",
+  3: "水",
+  4: "木",
+  5: "金",
+  6: "土",
 }
 function previousWeekday() {
   if (weekdayNumber.value === 0) {
@@ -283,6 +274,22 @@ function nextWeekday() {
     weekdayNumber.value++
   }
 }
+// ページング
+const currentPage = ref(1)
+const pageLimit = ref(5)
+const totalPages = computed(() => {
+  return Math.ceil(props.settings.length / pageLimit.value)
+})
+function updatePageNumber(pageNumber) {
+  currentPage.value = pageNumber
+}
+const slicedSettings = computed(() => {
+  let start = (currentPage.value -1) * pageLimit.value
+  let end = start + pageLimit.value
+  return props.settings.slice(start, end) 
+})
+// ヴァリデーションメソッド
+const errors = ref([])
 function periodValidation(startDay, endDay) {
   errors.value = []
   let invalid = false
@@ -318,8 +325,5 @@ function totalDaysValidation(startDay, endDay) {
     errors.value.push(`勤務日数は０以上期間内の日数(${calendar.length})以下にしてください。`)
     return true
   }
-}
-function reflectSetting(setting){
-  emit('reflect', setting)
 }
 </script>
