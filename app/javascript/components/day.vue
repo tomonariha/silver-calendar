@@ -9,86 +9,77 @@
   </Popper>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup>
+import { ref } from 'vue'
 import Popper from 'vue3-popper'
 
-export default defineComponent({
-  data() {
-    return {
-      schedule: "",
-      scheduleMarks: ["●" , "▲" , "△" , "□", "指定なし"],
-      markToSchedule: { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" , "指定なし":"" },
-      scheduleToMark: { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" },
-    }
-  },
-  props: { 
-    date: { type: Object, required: true },
-    autoAdjusted: { type: Boolean, required: true },
-  },
-  methods: {
-    token() {
-      const meta = document.querySelector('meta[name="csrf-token"]')
-      return meta ? meta.getAttribute('content') : ''
-    },
-    currentSchedule() {
-      return this.scheduleToMark[this.date.schedule]
-    },
-    changeSchedule(scheduleMark) {
-      if (scheduleMark === "指定なし") {
-        this.deleteDate()
-      } else {
-        this.updateCalendar(scheduleMark)
-      }
-      this.schedule = this.markToSchedule[scheduleMark]
-    },
-    deleteDate() {
-      if (this.autoAdjusted) {
-        this.$emit('delete', this.date)
-        return
-      }
-      fetch(`days/${this.date.year}/${this.date.month}/${this.date.date}`, {
-      method: 'DELETE',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
-      },
-      credentials: 'same-origin'
-      })
-      .then(() => {
-        this.$emit('delete', this.date)
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    updateCalendar(schedule) {
-      const dateState = {year: this.date.year, month: this.date.month, date: this.date.date, schedule: this.markToSchedule[schedule]}
-      if (this.autoAdjusted) {
-        this.$emit('update', dateState)
-        return
-      }
-      fetch(`days/${this.date.year}/${this.date.month}`, {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dateState),
-      credentials: 'same-origin'
-      })
-      .then(() => {
-        this.$emit('update', dateState)
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-  },
-  components: {
-    Popper,
-  },
-  emits: ['update', 'delete']
+const scheduleMarks = [ "●", "▲", "△", "□", "指定なし"]
+const markToSchedule = { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" , "指定なし":"" }
+const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
+const props = defineProps({ 
+  date: Object,
+  autoAdjusted: Boolean
 })
+const emit = defineEmits(['update', 'delete'])
+function token() {
+  const meta = document.querySelector('meta[name="csrf-token"]')
+  return meta ? meta.getAttribute('content') : ''
+}
+function currentSchedule() {
+  return scheduleToMark[props.date.schedule]
+}
+const dayOfSchedule = ref("")
+function changeSchedule(scheduleMark) {
+  if (scheduleMark === "指定なし") {
+    deleteDate()
+  } else {
+    updateCalendar(scheduleMark)
+  }
+  dayOfSchedule.value = markToSchedule[scheduleMark]
+}
+function deleteDate() {
+  const date = props.date
+  if (props.autoAdjusted) {
+    emit('delete', date)
+    return
+  }
+  fetch(`days/${date.year}/${date.month}/${date.date}`, {
+  method: 'DELETE',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+  },
+  credentials: 'same-origin'
+  })
+  .then(() => {
+    emit('delete', date)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+function updateCalendar(schedule) {
+  const date = props.date
+  const dateState = {year: date.year, month: date.month, date: date.date, schedule: markToSchedule[schedule]}
+  if (props.autoAdjusted) {
+    emit('update', dateState)
+    return
+  }
+  fetch(`days/${date.year}/${date.month}`, {
+  method: 'POST',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(dateState),
+  credentials: 'same-origin'
+  })
+  .then(() => {
+    emit('update', dateState)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
 </script>

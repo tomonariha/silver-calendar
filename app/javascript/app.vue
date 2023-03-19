@@ -12,8 +12,8 @@
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
   <div v-if="monthly">
-    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[this.calendarMonth] }}</div>
-    <button v-on:click="this.monthly=false">年間カレンダー</button>
+    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
+    <button v-on:click="toYearyCalendar">年間カレンダー</button>
     <table class="calendar">
       <thead class="calendar__header">
         <tr>
@@ -26,7 +26,7 @@
           <th class="calendar__header-day">土</th>
         </tr>
       </thead>
-      <tbody v-for="week in calendarWeeks(this.calendarMonth)" :key="week.id">
+      <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
         <tr class="calendar__week">
           <td class="calendar__day" 
             v-for='date in week.value'
@@ -91,7 +91,7 @@
   <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
   <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
   <button v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
-    <div id=overlay  v-show="showAlinmentContent">
+    <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
                    v-on:close="closeAlignmentModal"
@@ -103,510 +103,500 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup>
+import { ref, computed, defineProps, onMounted, nextTick } from 'vue'
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 
-export default defineComponent({
-  name: 'Calendar',
-  data() {
-    return {
-      schedules: ["●","▲","△","□"],
-      markToSchedule: { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" },
-      scheduleToMark: { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" },
-      calendarDays: [],
-      settings: [],
-      currentYear: this.getCurrentYear(),
-      currentMonth: this.getCurrentMonth(),
-      calendarYear: this.getCurrentYear(),
-      calendarMonth: this.getCurrentMonth(),
-      today: this.getCurrentDay(),
-      loaded: null,
-      showContent: false,
-      showAlinmentContent: false,
-      adjustedCalendar: [],
-      totalWorkingDays: {},
-      autoAdjusted: false,
-      calendarsIndex: [],
-      monthly: true,
-      workingDaysRequired: null,
-      numberOfWorkingDays: 0,
-    }
-  },
-  props: {
-    userId: { type: String, required: true }
-  },
-  computed: {
-    unAutoAdjusted() {
-      return !this.autoAdjusted
-    },
-    rangeOfYears() {
-      let rangeOfYears = []
-      const yearRangeNumber = 10
-      const pastYear = this.getCurrentYear() - yearRangeNumber
-      const futureYear = this.getCurrentYear() + yearRangeNumber
-      for (let year = pastYear;year < futureYear;year++) {
-        rangeOfYears.push(year)
-      }
-      return rangeOfYears
-    },
-  },
-  mounted() {
-    this.fetchCalendarAndSettings()
-    this.fetchCalendarsIndex()
-  },
-  methods: {
-    token() {
-      const meta = document.querySelector('meta[name="csrf-token"]')
-      return meta ? meta.getAttribute('content') : ''
-    },
-    formatDay(day) {
-      return day.toString().padStart(2, '0')
-    },
-    formatMonth(month) {
-      return month.toString().padStart(2, '0')
-    },
-    getCurrentYear() {
-      return new Date().getFullYear()
-    },
-    getCurrentMonth() {
-      return new Date().getMonth() + 1
-    },
-    getCurrentDay() {
-      return new Date().getDate()
-    },
-    previousMonth() {
-      this.loaded = false
-      if (this.calendarMonth === 1) {
-        this.calendarMonth = 12
-        this.calendarYear--
-        this.cancelAutoAdjust()
-      } else {
-        this.calendarMonth--
-      }
-      this.$nextTick(() => (this.loaded = true))
-    },
-    nextMonth() {
-      this.loaded = false
-      if (this.calendarMonth === 12) {
-        this.calendarMonth = 1
-        this.calendarYear++
-        this.cancelAutoAdjust()
-      } else {
-        this.calendarMonth++
-      }
-      this.$nextTick(() => (this.loaded = true))
-    },
-    fetchCalendar() {
-      this.calendarDays = []
-      fetch(`/api/calendars/${this.calendarYear}.json`, {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token()
-      },
-      credentials: 'same-origin'
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        json.forEach((r) => {
-          this.calendarDays.push(r)
-        })
-        this.loaded = true
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    openModal() {
-      this.showContent = true
-    },
-    closeModal() {
-      this.showContent = false
-    },
-    openAlignmentModal() {
-      this.showAlinmentContent = true
-    },
-    closeAlignmentModal() {
-      this.showAlinmentContent = false
-    },
-    adjustAndReflect(setting) {
-      (async () => {
-        await this.closeModal()
-        await this.autoAdjust(setting)
-        await this.reflectAdjustedCalendar()
-      })()
-    },
-    autoAdjust(setting) {
-      const startDate = new Date(setting.period_start_at)
-      const endDate = new Date(setting.period_end_at)
-      let availableDays = new Array()
-      let anyDays = new Array()
-      this.workingDaysRequired = setting.total_working_days
-      this.numberOfWorkingDays = 0
-      const schedulesOfWeek = { 
-        0: setting.schedule_of_sunday,
-        1: setting.schedule_of_monday,
-        2: setting.schedule_of_tuesday,
-        3: setting.schedule_of_wednesday,
-        4: setting.schedule_of_thursday,
-        5: setting.schedule_of_friday,
-        6: setting.schedule_of_saturday,
-      }
-      for (let day = startDate; day <= endDate; day.setDate(day.getDate()+1)) {
-        const formatedDate = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate()
-        availableDays.push(formatedDate)
-      }
-      this.extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
-        const date = new Date(day.date)
-        availableDays.forEach(availableDay=> {
-          const availableDate = new Date(availableDay)
-          if (this.equalDays(availableDate, date)) {
-            this.numberOfWorkingDays += this.countWorkingDays(day.schedule)
-            availableDays.splice(availableDays.indexOf(availableDay), 1)
-          }
-        })
-      })
-      for (let availableDay of availableDays) {
-        const day = new Date(availableDay)
-        const schedule = schedulesOfWeek[day.getDay()]
-        if (schedule === "None") { 
-          anyDays.push(availableDay)
-          continue
-        }
-        if ((this.workingDaysRequired) && (this.numberOfWorkingDays >= this.workingDaysRequired) && !(schedule === "off")) {
-          continue
-        }
-        this.numberOfWorkingDays += this.countWorkingDays(schedule)
-        this.insertSchedule(day, schedule)
-      }
-      if (anyDays.length > 0) {
-        for (let anyDay of anyDays) {
-          const day = new Date(anyDay)
-          if (this.workingDaysRequired - this.numberOfWorkingDays === 0.5) {
-            this.insertSchedule(day, "morning")
-            this.numberOfWorkingDays+=0.5
-          } else if (this.workingDaysRequired - this.numberOfWorkingDays >= 1){
-            this.insertSchedule(day, "full-time")
-            this.numberOfWorkingDays++
-          } else {
-            break
-          }
-        }
-      }
-      this.autoAdjusted = true
-    },
-    insertSchedule(day, schedule) {
-      const formatedDate = day.getFullYear() + "-" + this.formatMonth(day.getMonth()+1) + "-" + this.formatDay(day.getDate())
-      this.adjustedCalendar.push({
-        date: formatedDate,
-        schedule: schedule,
-      })
-    },
-    fetchSettings() {
-      this.settings = []
-      fetch(`api/calendars/${this.calendarYear}/settings.json`, {
-        method: 'GET',
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-Token': this.token()
-        },
-        credentials: 'same-origin'
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        json.forEach((r) => {
-          this.settings.push(r)
-        })
-        this.loaded = true
-      })
-      .then(()=> {
-        this.settings.sort((a, b)=>
-          a.period_start_at > b.period_start_at ? 1 : -1
-        )
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    reflectAdjustedCalendar() {
-      searchAdjustedDay:
-      for (let d of this.adjustedCalendar) {
-        for (let day of this.calendarDays) {
-          if (day.date === d.date) {
-            this.calendarDays.splice(this.calendarDays.indexOf(day), 1, d)
-            continue searchAdjustedDay
-          }
-        }
-        this.calendarDays.push(d)
-      }
-    },
-    fetchCalendarAndSettings() {
-      (async () => {
-        await this.fetchCalendar()
-        await this.fetchSettings()
-      })()
-    },
-    extractCalendarDaysWithinPeriod(startDate, endDate) {
-      const calendar = new Array()
-      for (let day of this.calendarDays) {
-        const date = new Date(day) 
-        if (date.getMonth() < startDate.getMonth()) {
-          continue
-        }
-        if (date.getMonth() > endDate.getMonth()) {
-          continue
-        }
-        if (date.getDate() < startDate.getDate()) {
-          continue
-        }
-        if (date.getDate() > endDate.getDate()) {
-          continue
-        }
-        calendar.push(day)
-      }
-      return calendar
-    },
-    equalDays(availableDate, date) {
-      if (availableDate.getMonth() !== date.getMonth()) { return false }
-      if (availableDate.getDate() !== date.getDate()) { return false }
-      return true
-    },
-    determineAutoAdjust() {
-      this.saveAdjustedCalendar()
-      this.autoAdjusted = false
-    },
-    cancelAutoAdjust() {
-      this.adjustedCalendar = [],
-      this.fetchCalendarAndSettings()
-      this.autoAdjusted = false
-    },
-    saveAdjustedCalendar() {
-      fetch(`api/calendars/${this.calendarYear}`, {
-      method: 'PUT',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ "calendar": this.adjustedCalendar }),
-      credentials: 'same-origin'
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-      this.adjustedCalendar = []
-    },
-    updateSetting(updatedSetting) {
-      updatedSetting.period_start_at = this.formatUpdatedDay(updatedSetting.period_start_at)
-      updatedSetting.period_end_at = this.formatUpdatedDay(updatedSetting.period_end_at)
-      for (let setting of this.settings) {
-        if(setting.id === updatedSetting.id) {
-          this.settings.splice(this.settings.indexOf(setting), 1, updatedSetting)
-          break
-        }
-      }
-    },
-    formatUpdatedDay(updatedDay) {
-      let day = new Date(updatedDay)
-      const formatedUpdatedDay = day.getFullYear() + "-" + this.formatMonth(day.getMonth() + 1) + "-" + this.formatDay(day.getDate())
-      return formatedUpdatedDay
-    },
-    createSetting(createdSetting) {
-      createdSetting.period_start_at = this.formatUpdatedDay(createdSetting.period_start_at)
-      createdSetting.period_end_at = this.formatUpdatedDay(createdSetting.period_end_at)
-      this.settings.push(createdSetting)
-    },
-    deleteSetting(settingId) {
-      for (let setting of this.settings) {
-        if (setting.id === settingId) {
-          this.settings.splice(this.settings.indexOf(setting), 1)
-          break
-        }
-      }
-    },
-    updateDay(day) {
-      const date = new Date(day.year, day.month - 1, day.date)
-      const formatedDay = this.formatUpdatedDay(date)
-      const newDay = { date: formatedDay, schedule: day.schedule }
-      const diff = this.updateToCalendarArray(this.calendarDays, newDay)
-      if (this.autoAdjusted) {
-        this.numberOfWorkingDays += diff
-        this.updateToCalendarArray(this.adjustedCalendar, newDay)
-      } 
-    },
-    deleteDay(day) {
-      const date = new Date(day.year, day.month - 1, day.date)
-      const formatedDay = this.formatUpdatedDay(date)
-      const diffAmount = this.deleteFromCalendarArray(this.calendarDays, formatedDay)
-      if (this.autoAdjusted) {
-        this.numberOfWorkingDays -= diffAmount
-        this.deleteFromCalendarArray(this.adjustedCalendar, formatedDay)
-      }
-    },
-    updateToCalendarArray(calendarDays, newDay){
-      for (let calendarDay of calendarDays) {
-        if (calendarDay.date === newDay.date) {
-          (this.countWorkingDays(calendarDay.schedule) - this.countWorkingDays(newDay.schedule)) 
-          calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
-          return (this.countWorkingDays(newDay.schedule) - this.countWorkingDays(calendarDay.schedule)) 
-        }
-      }
-      calendarDays.push(newDay)
-      return this.countWorkingDays(newDay.schedule)
-    },
-    deleteFromCalendarArray(calendarDays, formatedDay) {
-      for (let calendarDay of calendarDays) {
-        if (calendarDay.date === formatedDay) {
-          calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-          return this.countWorkingDays(calendarDay.schedule)
-        }
-      }
-    },
-    fetchCalendarsIndex() {
-      this.calendarsIndex = []
-      fetch('api/calendars', {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token()
-      },
-      credentials: 'same-origin'
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        json.forEach((r) => {
-          this.calendarsIndex.push(r)
-        })
-      })
-      .then(()=> {
-        this.calendarsIndex.sort((a, b)=>
-          a.year - b.year
-        )
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    createAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
-        if (calendarIndex.year === calendar.year) {
-          calendarIndex.google_calendar_id = calendar.google_calendar_id
-          break
-        }
-      }
-    },
-    deleteAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
-        if (calendarIndex.year === calendar.year) {
-          calendarIndex.google_calendar_id = null
-          break
-        }
-      }
-    },
-    updateAlignment(calendar) {
-      for (let calendarIndex of this.calendarsIndex) {
-        if (calendarIndex.year === calendar.year) {
-          calendarIndex.google_calendar_id = calendar.google_calendar_id
-          break
-        }
-      }
-    },
-    toMonthlyCalendar(month) {
-      this.calendarMonth = month
-      this.monthly = true
-    },
-    firstWday(month) {
-      const firstDay = new Date(this.calendarYear, month - 1, 1)
-      return firstDay.getDay()
-    },
-    lastDate(month) {
-      const lastDay = new Date(this.calendarYear, month, 0)
-      return lastDay.getDate()
-    },
-    calendarWeeks(month) {
-      const weeksAry = []
-      let value = []
-      let id = 1
-      let weekDay = 0
-      this.calendarDates(month).forEach(function (date, i, ary) {
-        !date ? (date = { weekDay: weekDay }) : (date.weekDay = weekDay)
-        value.push(date)
-        weekDay++
-        if (value.length === 7 || i === ary.length - 1) {
-          weeksAry.push({ id: id, value: value })
-          id++
-          value = []
-          weekDay = 0
-        }
-      })
-      return weeksAry
-    },
-    calendarDates(month) {
-      const calendar = []
-      let monthlyTotalWorkingDays = 0
-      if (this.firstWday(month) > 0) {
-        for (let blank = 0; blank < this.firstWday(month); blank++) {
-          calendar.push(null)
-        }
-      }
-      for (let date = 1; date <= this.lastDate(month); date++) {
-        const result = this.calendarDays.filter((day) =>
-          day.date.includes(
-            `${this.calendarYear}-${this.formatMonth(month)}-${this.formatDay(date)}`
-          )
-        )
-        if (result.length > 0) {
-          const schedule = String(result[0].schedule)
-          calendar.push({ 
-            date: date,
-            schedule: schedule,
-            year: this.calendarYear,
-            month: month
-          })
-          monthlyTotalWorkingDays += this.countWorkingDays(schedule) 
-        } else {
-          calendar.push({
-            date: date, 
-            schedule: null,
-            year: this.calendarYear,
-            month: month
-          })
-        }
-      }
-      this.totalWorkingDays[month] = monthlyTotalWorkingDays
-      return calendar
-    },
-    countWorkingDays(schedule) {
-      if (schedule === 'full-time') {
-        return 1
-      } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
-        return 0.5
-      }
-      return 0
-    },
-    yearyTotalWorkingDays(){
-      let totalWorkingDays = 0
-      for (let i = 1; i <= 12; i++) {
-        totalWorkingDays += this.totalWorkingDays[i]
-      }
-      return totalWorkingDays
-    },
-  },
-  components: {
-    Setting,
-    Day,
-    Alignment,
-  },
+const props = defineProps({ userId: String })
+onMounted(() => {
+  fetchCalendarAndSettings()
+  fetchCalendarsIndex()
 })
+function fetchCalendarAndSettings() {
+  (async () => {
+    // この順序で読み込まないとエラーになる
+    await fetchCalendar()
+    await fetchSettings()
+  })()
+}
+//カレンダー表示関連
+const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
+const calendarYear = ref(getCurrentYear())
+function getCurrentYear() {
+  return new Date().getFullYear()
+}
+const calendarMonth = ref(getCurrentMonth())
+function getCurrentMonth() {
+  return new Date().getMonth() + 1
+}
+function previousMonth() {
+  loaded.value = false
+  if (calendarMonth.value === 1) {
+    calendarMonth.value = 12
+    calendarYear.value--
+    cancelAutoAdjust()
+  } else {
+    calendarMonth.value--
+  }
+  nextTick(() => (loaded.value = true))
+}
+function nextMonth() {
+  loaded.value = false
+  if (calendarMonth.value === 12) {
+    calendarMonth.value = 1
+    calendarYear.value++
+    cancelAutoAdjust()
+  } else {
+    calendarMonth.value++
+  }
+  nextTick(() => (loaded.value = true))
+}
+function getCurrentDay() {
+  return new Date().getDate()
+}
+function token() {
+  const meta = document.querySelector('meta[name="csrf-token"]')
+  return meta ? meta.getAttribute('content') : ''
+}
+const loaded = ref(null)
+const calendarDays = ref([])
+function fetchCalendar() {
+  calendarDays.value = []
+  fetch(`/api/calendars/${calendarYear.value}.json`, {
+  method: 'GET',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token()
+  },
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    json.forEach((r) => {
+      calendarDays.value.push(r)
+    })
+    loaded.value = true
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+function calendarWeeks(month) {
+  const weeksAry = []
+  let value = []
+  let id = 1
+  let weekDay = 0
+  calendarDates(month).forEach(function (date, i, ary) {
+    !date ? (date = { weekDay: weekDay }) : (date.weekDay = weekDay)
+    value.push(date)
+    weekDay++
+    if (value.length === 7 || i === ary.length - 1) {
+      weeksAry.push({ id: id, value: value })
+      id++
+      value = []
+      weekDay = 0
+    }
+  })
+  return weeksAry
+}
+function calendarDates(month) {
+  const calendar = []
+  let monthlyTotalWorkingDays = 0
+  if (firstWday(month) > 0) {
+    for (let blank = 0; blank < firstWday(month); blank++) {
+      calendar.push(null)
+    }
+  }
+  for (let date = 1; date <= lastDate(month); date++) {
+    const result = calendarDays.value.filter((day) =>
+      day.date.includes(
+        `${calendarYear.value}-${formatMonth(month)}-${formatDay(date)}`
+      )
+    )
+    if (result.length > 0) {
+      const schedule = String(result[0].schedule)
+      calendar.push({ 
+        date: date,
+        schedule: schedule,
+        year: calendarYear.value,
+        month: month
+      })
+      monthlyTotalWorkingDays += countWorkingDays(schedule) 
+    } else {
+      calendar.push({
+        date: date, 
+        schedule: null,
+        year: calendarYear.value,
+        month: month
+      })
+    }
+  }
+  totalWorkingDays.value[month] = monthlyTotalWorkingDays
+  return calendar
+}
+function firstWday(month) {
+  const firstDay = new Date(calendarYear.value, month - 1, 1)
+  return firstDay.getDay()
+}
+function lastDate(month) {
+  const lastDay = new Date(calendarYear.value, month, 0)
+  return lastDay.getDate()
+}
+const rangeOfYears = computed(() => {
+  let rangeOfYears = []
+  const yearRangeNumber = 10
+  const pastYear = getCurrentYear() - yearRangeNumber
+  const futureYear = getCurrentYear() + yearRangeNumber
+  for (let year = pastYear;year < futureYear;year++) {
+    rangeOfYears.push(year)
+  }
+  return rangeOfYears
+})
+const monthly = ref(true)
+function toMonthlyCalendar(month) {
+  calendarMonth.value = month
+  monthly.value = true
+}
+function toYearyCalendar(){
+  monthly.value = false
+}
+//勤務日数カウント関連
+const totalWorkingDays = ref({})
+function countWorkingDays(schedule) {
+  if (schedule === 'full-time') {
+    return 1
+  } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
+    return 0.5
+  }
+  return 0
+}
+function yearyTotalWorkingDays(){
+  let totalDays = 0
+  for (let i = 1; i <= 12; i++) {
+    totalDays += totalWorkingDays.value[i]
+  }
+  return totalDays
+}
+//自動調整関連
+const adjustedCalendar = ref([])
+const autoAdjusted = ref(false)
+const unAutoAdjusted = computed(() => {
+  return !autoAdjusted.value
+})
+const workingDaysRequired = ref(null)
+const numberOfWorkingDays = ref(0)
+function autoAdjust(setting) {
+  const startDate = new Date(setting.period_start_at)
+  const endDate = new Date(setting.period_end_at)
+  let availableDays = new Array()
+  let anyDays = new Array()
+  workingDaysRequired.value = setting.total_working_days
+  numberOfWorkingDays.value = 0
+  const schedulesOfWeek = { 
+    0: setting.schedule_of_sunday,
+    1: setting.schedule_of_monday,
+    2: setting.schedule_of_tuesday,
+    3: setting.schedule_of_wednesday,
+    4: setting.schedule_of_thursday,
+    5: setting.schedule_of_friday,
+    6: setting.schedule_of_saturday,
+  }
+  // 期間内の日付オブジェクトを利用可能日の配列へ入れる
+  for (let day = startDate; day <= endDate; day.setDate(day.getDate()+1)) {
+    const formatedDate = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate()
+    availableDays.push(formatedDate)
+  }
+  // CalendarDays配列に入っている期間内の日付オブジェクトを抽出し、
+  // その日付の勤務予定の日数をカウントし、利用可能日の配列から取り除く
+  extractCalendarDaysWithinPeriod(startDate, endDate).forEach(day=> {
+    const date = new Date(day.date)
+    availableDays.forEach(availableDay=> {
+      const availableDate = new Date(availableDay)
+      if (equalDays(availableDate, date)) {
+        numberOfWorkingDays.value += countWorkingDays(day.schedule)
+        availableDays.splice(availableDays.indexOf(availableDay), 1)
+      }
+    })
+  })
+  for (let availableDay of availableDays) {
+    const day = new Date(availableDay)
+    const schedule = schedulesOfWeek[day.getDay()]
+    if (schedule === "None") { 
+      anyDays.push(availableDay)
+      continue
+    }
+    if ((workingDaysRequired.value) && (numberOfWorkingDays.value >= workingDaysRequired.value) && !(schedule === "off")) {
+      continue
+    }
+    numberOfWorkingDays.value += countWorkingDays(schedule)
+    insertSchedule(day, schedule)
+  }
+  if (anyDays.length > 0) {
+    for (let anyDay of anyDays) {
+      const day = new Date(anyDay)
+      if (workingDaysRequired.value - numberOfWorkingDays.value === 0.5) {
+        insertSchedule(day, "morning")
+        numberOfWorkingDays.value+=0.5
+      } else if (workingDaysRequired.value - numberOfWorkingDays.value >= 1){
+        insertSchedule(day, "full-time")
+        numberOfWorkingDays.value++
+      } else {
+        break
+      }
+    }
+  }
+  autoAdjusted.value = true
+}
+function equalDays(availableDate, date) {
+  if (availableDate.getMonth() !== date.getMonth()) { return false }
+  if (availableDate.getDate() !== date.getDate()) { return false }
+  return true
+}
+function insertSchedule(day, schedule) {
+  const formatedDate = day.getFullYear() + "-" + formatMonth(day.getMonth()+1) + "-" + formatDay(day.getDate())
+  adjustedCalendar.value.push({
+    date: formatedDate,
+    schedule: schedule,
+  })
+}
+function formatMonth(month) {
+  return month.toString().padStart(2, '0')
+}
+function formatDay(day) {
+  return day.toString().padStart(2, '0')
+}
+function reflectAdjustedCalendar() {
+  searchAdjustedDay:
+  for (let d of adjustedCalendar.value) {
+    for (let day of calendarDays.value) {
+      if (day.date === d.date) {
+        calendarDays.value.splice(calendarDays.value.indexOf(day), 1, d)
+        continue searchAdjustedDay
+      }
+    }
+    calendarDays.value.push(d)
+  }
+}
+function extractCalendarDaysWithinPeriod(startDate, endDate) {
+  const calendar = new Array()
+  for (let day of calendarDays.value) {
+    const date = new Date(day) 
+    if (date.getMonth() < startDate.getMonth()) {
+      continue
+    }
+    if (date.getMonth() > endDate.getMonth()) {
+      continue
+    }
+    if (date.getDate() < startDate.getDate()) {
+      continue
+    }
+    if (date.getDate() > endDate.getDate()) {
+      continue
+    }
+    calendar.push(day)
+  }
+  return calendar
+}
+function determineAutoAdjust() {
+  saveAdjustedCalendar()
+  autoAdjusted.value = false
+}
+function cancelAutoAdjust() {
+  adjustedCalendar.value = [],
+  fetchCalendarAndSettings()
+  autoAdjusted.value = false
+}
+function saveAdjustedCalendar() {
+  fetch(`api/calendars/${calendarYear.value}`, {
+  method: 'PUT',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ "calendar": adjustedCalendar.value }),
+  credentials: 'same-origin'
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+  adjustedCalendar.value = []
+}
+function adjustAndReflect(setting) {
+  (async () => {
+    await closeModal()
+    await autoAdjust(setting)
+    await reflectAdjustedCalendar()
+  })()
+}
+//条件設定関連
+const settings = ref([])
+function fetchSettings() {
+  settings.value = []
+  fetch(`api/calendars/${calendarYear.value}/settings.json`, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    json.forEach((r) => {
+      settings.value.push(r)
+    })
+    loaded.value = true
+  })
+  .then(()=> {
+    settings.value.sort((a, b)=>
+      a.period_start_at > b.period_start_at ? 1 : -1
+    )
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+const calendarsIndex= ref([])
+function fetchCalendarsIndex() {
+  calendarsIndex.value = []
+  fetch('api/calendars', {
+  method: 'GET',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token()
+  },
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    json.forEach((r) => {
+      calendarsIndex.value.push(r)
+    })
+  })
+  .then(()=> {
+    calendarsIndex.value.sort((a, b)=>
+      a.year - b.year
+    )
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+const showContent = ref(false)
+function openModal() {
+  showContent.value = true
+}
+function closeModal() {
+  showContent.value = false
+}
+function formatUpdatedDay(updatedDay) {
+  let day = new Date(updatedDay)
+  const formatedUpdatedDay = day.getFullYear() + "-" + formatMonth(day.getMonth() + 1) + "-" + formatDay(day.getDate())
+  return formatedUpdatedDay
+}
+function createSetting(createdSetting) {
+  createdSetting.period_start_at = formatUpdatedDay(createdSetting.period_start_at)
+  createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
+  settings.value.push(createdSetting)
+}
+function deleteSetting(settingId) {
+  for (let setting of settings.value) {
+    if (setting.id === settingId) {
+      settings.value.splice(settings.value.indexOf(setting), 1)
+      break
+    }
+  }
+}
+function updateSetting(updatedSetting) {
+  updatedSetting.period_start_at = formatUpdatedDay(updatedSetting.period_start_at)
+  updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
+  for (let setting of settings.value) {
+    if(setting.id === updatedSetting.id) {
+      settings.value.splice(settings.value.indexOf(setting), 1, updatedSetting)
+      break
+    }
+  }
+}
+//勤務入力関連
+function updateDay(day) {
+  const date = new Date(day.year, day.month - 1, day.date)
+  const formatedDay = formatUpdatedDay(date)
+  const newDay = { date: formatedDay, schedule: day.schedule }
+  const diff = updateToCalendarArray(calendarDays.value, newDay)
+  if (autoAdjusted.value) {
+    numberOfWorkingDays.value += diff
+    updateToCalendarArray(adjustedCalendar.value, newDay)
+  } 
+}
+function updateToCalendarArray(calendarDays, newDay){
+  for (let calendarDay of calendarDays) {
+    if (calendarDay.date === newDay.date) {
+      countWorkingDays(calendarDay.schedule) - countWorkingDays(newDay.schedule)
+      calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
+      return (countWorkingDays(newDay.schedule) - countWorkingDays(calendarDay.schedule)) 
+    }
+  }
+  calendarDays.push(newDay)
+  return countWorkingDays(newDay.schedule)
+}
+function deleteDay(day) {
+  const date = new Date(day.year, day.month - 1, day.date)
+  const formatedDay = formatUpdatedDay(date)
+  const diffAmount = deleteFromCalendarArray(calendarDays.value, formatedDay)
+  if (autoAdjusted.value) {
+    numberOfWorkingDays.value -= diffAmount
+    deleteFromCalendarArray(adjustedCalendar.value, formatedDay)
+  }
+}
+function deleteFromCalendarArray(calendarDays, formatedDay) {
+  for (let calendarDay of calendarDays) {
+  if (calendarDay.date === formatedDay) {
+    calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
+    return countWorkingDays(calendarDay.schedule)
+    }
+  }
+}
+//外部アプリ連携関連
+const showAlignmentContent = ref(false)
+function openAlignmentModal() {
+  showAlignmentContent.value = true
+}
+function closeAlignmentModal() {
+  showAlignmentContent.value = false
+}
+function createAlignment(calendar) {
+  for (let calendarIndex of calendarsIndex.value) {
+    if (calendarIndex.year === calendar.year) {
+      calendarIndex.google_calendar_id = calendar.google_calendar_id
+      break
+    }
+  }
+}
+function deleteAlignment(calendar) {
+  for (let calendarIndex of calendarsIndex.value) {
+    if (calendarIndex.year === calendar.year) {
+      calendarIndex.google_calendar_id = null
+      break
+    }
+  }
+}
+function updateAlignment(calendar) {
+  for (let calendarIndex of calendarsIndex.value) {
+    if (calendarIndex.year === calendar.year) {
+      calendarIndex.google_calendar_id = calendar.google_calendar_id
+      break
+    }
+  }
+}
 </script>
 
 <style>

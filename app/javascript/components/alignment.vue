@@ -5,110 +5,100 @@
   <p v-else>認証済</p>
   <div v-for="calendar in slicedCalendars" :key="calendar.year">
     <div class="calendar_year__body">{{ calendar.year }}</div>
-    <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['create'])">追加</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['delete'])">削除</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, this.requestMethods['update'])">更新</button>
+    <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, requestMethods['delete'])">削除</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
-    <button v-on:click="this.currentPage = pageNumber">{{ pageNumber }}</button>
+    <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
   </div>
   <br>
-  <button v-on:click="$emit('close')">閉じる</button>
+  <button v-on:click="emit('close')">閉じる</button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 
-export default defineComponent({
-  name: 'alignment',
-  data() {
-    return {
-      authenticatedGoogle: false,
-      year: this.getCurrentYear(),
-      requestMethods: { 
-                        'create': 'POST',
-                        'delete': 'DELETE',
-                        'update': 'PUT'
-                      },
-      currentPage: 1,
-      pageLimit: 5,
-    }
-  },
-  props: {
-    calendars: { type: Array, required: true }
-  },
-  computed: {
-    notAuthenticatedGoogle() {
-      return !this.authenticatedGoogle
-    },
-    slicedCalendars() {
-      let start = (this.currentPage -1) * this.pageLimit
-      let end = start + this.pageLimit
-      return this.calendars.slice(start, end)
-    },
-    totalPages(){
-      return Math.ceil(this.calendars.length / this.pageLimit)
-    },
-  },
-  methods: {
-    token() {
-      const meta = document.querySelector('meta[name="csrf-token"]')
-      return meta ? meta.getAttribute('content') : ''
-    },
-    fetchGoogleCalendar(calendar, method) {
-      fetch(`api/calendars/${calendar.year}/alignment`, {
-      method: method,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token(),
-      },
-      credentials: 'same-origin'
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        if (method != 'delete') {
-          calendar["google_calendar_id"] = json.google_calendar_id
-        }
-        this.$emit(method, calendar)
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    getCurrentYear() {
-      return new Date().getFullYear()
-    },
-    notExistsGoogleId(google_calendar_id) {
-      return !google_calendar_id
-    },
-    fetchUser() {
-      fetch('api/users', {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': this.token()
-      },
-      credentials: 'same-origin'
-      })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        this.authenticatedGoogle = json.authenticate
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    },
-    redirectOAuth() {
-      window.location.href = '/users/auth/google_oauth2'
-    }
-  },
-  mounted() {
-    this.fetchUser()
-  },
-  emits: ['close', 'delete', 'create', 'update']
+const props = defineProps({
+  calendars: Array
 })
+const emit = defineEmits(['close', 'delete', 'create', 'update'])
+// Google
+const authenticatedGoogle = ref(false)
+const notAuthenticatedGoogle = computed(() => {
+  return !authenticatedGoogle.value
+})
+function redirectOAuth() {
+  window.location.href = '/users/auth/google_oauth2'
+}
+function notExistsGoogleId(google_calendar_id) {
+  return !google_calendar_id
+}
+function token() {
+  const meta = document.querySelector('meta[name="csrf-token"]')
+  return meta ? meta.getAttribute('content') : ''
+}
+const requestMethods = { 
+  'create': 'POST',
+  'delete': 'DELETE',
+  'update': 'PUT'
+}
+function fetchGoogleCalendar(calendar, method) {
+  fetch(`api/calendars/${calendar.year}/alignment`, {
+  method: method,
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+  },
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    if (method != 'delete') {
+      calendar["google_calendar_id"] = json.google_calendar_id
+    }
+    emit(method, calendar)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+function fetchUser() {
+  fetch('api/users', {
+  method: 'GET',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token()
+  },
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    authenticatedGoogle.value = json.authenticate
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+onMounted(() => {
+  fetchUser()
+})
+// ページング
+const currentPage = ref(1)
+const pageLimit = ref(5)
+const slicedCalendars = computed(() => {
+  let start = (currentPage.value -1) * pageLimit.value
+  let end = start + pageLimit.value
+  return props.calendars.slice(start, end)
+})
+const totalPages = computed(() => {
+  return Math.ceil(props.calendars.length / pageLimit.value)
+})
+function updatePageNumber(pageNumber) {
+  currentPage.value = pageNumber
+}
 </script>
