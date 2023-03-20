@@ -114,7 +114,7 @@ function createSetting() {
     return response.json()
   })
   .then((json) => {
-    toast("作成しました", {timeout: 2000})
+    toast("作成しました")
     setting['id'] = json.id
     emit('create', setting)
   })
@@ -150,7 +150,7 @@ function updateSetting(settingId) {
   credentials: 'same-origin'
   })
   .then(() => {
-    toast("更新しました", {timeout: 2000})
+    toast("更新しました")
     setting['id'] = settingId
     emit('update', setting)
   })
@@ -191,7 +191,7 @@ function deleteSetting(id) {
   credentials: 'same-origin'
   })
   .then(() => {
-    toast("削除しました", {timeout: 2000})
+    toast("削除しました")
     resetSettingParams()
     emit('delete', id)
   })

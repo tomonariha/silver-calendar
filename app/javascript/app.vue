@@ -405,7 +405,7 @@ function extractCalendarDaysWithinPeriod(startDate, endDate) {
 }
 function determineAutoAdjust() {
   saveAdjustedCalendar()
-  toast("適用しました", {timeout: 2000})
+  toast("適用しました")
   autoAdjusted.value = false
 }
 function cancelAutoAdjust() {
