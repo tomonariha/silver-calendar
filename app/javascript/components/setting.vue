@@ -199,7 +199,6 @@ function deleteSetting(id) {
     console.warn(error)
   })
 }
-
 function resetSettingParams() {
   schedules.value[0] = "off"
   schedules.value[1] = "None"
