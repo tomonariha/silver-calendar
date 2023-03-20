@@ -69,7 +69,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const props = defineProps({ 
   year: Number,
   settings: Array
@@ -112,6 +114,7 @@ function createSetting() {
     return response.json()
   })
   .then((json) => {
+    toast("作成しました", {timeout: 2000})
     setting['id'] = json.id
     emit('create', setting)
   })
@@ -147,6 +150,7 @@ function updateSetting(settingId) {
   credentials: 'same-origin'
   })
   .then(() => {
+    toast("更新しました", {timeout: 2000})
     setting['id'] = settingId
     emit('update', setting)
   })
@@ -187,6 +191,7 @@ function deleteSetting(id) {
   credentials: 'same-origin'
   })
   .then(() => {
+    toast("削除しました", {timeout: 2000})
     resetSettingParams()
     emit('delete', id)
   })
@@ -194,6 +199,7 @@ function deleteSetting(id) {
     console.warn(error)
   })
 }
+
 function resetSettingParams() {
   schedules.value[0] = "off"
   schedules.value[1] = "None"
