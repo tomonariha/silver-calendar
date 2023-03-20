@@ -18,7 +18,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const props = defineProps({
   calendars: Array
 })
@@ -43,6 +45,11 @@ const requestMethods = {
   'delete': 'DELETE',
   'update': 'PUT'
 }
+const toActionString = {
+  'POST': '作成',
+  'DELETE': '削除',
+  'PUT': '更新'
+}
 function fetchGoogleCalendar(calendar, method) {
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
@@ -59,6 +66,7 @@ function fetchGoogleCalendar(calendar, method) {
     if (method != 'delete') {
       calendar["google_calendar_id"] = json.google_calendar_id
     }
+    toast(`${toActionString[method]}しました`)
     emit(method, calendar)
   })
   .catch((error) => {

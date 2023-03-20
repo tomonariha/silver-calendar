@@ -105,10 +105,12 @@
 
 <script setup>
 import { ref, computed, defineProps, onMounted, nextTick } from 'vue'
+import { useToast } from "vue-toastification"
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 
+const toast = useToast()
 const props = defineProps({ userId: String })
 onMounted(() => {
   fetchCalendarAndSettings()
@@ -403,6 +405,7 @@ function extractCalendarDaysWithinPeriod(startDate, endDate) {
 }
 function determineAutoAdjust() {
   saveAdjustedCalendar()
+  toast("適用しました")
   autoAdjusted.value = false
 }
 function cancelAutoAdjust() {
