@@ -190,7 +190,7 @@ function editSetting(setting) {
   }
 }
 function deleteSetting(id) {
-  confirmedSetting.value = null
+  cancelConfirm()
   fetch(`api/calendars/${props.year}/settings/${id}`, {
   method: 'DELETE',
   headers: {
