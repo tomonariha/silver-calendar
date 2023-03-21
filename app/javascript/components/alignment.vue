@@ -1,12 +1,19 @@
 <template>
   <p>連携機能</p>
+  <div id=overlay  v-show="confirmedCalendar">
+    <div id=content>
+      <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
+               v-on:cancel="cancelConfirm">
+      </Confirm>
+    </div>
+  </div>
   <p>Googleカレンダー</p>
   <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
   <p v-else>認証済</p>
   <div v-for="calendar in slicedCalendars" :key="calendar.year">
     <div class="calendar_year__body">{{ calendar.year }}</div>
     <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, requestMethods['delete'])">削除</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="confirmDialog(calendar)">削除</button>
     <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
@@ -18,6 +25,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import Confirm from './confirm.vue'
 import { useToast } from "vue-toastification"
 
 const toast = useToast()
@@ -51,6 +59,7 @@ const toActionString = {
   'PUT': '更新'
 }
 function fetchGoogleCalendar(calendar, method) {
+  cancelConfirm()
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
   headers: {
@@ -108,5 +117,13 @@ const totalPages = computed(() => {
 })
 function updatePageNumber(pageNumber) {
   currentPage.value = pageNumber
+}
+// 確認ダイアログ
+const confirmedCalendar = ref(null)
+function confirmDialog(calendar){
+  confirmedCalendar.value = calendar
+}
+function cancelConfirm() {
+  confirmedCalendar.value = null
 }
 </script>
