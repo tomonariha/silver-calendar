@@ -1,9 +1,16 @@
 <template>
   <p>条件の設定</p>
+  <div id=overlay  v-show="confirmedSetting">
+    <div id=content>
+      <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
+               v-on:cancel="cancelConfirm">
+      </Confirm>
+    </div>
+  </div>
   <div v-for="setting in props.settings" :key="setting.id">
     <span>{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</span>
     <button v-on:click="editSetting(setting)">編集</button>
-    <button v-on:click="deleteSetting(setting.id)">削除</button>
+    <button v-on:click="confirmDialog(setting)">削除</button>
     <button v-on:click="reflectSetting(setting)">適用</button>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
@@ -69,6 +76,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import Confirm from './confirm.vue'
 import { useToast } from "vue-toastification"
 
 const toast = useToast()
@@ -182,6 +190,7 @@ function editSetting(setting) {
   }
 }
 function deleteSetting(id) {
+  cancelConfirm()
   fetch(`api/calendars/${props.year}/settings/${id}`, {
   method: 'DELETE',
   headers: {
@@ -293,6 +302,14 @@ const slicedSettings = computed(() => {
   let end = start + pageLimit.value
   return props.settings.slice(start, end) 
 })
+// 確認ダイアログ
+const confirmedSetting = ref(null)
+function confirmDialog(setting){
+  confirmedSetting.value = setting
+}
+function cancelConfirm() {
+  confirmedSetting.value = null
+}
 // ヴァリデーションメソッド
 const errors = ref([])
 function periodValidation(startDay, endDay) {

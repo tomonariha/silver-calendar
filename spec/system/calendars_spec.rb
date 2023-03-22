@@ -57,12 +57,16 @@ RSpec.describe 'Calendars', type: :system do
   scenario 'user delete setting', js: true do
     click_button '条件の入力'
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
-    click_button 'この条件を削除'
+    click_button '削除'
+    click_button 'はい'
     expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
   end
 
   scenario 'user apply setting to calendar', js: true do
+    click_button '条件の入力'
     click_button '適用'
+    select '2023', from: 'specifiy_calendar_year'
+    select '1', from: 'specifiy_calendar_month'
     within '#day3' do
       expect(find('.calendar__day-body')).to have_content('●')
     end
