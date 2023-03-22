@@ -458,13 +458,13 @@ function fetchSettings() {
     loaded.value = true
   })
   .then(()=> {
-    settingsSort() 
+    sortSettings()
   })
   .catch((error) => {
     console.warn(error)
   })
 }
-function settingsSort() {
+function sortSettings() {
   settings.value.sort((a, b)=>
     a.period_start_at > b.period_start_at ? 1 : -1
   )
@@ -485,7 +485,7 @@ function createSetting(createdSetting) {
   createdSetting.period_start_at = formatUpdatedDay(createdSetting.period_start_at)
   createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
   settings.value.push(createdSetting)
-  settingsSort() 
+  sortSettings()
 }
 function deleteSetting(settingId) {
   for (let setting of settings.value) {
@@ -504,7 +504,7 @@ function updateSetting(updatedSetting) {
       break
     }
   }
-  settingsSort() 
+  sortSettings()
 }
 //勤務入力関連
 function updateDay(day) {
