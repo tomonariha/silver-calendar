@@ -458,41 +458,16 @@ function fetchSettings() {
     loaded.value = true
   })
   .then(()=> {
-    settings.value.sort((a, b)=>
-      a.period_start_at > b.period_start_at ? 1 : -1
-    )
+    settingsSort() 
   })
   .catch((error) => {
     console.warn(error)
   })
 }
-const calendarsIndex= ref([])
-function fetchCalendarsIndex() {
-  calendarsIndex.value = []
-  fetch('api/calendars', {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token()
-  },
-  credentials: 'same-origin'
-  })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    json.forEach((r) => {
-      calendarsIndex.value.push(r)
-    })
-  })
-  .then(()=> {
-    calendarsIndex.value.sort((a, b)=>
-      a.year - b.year
-    )
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+function settingsSort() {
+  settings.value.sort((a, b)=>
+    a.period_start_at > b.period_start_at ? 1 : -1
+  )
 }
 const showContent = ref(false)
 function openModal() {
@@ -510,6 +485,7 @@ function createSetting(createdSetting) {
   createdSetting.period_start_at = formatUpdatedDay(createdSetting.period_start_at)
   createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
   settings.value.push(createdSetting)
+  settingsSort() 
 }
 function deleteSetting(settingId) {
   for (let setting of settings.value) {
@@ -528,6 +504,7 @@ function updateSetting(updatedSetting) {
       break
     }
   }
+  settingsSort() 
 }
 //勤務入力関連
 function updateDay(day) {
@@ -575,6 +552,34 @@ function openAlignmentModal() {
 }
 function closeAlignmentModal() {
   showAlignmentContent.value = false
+}
+const calendarsIndex= ref([])
+function fetchCalendarsIndex() {
+  calendarsIndex.value = []
+  fetch('api/calendars', {
+  method: 'GET',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token()
+  },
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+    json.forEach((r) => {
+      calendarsIndex.value.push(r)
+    })
+  })
+  .then(()=> {
+    calendarsIndex.value.sort((a, b)=>
+      a.year - b.year
+    )
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
 }
 function createAlignment(calendar) {
   for (let calendarIndex of calendarsIndex.value) {
