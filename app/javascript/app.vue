@@ -573,11 +573,22 @@ function deleteCalendar() {
   })
   .then(() => {
     toast("削除しました")
+    calendarDays.value = []
+    settings.value = []
+    deleteFromCalendarsIndex()
   })
   .catch((error) => {
     console.warn(error)
   })
   cancelConfirm()
+}
+function deleteFromCalendarsIndex() {
+  for (let calendar of calendarsIndex.value) {
+    if (calendarYear.value === calendar.year) {
+      calendarsIndex.value.splice(calendarsIndex.value.indexOf(calendar), 1)
+      break
+    }
+  }
 }
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
@@ -587,7 +598,7 @@ function openAlignmentModal() {
 function closeAlignmentModal() {
   showAlignmentContent.value = false
 }
-const calendarsIndex= ref([])
+const calendarsIndex = ref([])
 function fetchCalendarsIndex() {
   calendarsIndex.value = []
   fetch('api/calendars', {
