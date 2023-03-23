@@ -122,16 +122,11 @@ import Confirm from './components/confirm.vue'
 const toast = useToast()
 const props = defineProps({ userId: String })
 onMounted(() => {
-  fetchCalendarAndSettings()
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
   fetchCalendarsIndex()
 })
-function fetchCalendarAndSettings() {
-  (async () => {
-    // この順序で読み込まないとエラーになる
-    await fetchCalendar()
-    await fetchSettings()
-  })()
-}
 //カレンダー表示関連
 const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
 const calendarYear = ref(getCurrentYear())
@@ -174,26 +169,29 @@ function token() {
 const loaded = ref(null)
 const calendarDays = ref([])
 function fetchCalendar() {
-  calendarDays.value = []
-  fetch(`/api/calendars/${calendarYear.value}.json`, {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token()
-  },
-  credentials: 'same-origin'
-  })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    json.forEach((r) => {
-      calendarDays.value.push(r)
+  return new Promise(function(resolve, reject) {
+    calendarDays.value = []
+    fetch(`/api/calendars/${calendarYear.value}.json`, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
     })
-    loaded.value = true
-  })
-  .catch((error) => {
-    console.warn(error)
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      json.forEach((r) => {
+        calendarDays.value.push(r)
+      })
+      loaded.value = true
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
+    resolve()
   })
 }
 function calendarWeeks(month) {
@@ -419,7 +417,9 @@ function determineAutoAdjust() {
 }
 function cancelAutoAdjust() {
   adjustedCalendar.value = [],
-  fetchCalendarAndSettings()
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
   autoAdjusted.value = false
 }
 function saveAdjustedCalendar() {
@@ -557,6 +557,9 @@ function deleteFromCalendarArray(calendarDays, formatedDay) {
 // 確認ダイアログ
 const showConfirm = ref(false)
 function confirmDeleteCalendar(){
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
   showConfirm.value = true
 }
 function cancelConfirm() {
@@ -593,6 +596,7 @@ function deleteFromCalendarsIndex() {
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
 function openAlignmentModal() {
+  fetchCalendarsIndex()
   showAlignmentContent.value = true
 }
 function closeAlignmentModal() {
