@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Day < ApplicationRecord
-  belongs_to :calendar, dependent: :destroy
+  belongs_to :calendar
   with_options presence: true do
     validates :calendar_id
     validates :date

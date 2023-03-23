@@ -18,4 +18,9 @@ class Api::CalendarsController < ApplicationController
   def index
     @calendars = User.find(current_user.id).calendars
   end
+
+  def destroy
+    @calendar = User.find(current_user.id).calendars.find_by(year: params[:year])
+    @calendar.destroy!
+  end
 end

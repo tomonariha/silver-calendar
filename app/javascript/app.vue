@@ -11,6 +11,14 @@
     <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
+  <button v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除</button>
+  <div id=overlay v-show="showConfirm">
+    <div id=content>
+      <Confirm v-on:delete='deleteCalendar'
+               v-on:cancel='cancelConfirm'>
+      </Confirm>
+    </div>
+  </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
     <button v-on:click="toYearyCalendar">年間カレンダー</button>
@@ -109,6 +117,7 @@ import { useToast } from "vue-toastification"
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
+import Confirm from './components/confirm.vue'
 
 const toast = useToast()
 const props = defineProps({ userId: String })
@@ -544,6 +553,31 @@ function deleteFromCalendarArray(calendarDays, formatedDay) {
     return countWorkingDays(calendarDay.schedule)
     }
   }
+}
+// 確認ダイアログ
+const showConfirm = ref(false)
+function confirmDeleteCalendar(){
+  showConfirm.value = true
+}
+function cancelConfirm() {
+  showConfirm.value = false
+}
+function deleteCalendar() {
+  fetch(`api/calendars/${calendarYear.value}`, {
+  method: 'DELETE',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+  },
+  credentials: 'same-origin'
+  })
+  .then(() => {
+    toast("削除しました")
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+  cancelConfirm()
 }
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
