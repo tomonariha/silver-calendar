@@ -1,0 +1,71 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgres://postgres:postgres@localhost/ci_test"
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: set Timezone
+      uses: szenius/set-timezone
+      with:
+        timezoneLinux: "Asia/Tokyo"
+
+    - uses: actions/checkout
+    - name: setup Ruby
+      uses: ruby/setup-ruby
+      with:
+        ruby-version: '3.1.0'
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+    - name: setup Node.js
+      uses: actions/setup-node
+      with:
+        node-version: '16.14.0'
+
+    - name: Cache node modules
+      uses: actions/cache
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: yarn install
+      run:  yarn install --check-files
+
+    - name: setup DB
+      run: bundle exec rails db:setup
+
+    - name: run Specs
+      run: bundle exec rspec
