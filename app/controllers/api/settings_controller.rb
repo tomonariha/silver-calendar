@@ -2,7 +2,8 @@
 
 class Api::SettingsController < ApplicationController
   def index
-    @settings = User.find(current_user.id).calendars.find_by(year: params[:calendar_year]).settings
+    @calendar = User.find(current_user.id).calendars.find_by(year: params[:calendar_year])
+    @settings = @calendar&.settings
   end
 
   def show; end
