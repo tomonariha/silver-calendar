@@ -1,71 +1,54 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
-# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
-
-name: Test
-
+# This workflow uses actions that are not certified by GitHub.  They are
+# provided by a third-party and are governed by separate terms of service,
+# privacy policy, and support documentation.
+#
+# This workflow will install a prebuilt Ruby version, install dependencies, and
+# run tests and linters.
+name: "Ruby on Rails CI"
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
-permissions:
-  contents: read
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: "postgres://postgres:postgres@localhost/ci_test"
-
     services:
       postgres:
-        image: postgres
+        image: postgres:11-alpine
         ports:
-          - 5432:5432
+          - "5432:5432"
         env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
     steps:
-    - name: set Timezone
-      uses: szenius/set-timezone
-      with:
-        timezoneLinux: "Asia/Tokyo"
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # Add or replace dependency steps here
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.0'
+          bundler-cache: true
+      # Add or replace database setup steps here
+      - name: Set up database schema
+        run: bin/rails db:schema:load
+      # Add or replace test runners here
+      - name: yarn install
+        run:  yarn install --check-files
 
-    - uses: actions/checkout
-    - name: setup Ruby
-      uses: ruby/setup-ruby
-      with:
-        ruby-version: '3.1.0'
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: yarn css setup
+        run: yarn build:css
 
-    - name: setup Node.js
-      uses: actions/setup-node
-      with:
-        node-version: '16.14.0'
+      - name: yarn js setup
+        run: yarn build
 
-    - name: Cache node modules
-      uses: actions/cache
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: yarn install
-      run:  yarn install --check-files
+      - name: Setup test DB
+        run: bundle exec rails db:setup
 
-    - name: setup DB
-      run: bundle exec rails db:setup
-
-    - name: run Specs
-      run: bundle exec rspec
+      - name: Run tests
+        run: bundle exec rspec
