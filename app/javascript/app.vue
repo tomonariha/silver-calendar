@@ -11,6 +11,14 @@
     <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
+  <button v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除</button>
+  <div id=overlay v-show="showConfirm">
+    <div id=content>
+      <Confirm v-on:delete='deleteCalendar'
+               v-on:cancel='cancelConfirm'>
+      </Confirm>
+    </div>
+  </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
     <button v-on:click="toYearyCalendar">年間カレンダー</button>
@@ -109,20 +117,16 @@ import { useToast } from "vue-toastification"
 import Setting from './components/setting.vue' 
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
+import Confirm from './components/confirm.vue'
 
 const toast = useToast()
 const props = defineProps({ userId: String })
 onMounted(() => {
-  fetchCalendarAndSettings()
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
   fetchCalendarsIndex()
 })
-function fetchCalendarAndSettings() {
-  (async () => {
-    // この順序で読み込まないとエラーになる
-    await fetchCalendar()
-    await fetchSettings()
-  })()
-}
 //カレンダー表示関連
 const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
 const calendarYear = ref(getCurrentYear())
@@ -165,26 +169,29 @@ function token() {
 const loaded = ref(null)
 const calendarDays = ref([])
 function fetchCalendar() {
-  calendarDays.value = []
-  fetch(`/api/calendars/${calendarYear.value}.json`, {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token()
-  },
-  credentials: 'same-origin'
-  })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    json.forEach((r) => {
-      calendarDays.value.push(r)
+  return new Promise(function(resolve, reject) {
+    calendarDays.value = []
+    fetch(`/api/calendars/${calendarYear.value}.json`, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
     })
-    loaded.value = true
-  })
-  .catch((error) => {
-    console.warn(error)
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      json.forEach((r) => {
+        calendarDays.value.push(r)
+      })
+      loaded.value = true
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
+    resolve()
   })
 }
 function calendarWeeks(month) {
@@ -410,7 +417,9 @@ function determineAutoAdjust() {
 }
 function cancelAutoAdjust() {
   adjustedCalendar.value = [],
-  fetchCalendarAndSettings()
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
   autoAdjusted.value = false
 }
 function saveAdjustedCalendar() {
@@ -545,15 +554,55 @@ function deleteFromCalendarArray(calendarDays, formatedDay) {
     }
   }
 }
+// 確認ダイアログ
+const showConfirm = ref(false)
+function confirmDeleteCalendar(){
+  fetchCalendar().then(function() {
+    fetchSettings();
+  })
+  showConfirm.value = true
+}
+function cancelConfirm() {
+  showConfirm.value = false
+}
+function deleteCalendar() {
+  fetch(`api/calendars/${calendarYear.value}`, {
+  method: 'DELETE',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+  },
+  credentials: 'same-origin'
+  })
+  .then(() => {
+    toast("削除しました")
+    calendarDays.value = []
+    settings.value = []
+    deleteFromCalendarsIndex()
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+  cancelConfirm()
+}
+function deleteFromCalendarsIndex() {
+  for (let calendar of calendarsIndex.value) {
+    if (calendarYear.value === calendar.year) {
+      calendarsIndex.value.splice(calendarsIndex.value.indexOf(calendar), 1)
+      break
+    }
+  }
+}
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
 function openAlignmentModal() {
+  fetchCalendarsIndex()
   showAlignmentContent.value = true
 }
 function closeAlignmentModal() {
   showAlignmentContent.value = false
 }
-const calendarsIndex= ref([])
+const calendarsIndex = ref([])
 function fetchCalendarsIndex() {
   calendarsIndex.value = []
   fetch('api/calendars', {
