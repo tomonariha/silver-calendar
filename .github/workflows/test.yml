@@ -41,12 +41,6 @@ jobs:
       - name: yarn install
         run:  yarn install --check-files
 
-      - name: yarn css setup
-        run: yarn build:css
-
-      - name: yarn js setup
-        run: yarn build
-
       - name: Setup test DB
         run: bundle exec rails db:setup
 
