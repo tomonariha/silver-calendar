@@ -6,6 +6,7 @@ RSpec.describe 'Calendars', type: :system do
   let!(:user) { FactoryBot.create(:user) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id) }
   let!(:day) { FactoryBot.create(:day, calendar_id: calendar.id) }
+  let!(:day2) { FactoryBot.create(:day, :day2, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
 
   before do
@@ -14,16 +15,20 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user insert new schedule on day of calendar', js: true do
+    select '2023', from: 'specifiy_calendar_year'
+    select '1', from: 'specifiy_calendar_month'
     within '#day1' do
-      click_button
+      click_button '□'
       click_button '●'
       expect(find('.calendar__day-body')).to have_content('●')
     end
   end
 
   scenario 'user delete schedule on day of calendar', js: true do
+    select '2023', from: 'specifiy_calendar_year'
+    select '1', from: 'specifiy_calendar_month'
     within '#day2' do
-      click_button
+      click_button '●'
       click_button '指定なし'
       expect(find('.calendar__day-body')).to_not have_content('●')
     end
@@ -82,7 +87,7 @@ RSpec.describe 'Calendars', type: :system do
   scenario 'user delete calendar', js: true do
     select '2023', from: 'specifiy_calendar_year'
     select '1', from: 'specifiy_calendar_month'
-    within '#day2' do
+    within '#day1' do
       expect(find('.calendar__day-body')).to have_content('□')
     end
     click_button '条件の入力'
@@ -90,7 +95,7 @@ RSpec.describe 'Calendars', type: :system do
     click_button '閉じる'
     click_button 'この年のカレンダーを削除'
     click_button 'はい'
-    within '#day2' do
+    within '#day1' do
       expect(find('.calendar__day-body')).to_not have_content('□')
     end
     click_button '条件の入力'
