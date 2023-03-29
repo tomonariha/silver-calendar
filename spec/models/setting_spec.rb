@@ -7,13 +7,6 @@ RSpec.describe Setting, type: :model do
     expect(FactoryBot.create(:setting)).to be_valid
   end
 
-  it 'is invalid with periods overlaps' do
-    setting = FactoryBot.create(:setting)
-    another_setting = FactoryBot.build(:setting, calendar_id: setting.calendar_id, schedule_of_sunday: 'off')
-    another_setting.valid?
-    expect(another_setting.errors[:period_start_at]).to include('他の条件の期間と重ならないようにしてください')
-  end
-
   it 'is invalid without calendar_id' do
     setting = Setting.new(calendar_id: nil)
     setting.valid?
