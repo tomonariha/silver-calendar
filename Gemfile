@@ -88,3 +88,5 @@ group :development do
   gem 'rubocop-rails', require: false
   gem 'slim_lint', require: false
 end
+
+gem "dockerfile-rails", ">= 1.2", :group => :development
