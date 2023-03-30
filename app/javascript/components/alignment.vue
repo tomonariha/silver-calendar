@@ -7,14 +7,17 @@
       </Confirm>
     </div>
   </div>
+  <div id=overlay v-show="isFetching">
+    <p id="content">反映しています。しばらくお待ちください</p>
+  </div>
   <p>Googleカレンダー</p>
   <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
   <p v-else>認証済</p>
   <div v-for="calendar in slicedCalendars" :key="calendar.year">
     <div class="calendar_year__body">{{ calendar.year }}</div>
-    <button v-bind:disabled="calendar.google_calendar_id" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="confirmDialog(calendar)">削除</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id)" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
+    <button v-bind:disabled="calendar.google_calendar_id || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="confirmDialog(calendar)">削除</button>
+    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
     <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
@@ -58,7 +61,9 @@ const toActionString = {
   'DELETE': '削除',
   'PUT': '更新'
 }
+const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
+  isFetching.value = true
   cancelConfirm()
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
@@ -80,6 +85,9 @@ function fetchGoogleCalendar(calendar, method) {
   })
   .catch((error) => {
     console.warn(error)
+  })
+  .finally(() => {
+    isFetching.value = false
   })
 }
 function fetchUser() {
