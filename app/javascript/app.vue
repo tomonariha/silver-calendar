@@ -41,12 +41,17 @@
             :key='date.date'
             :id="'day' + date.date">
             <div class="calendar__day-label">{{ date.date }}</div>
-            <Day v-bind:date="date"
-                 v-bind:autoAdjusted="autoAdjusted"
-                 v-if="date.date"
-                 v-on:update="updateDay"
-                 v-on:delete="deleteDay">
-            </Day>
+            <div v-if="autoAdjusted && outsideWithinPeriod(date, reflectedSetting)">
+              <button v-on:click="alertUnChangeable">{{ scheduleToMark[date.schedule] }}</button>
+            </div>
+            <div v-else>
+              <Day v-bind:date="date"
+                   v-bind:autoAdjusted="autoAdjusted"
+                   v-if="date.date"
+                   v-on:update="updateDay"
+                   v-on:delete="deleteDay">
+              </Day>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -298,6 +303,24 @@ const unAutoAdjusted = computed(() => {
 })
 const workingDaysRequired = ref(null)
 const numberOfWorkingDays = ref(0)
+const reflectedSetting = ref(null)
+function outsideWithinPeriod(date, setting) {
+  if (!date.date) {
+    return false
+  }
+  const formatedDate = (date.year + "-" + formatMonth(date.month) + "-" + formatDay(date.date))
+  if (formatedDate < setting.period_start_at) {
+    return true
+  }
+  if (formatedDate > setting.period_end_at) {
+    return true
+  }
+  return false
+}
+function alertUnChangeable() {
+  toast.error(`自動調整の期間外なので変更できません \n
+    期間：${reflectedSetting.value.period_start_at} ~ ${reflectedSetting.value.period_end_at}`)
+}
 function autoAdjust(setting) {
   const startDate = new Date(setting.period_start_at)
   const endDate = new Date(setting.period_end_at)
@@ -358,7 +381,9 @@ function autoAdjust(setting) {
       }
     }
   }
+  reflectedSetting.value = setting
   autoAdjusted.value = true
+  calendarMonth.value = startDate.getMonth() + 1
 }
 function equalDays(availableDate, date) {
   if (availableDate.getMonth() !== date.getMonth()) { return false }
@@ -420,6 +445,7 @@ function cancelAutoAdjust() {
   fetchCalendar().then(function() {
     fetchSettings();
   })
+  reflectedSetting.value = null
   autoAdjusted.value = false
 }
 function saveAdjustedCalendar() {
