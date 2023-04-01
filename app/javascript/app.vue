@@ -383,7 +383,7 @@ function autoAdjust(setting) {
   }
   reflectedSetting.value = setting
   autoAdjusted.value = true
-  calendarMonth.value = startDate.getMonth() + 1
+  calendarMonth.value = startDate.getMonth()
 }
 function equalDays(availableDate, date) {
   if (availableDate.getMonth() !== date.getMonth()) { return false }
