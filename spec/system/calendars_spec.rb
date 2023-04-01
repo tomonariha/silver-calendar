@@ -101,4 +101,19 @@ RSpec.describe 'Calendars', type: :system do
     click_button '条件の入力'
     expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
   end
+
+  scenario 'user execute autoadjust from setting', js: true do
+    select '2023', from: 'specifiy_calendar_year'
+    click_button '条件の入力'
+    click_button '適用'
+    within '#day20' do
+      expect(find('.calendar__day-body')).to have_content('●')
+    end
+
+    click_button '後'
+    within '#day1' do
+      click_button
+      expect(page).to_not have_content('自動調整の期間外なので変更できません')
+    end
+  end
 end
