@@ -13,11 +13,14 @@
   <p>Googleカレンダー</p>
   <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
   <p v-else>認証済</p>
-  <div v-for="calendar in slicedCalendars" :key="calendar.year">
-    <div class="calendar_year__body">{{ calendar.year }}</div>
-    <button v-bind:disabled="calendar.google_calendar_id || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="confirmDialog(calendar)">削除</button>
-    <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
+  <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+  <div v-else>
+    <div v-for="calendar in slicedCalendars" :key="calendar.year">
+      <div class="calendar_year__body">{{ calendar.year }}</div>
+      <button v-bind:disabled="calendar.google_calendar_id || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
+      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="confirmDialog(calendar)">削除</button>
+      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
+    </div>
   </div>
   <div v-for="pageNumber in totalPages" :key="pageNumber">
     <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
@@ -115,6 +118,9 @@ onMounted(() => {
 // ページング
 const currentPage = ref(1)
 const pageLimit = ref(5)
+const haveNoCalendars = computed(() => {
+  return !(props.calendars.length > 0)
+})
 const slicedCalendars = computed(() => {
   let start = (currentPage.value -1) * pageLimit.value
   let end = start + pageLimit.value
