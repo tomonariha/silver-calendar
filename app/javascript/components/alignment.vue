@@ -1,5 +1,6 @@
 <template>
   <p>連携機能</p>
+  <Time></Time>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -32,6 +33,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import Confirm from './confirm.vue'
+import Time from './time.vue'
 import { useToast } from "vue-toastification"
 
 const toast = useToast()
