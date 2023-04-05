@@ -1,6 +1,23 @@
 <template>
   <p>連携機能</p>
-  <Time></Time>
+  <Time v-bind:dayOfSchedule="'午前：'"
+        v-bind:selectedStartHour="selectedMorningStartHour"
+        v-bind:selectedStartMinit="selectedMorningStartMinit"
+        v-bind:selectedEndHour="selectedMorningEndHour"
+        v-bind:selectedEndMinit="selectedMorningEndMinit">
+  </Time>
+  <Time v-bind:dayOfSchedule="'午後：'"
+        v-bind:selectedStartHour="selectedAfterNoonStartHour"
+        v-bind:selectedStartMinit="selectedAfterNoonStartMinit"
+        v-bind:selectedEndHour="selectedAfterNoonEndHour"
+        v-bind:selectedEndMinit="selectedAfterNoonEndMinit">
+  </Time>
+  <Time v-bind:dayOfSchedule="'全日：'"
+        v-bind:selectedStartHour="selectedFullTimeStartHour"
+        v-bind:selectedStartMinit="selectedFullTimeStartMinit"
+        v-bind:selectedEndHour="selectedFullTimeEndHour"
+        v-bind:selectedEndMinit="selectedFullTimeEndMinit">
+  </Time>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -41,6 +58,20 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
+// Time
+const selectedMorningStartHour = ref(8)
+const selectedMorningStartMinit = ref(0)
+const selectedMorningEndHour = ref(12)
+const selectedMorningEndMinit = ref(0)
+const selectedAfterNoonStartHour = ref(13)
+const selectedAfterNoonStartMinit = ref(0)
+const selectedAfterNoonEndHour = ref(17)
+const selectedAfterNoonEndMinit = ref(0)
+const selectedFullTimeStartHour = ref(8)
+const selectedFullTimeStartMinit = ref(0)
+const selectedFullTimeEndHour = ref(17)
+const selectedFullTimeEndMinit = ref(0)
+
 // Google
 const authenticatedGoogle = ref(false)
 const notAuthenticatedGoogle = computed(() => {
