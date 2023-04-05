@@ -7,8 +7,8 @@
   </select>
   <span>時</span>
   <select v-model="selectedStartMinit" v-on:change="updateStartMinit">
-    <option v-for="minit in 60" :key="minit">
-      {{ minit -1 }}
+    <option v-for="minit in minits" :key="minit">
+      {{ minit }}
     </option>
   </select>
   <span>分〜</span>
@@ -19,8 +19,8 @@
   </select>
   <span>時</span>
   <select v-model="selectedEndMinit" v-on:change="updateEndMinit">
-    <option v-for="minit in 60" :key="minit">
-      {{ minit -1 }}
+    <option v-for="minit in minits" :key="minit">
+      {{ minit }}
     </option>
   </select>
   <span>分</span>
@@ -42,11 +42,12 @@ onMounted(() => {
   selectedEndHour.value = props.selectedEndHour,
   selectedEndMinit.value = props.selectedEndMinit
 })
-const emit = defineEmits(['selectedStartHour', 'startMinit', 'endHour', 'endMinit'])
+const emit = defineEmits(['selectedStartHour', 'selectedStartMinit', 'selectedEndHour', 'selectedEndMinit'])
 const selectedStartHour = ref(0)
 const selectedStartMinit = ref(0)
 const selectedEndHour = ref(0)
 const selectedEndMinit = ref(0)
+const minits = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
 function updateStartHour() {
   emit('selectedStartHour', selectedStartHour)
 }
