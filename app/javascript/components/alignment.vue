@@ -58,7 +58,7 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
-// Time
+// 時刻設定用
 const selectedMorningStartHour = ref(8)
 const selectedMorningStartMinit = ref(0)
 const selectedMorningEndHour = ref(12)
@@ -71,7 +71,23 @@ const selectedFullTimeStartHour = ref(8)
 const selectedFullTimeStartMinit = ref(0)
 const selectedFullTimeEndHour = ref(17)
 const selectedFullTimeEndMinit = ref(0)
-
+function generateWorkingTimes() {
+  const workingTimes = {
+    morningStartHour: selectedMorningStartHour.value,
+    morningStartMinit: selectedMorningStartMinit.value,
+    morningEndHour: selectedMorningEndHour.value,
+    morningEndMinit: selectedMorningEndMinit.value,
+    afterNoonStartHour: selectedAfterNoonStartHour.value,
+    afterNoonStartMinit: selectedAfterNoonStartMinit.value,
+    afterNoonEndHour: selectedAfterNoonEndHour.value,
+    afterNoonEndMinit: selectedAfterNoonEndMinit.value,
+    fullTimeStartHour: selectedFullTimeStartHour.value,
+    fullTimeStartMinit: selectedFullTimeStartMinit.value,
+    fullTimeEndHour: selectedFullTimeEndHour.value,
+    fullTimeEndMinit: selectedFullTimeEndMinit.value,
+  }
+  return workingTimes
+}
 // Google
 const authenticatedGoogle = ref(false)
 const notAuthenticatedGoogle = computed(() => {
@@ -101,12 +117,15 @@ const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
   isFetching.value = true
   cancelConfirm()
+  const workingTimes = generateWorkingTimes()
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
   },
+  body: JSON.stringify(workingTimes),
   credentials: 'same-origin'
   })
   .then((response) => {
