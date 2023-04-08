@@ -33,17 +33,20 @@ class CalendarClient
       date = day.date.strftime('%Y-%m-%d')
       case day.schedule
       when 'full-time'
+        schedule = '全日出勤'
         start_at = DateTime.parse("#{date} #{full_time_start_at}#{time_offset}")
         end_at = DateTime.parse("#{date} #{full_time_end_at}#{time_offset}")
       when 'morning'
+        schedule = '午前出勤'
         start_at = DateTime.parse("#{date} #{morning_start_at}#{time_offset}")
         end_at = DateTime.parse("#{date} #{morning_end_at}#{time_offset}")
       when 'after-noon'
+        schedule = '午後出勤'
         start_at = DateTime.parse("#{date} #{after_noon_start_at}#{time_offset}")
         end_at = DateTime.parse("#{date} #{after_noon_end_at}#{time_offset}")
       end
       event = Google::Apis::CalendarV3::Event.new(
-        summary: day.schedule.to_s,
+        summary: schedule,
         start: { date_time: start_at,
                  time_zone: },
         end: { date_time: end_at,
