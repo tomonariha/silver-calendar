@@ -35,11 +35,11 @@ class CalendarClient
         start_at = DateTime.parse(date + ' ' + full_time_start_at + time_offset)
         end_at = DateTime.parse(date + ' ' + full_time_end_at + time_offset)
       when 'morning' then
-        start_at = DateTime.parse(date + ' ' + morning_start_at)
-        end_at = DateTime.parse(date + ' ' + morning_end_at)
+        start_at = DateTime.parse(date + ' ' + morning_start_at + time_offset)
+        end_at = DateTime.parse(date + ' ' + morning_end_at + time_offset)
       when 'after-noon' then
-        start_at = DateTime.parse(date + ' ' + after_noon_start_at)
-        end_at = DateTime.parse(date + ' ' + after_noon_end_at)
+        start_at = DateTime.parse(date + ' ' + after_noon_start_at + time_offset)
+        end_at = DateTime.parse(date + ' ' + after_noon_end_at + time_offset)
       end
       event = Google::Apis::CalendarV3::Event.new(
         summary: day.schedule.to_s,
