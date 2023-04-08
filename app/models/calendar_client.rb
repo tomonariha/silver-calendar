@@ -19,8 +19,9 @@ class CalendarClient
 
   def insert_events(calendar_days, google_calendar_id, working_times)
     return if calendar_days.empty?
+
     time_zone = Time.zone.name
-    time_offset = Time.now.strftime('%z')
+    time_offset = Time.zone.now.strftime('%z')
     morning_start_at = format_time(working_times['morningStartHour'], working_times['morningStartMinit'])
     morning_end_at = format_time(working_times['morningEndHour'], working_times['morningEndMinit'])
     after_noon_start_at = format_time(working_times['afterNoonStartHour'], working_times['afterNoonStartMinit'])
@@ -31,22 +32,22 @@ class CalendarClient
     calendar_days.map do |day|
       date = day.date.strftime('%Y-%m-%d')
       case day.schedule
-      when 'full-time' then
-        start_at = DateTime.parse(date + ' ' + full_time_start_at + time_offset)
-        end_at = DateTime.parse(date + ' ' + full_time_end_at + time_offset)
-      when 'morning' then
-        start_at = DateTime.parse(date + ' ' + morning_start_at + time_offset)
-        end_at = DateTime.parse(date + ' ' + morning_end_at + time_offset)
-      when 'after-noon' then
-        start_at = DateTime.parse(date + ' ' + after_noon_start_at + time_offset)
-        end_at = DateTime.parse(date + ' ' + after_noon_end_at + time_offset)
+      when 'full-time'
+        start_at = DateTime.parse("#{date} #{full_time_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{full_time_end_at}#{time_offset}")
+      when 'morning'
+        start_at = DateTime.parse("#{date} #{morning_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{morning_end_at}#{time_offset}")
+      when 'after-noon'
+        start_at = DateTime.parse("#{date} #{after_noon_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{after_noon_end_at}#{time_offset}")
       end
       event = Google::Apis::CalendarV3::Event.new(
         summary: day.schedule.to_s,
         start: { date_time: start_at,
-                 time_zone: time_zone },
+                 time_zone: },
         end: { date_time: end_at,
-               time_zone: time_zone },
+               time_zone: },
         description: '今日の予定'
       )
       events << event
@@ -114,6 +115,6 @@ class CalendarClient
   end
 
   def format_time(hour, minit)
-    hour.to_s.rjust(2, '0') + ':' + minit.to_s.rjust(2, '0')
+    "#{hour.to_s.rjust(2, '0')}:#{minit.to_s.rjust(2, '0')}"
   end
 end
