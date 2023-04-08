@@ -22,7 +22,7 @@ class Api::AlignmentsController < ApplicationController
     @client.delete_calendar(@calendar)
     @result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
-    @client.insert_events(calendar_days, @result.id)
+    @client.insert_events(calendar_days, @result.id, @working_times)
   end
   # Googleカレンダーからの予定取得用
   # def get_event
