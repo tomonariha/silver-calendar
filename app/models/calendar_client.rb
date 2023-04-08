@@ -17,20 +17,40 @@ class CalendarClient
     )
   end
 
-  def insert_events(calendar_days, google_calendar_id)
+  def insert_events(calendar_days, google_calendar_id, working_times)
     return if calendar_days.empty?
 
+    time_zone = Time.zone.name
+    time_offset = Time.zone.now.strftime('%z')
+    morning_start_at = format_time(working_times['morningStartHour'], working_times['morningStartMinit'])
+    morning_end_at = format_time(working_times['morningEndHour'], working_times['morningEndMinit'])
+    after_noon_start_at = format_time(working_times['afterNoonStartHour'], working_times['afterNoonStartMinit'])
+    after_noon_end_at = format_time(working_times['afterNoonEndHour'], working_times['afterNoonEndMinit'])
+    full_time_start_at = format_time(working_times['fullTimeStartHour'], working_times['fullTimeStartMinit'])
+    full_time_end_at = format_time(working_times['fullTimeEndHour'], working_times['fullTimeEndMinit'])
     events = []
     calendar_days.map do |day|
-      date = day.date
+      date = day.date.strftime('%Y-%m-%d')
+      case day.schedule
+      when 'full-time'
+        schedule = '全日出勤'
+        start_at = DateTime.parse("#{date} #{full_time_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{full_time_end_at}#{time_offset}")
+      when 'morning'
+        schedule = '午前出勤'
+        start_at = DateTime.parse("#{date} #{morning_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{morning_end_at}#{time_offset}")
+      when 'after-noon'
+        schedule = '午後出勤'
+        start_at = DateTime.parse("#{date} #{after_noon_start_at}#{time_offset}")
+        end_at = DateTime.parse("#{date} #{after_noon_end_at}#{time_offset}")
+      end
       event = Google::Apis::CalendarV3::Event.new(
-        summary: day.schedule.to_s,
-        start: Google::Apis::CalendarV3::EventDateTime.new(
-          date:
-        ),
-        end: Google::Apis::CalendarV3::EventDateTime.new(
-          date:
-        ),
+        summary: schedule,
+        start: { date_time: start_at,
+                 time_zone: },
+        end: { date_time: end_at,
+               time_zone: },
         description: '今日の予定'
       )
       events << event
@@ -66,7 +86,11 @@ class CalendarClient
   # end
 
   def create_calendar(calendar)
-    new_calendar = Google::Apis::CalendarV3::Calendar.new(summary: "WDD #{calendar.year}年", descrition: 'テスト')
+    new_calendar = Google::Apis::CalendarV3::Calendar.new(
+      summary: "WDD #{calendar.year}年",
+      time_zone: 'Asia/Tokyo',
+      descrition: 'テスト'
+    )
     authorize
     result = @service.insert_calendar(new_calendar)
     # GoogleカレンダーからのレスポンスでカレンダーIDを取得しDBへ保存
@@ -91,5 +115,9 @@ class CalendarClient
 
   def delete_calendar_id_from_cache
     Rails.cache.delete("#{@user.uid}calendar_id")
+  end
+
+  def format_time(hour, minit)
+    "#{hour.to_s.rjust(2, '0')}:#{minit.to_s.rjust(2, '0')}"
   end
 end

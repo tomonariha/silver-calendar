@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 class Api::AlignmentsController < ApplicationController
-  before_action :set_user, :set_calendar, :set_calendar_client
+  before_action :set_user, :set_calendar, :set_calendar_client, :set_working_times
 
   def create
     # resultにはGoogleカレンダーからのレスポンスが入る。
     # Googleカレンダーに新しく作ったカレンダーのIDを取得するための処理。
+    # 取得失敗時の処理も入れたい。
     @result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
-    @client.insert_events(calendar_days, @result.id)
+    @client.insert_events(calendar_days, @result.id, @working_times)
   end
 
   def destroy
@@ -21,7 +22,7 @@ class Api::AlignmentsController < ApplicationController
     @client.delete_calendar(@calendar)
     @result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
-    @client.insert_events(calendar_days, @result.id)
+    @client.insert_events(calendar_days, @result.id, @working_times)
   end
   # Googleカレンダーからの予定取得用
   # def get_event
@@ -41,5 +42,9 @@ class Api::AlignmentsController < ApplicationController
 
   def set_calendar_client
     @client = CalendarClient.new(current_user)
+  end
+
+  def set_working_times
+    @working_times = params
   end
 end
