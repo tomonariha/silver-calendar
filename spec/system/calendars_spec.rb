@@ -11,7 +11,7 @@ RSpec.describe 'Calendars', type: :system do
 
   before do
     sign_in user
-    visit root_path
+    visit calendar_path
   end
 
   scenario 'user insert new schedule on day of calendar', js: true do
