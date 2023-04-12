@@ -9,7 +9,7 @@ class Api::SettingsController < ApplicationController
   def show; end
 
   def create
-    @calendar = User.find(current_user.id).calendars.find_by(year: params[:calendar_year])
+    @calendar = User.find(current_user.id).calendars.find_or_create_by(year: params[:calendar_year])
     @setting = Setting.new(setting_params.merge(calendar_id: @calendar.id))
     @setting.save!
   end
