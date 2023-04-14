@@ -1,23 +1,13 @@
 <template>
   <p>連携機能</p>
-  <Time v-bind:dayOfSchedule="'午前：'"
-        v-bind:selectedStartHour="selectedMorningStartHour"
-        v-bind:selectedStartMinit="selectedMorningStartMinit"
-        v-bind:selectedEndHour="selectedMorningEndHour"
-        v-bind:selectedEndMinit="selectedMorningEndMinit">
+  <Time v-bind:dayOfSchedule="'morning'">
   </Time>
-  <Time v-bind:dayOfSchedule="'午後：'"
-        v-bind:selectedStartHour="selectedAfterNoonStartHour"
-        v-bind:selectedStartMinit="selectedAfterNoonStartMinit"
-        v-bind:selectedEndHour="selectedAfterNoonEndHour"
-        v-bind:selectedEndMinit="selectedAfterNoonEndMinit">
+  <Time v-bind:dayOfSchedule="'afterNoon'">
   </Time>
-  <Time v-bind:dayOfSchedule="'全日：'"
-        v-bind:selectedStartHour="selectedFullTimeStartHour"
-        v-bind:selectedStartMinit="selectedFullTimeStartMinit"
-        v-bind:selectedEndHour="selectedFullTimeEndHour"
-        v-bind:selectedEndMinit="selectedFullTimeEndMinit">
+  <Time v-bind:dayOfSchedule="'fullTime'">
   </Time>
+  <button v-on:click="fetchTimes">保存</button>
+  <button v-on:click="kakunin">確認</button>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -48,46 +38,76 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
 import { useToast } from "vue-toastification"
-
+/*
+function updateMorningStartHour(hour) {
+  console.log(hour)
+  selectedMorningStartHour.value = parseInt(hour)
+}*/
+function kakunin() {
+  console.log(morningStartHour.value)
+}
 const toast = useToast()
 const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
 // 時刻設定用
-const selectedMorningStartHour = ref(8)
-const selectedMorningStartMinit = ref(0)
-const selectedMorningEndHour = ref(12)
-const selectedMorningEndMinit = ref(0)
-const selectedAfterNoonStartHour = ref(13)
-const selectedAfterNoonStartMinit = ref(0)
-const selectedAfterNoonEndHour = ref(17)
-const selectedAfterNoonEndMinit = ref(0)
-const selectedFullTimeStartHour = ref(8)
-const selectedFullTimeStartMinit = ref(0)
-const selectedFullTimeEndHour = ref(17)
-const selectedFullTimeEndMinit = ref(0)
+const morningStartHour = ref(8)
+const morningStartMinit = ref(0)
+const morningEndHour = ref(12)
+const morningEndMinit = ref(0)
+const afterNoonStartHour = ref(13)
+const afterNoonStartMinit = ref(0)
+const afterNoonEndHour = ref(17)
+const afterNoonEndMinit = ref(0)
+const fullTimeStartHour = ref(8)
+const fullTimeStartMinit = ref(0)
+const fullTimeEndHour = ref(17)
+const fullTimeEndMinit = ref(0)
+
+/*{          morningStartHour,
+        morningStartMinit,
+        morningEndHour,
+        morningEndMinit,
+        afterNoonStartHour,
+        afterNoonStartMinit,
+        afterNoonStartHour,
+        afterNoonEndMinit,
+        fullTimeStartHour,
+        fullTimeStartMinit,
+        fullTimeEndHour,
+        fullTimeEndMinit}
+       )
+       */
+/*
+function changeMorningStartHour(hour) {
+  MorningStartHour.value = hour
+}*/
+
 function generateWorkingTimes() {
-  const workingTimes = {
-    morningStartHour: selectedMorningStartHour.value,
-    morningStartMinit: selectedMorningStartMinit.value,
-    morningEndHour: selectedMorningEndHour.value,
-    morningEndMinit: selectedMorningEndMinit.value,
-    afterNoonStartHour: selectedAfterNoonStartHour.value,
-    afterNoonStartMinit: selectedAfterNoonStartMinit.value,
-    afterNoonEndHour: selectedAfterNoonEndHour.value,
-    afterNoonEndMinit: selectedAfterNoonEndMinit.value,
-    fullTimeStartHour: selectedFullTimeStartHour.value,
-    fullTimeStartMinit: selectedFullTimeStartMinit.value,
-    fullTimeEndHour: selectedFullTimeEndHour.value,
-    fullTimeEndMinit: selectedFullTimeEndMinit.value,
-  }
+  const workingTimes = ref({
+    morningStartHour: morningStartHour.value,
+    morningStartMinit: morningStartMinit.value,
+    morningEndHour: morningEndHour.value,
+    morningEndMinit: morningEndMinit.value,
+    afterNoonStartHour: afterNoonStartHour.value,
+    afterNoonStartMinit: afterNoonStartMinit.value,
+    afterNoonEndHour: afterNoonEndHour.value,
+    afterNoonEndMinit: afterNoonEndMinit.value,
+    fullTimeStartHour: fullTimeStartHour.value,
+    fullTimeStartMinit: fullTimeStartMinit.value,
+    fullTimeEndHour: fullTimeEndHour.value,
+    fullTimeEndMinit: fullTimeEndMinit.value,
+  })
   return workingTimes
 }
+const timeParams = generateWorkingTimes()
+provide('timeParams', timeParams
+)
 // Google
 const authenticatedGoogle = ref(false)
 const notAuthenticatedGoogle = computed(() => {
@@ -159,6 +179,21 @@ function fetchUser() {
   })
   .then((json) => {
     authenticatedGoogle.value = json.authenticate
+    timeParams.value['morningStartHour'] = 9
+    /*
+    selectedMorningStartHour.value = json.morningStartHour
+    selectedMorningStartMinit.value = json.morningStartMinit
+    selectedMorningEndHour.value = json.morningEndHour
+    selectedMorningEndMinit.value = json.morningEndMinit
+    selectedAfterNoonStartHour.value = json.afterNoonStartHour
+    selectedAfterNoonStartMinit.value = json.afterNoonStartMinit
+    selectedAfterNoonEndHour.value = json.afterNoonEndHour
+    selectedAfterNoonEndMinit.value = json.afterNoonEndMinit
+    selectedFullTimeStartHour.value = json.fullTimeStartHour
+    selectedFullTimeStartMinit.value = json.fullTimeStartMinit
+    selectedFullTimeEndHour.value = json.fullTimeEndHour
+    selectedFullTimeEndMinit.value = json.fullTimeEndMinit
+    */
   })
   .catch((error) => {
     console.warn(error)
@@ -167,6 +202,30 @@ function fetchUser() {
 onMounted(() => {
   fetchUser()
 })
+function fetchTimes() {
+  const workingTimes = generateWorkingTimes()
+  console.log(workingTimes)
+  fetch('api/times', {
+  method: 'PUT',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(workingTimes),
+  credentials: 'same-origin'
+  })
+  .then((response) => {
+    return response.json()
+  })
+  .then((json) => {
+   
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
+
 // ページング
 const currentPage = ref(1)
 const pageLimit = ref(5)

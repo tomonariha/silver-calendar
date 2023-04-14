@@ -5,5 +5,6 @@ Rails.application.routes.draw do
       resource 'alignment', only: %i(create destroy update)
     end
     resource 'users', only: %i(show)
+    resource 'times', only: %i(update)
   end
 end
