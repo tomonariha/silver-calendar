@@ -19,6 +19,7 @@ class CalendarClient
 
   def insert_events(calendar_days, google_calendar_id, working_times)
     return if calendar_days.empty?
+
     time_zone = Time.zone.name
     time_offset = Time.zone.now.strftime('%z')
     morning_start_at = format_time(working_times['morningStartHour'], working_times['morningStartMinit'])

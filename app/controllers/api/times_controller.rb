@@ -3,7 +3,7 @@
 class Api::TimesController < ApplicationController
   def update
     user = current_user
-    user.update!(time_params.transform_keys! {|key| key.underscore })
+    user.update!(time_params.transform_keys!(&:underscore))
   end
 
   private
