@@ -7,7 +7,6 @@
   <Time v-bind:dayOfSchedule="'fullTime'">
   </Time>
   <button v-on:click="fetchTimes">保存</button>
-  <button v-on:click="kakunin">確認</button>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -75,6 +74,24 @@ const workingTimes = ref({
   fullTimeEndHour: fullTimeEndHour.value,
   fullTimeEndMinit: fullTimeEndMinit.value,
 })
+function fetchTimes() {
+  fetch('api/times', {
+  method: 'PUT',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(workingTimes.value),
+  credentials: 'same-origin'
+  })
+  .then(() => {
+     toast(`保存しました`)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
+}
 provide('workingTimes', workingTimes)
 // Google
 const authenticatedGoogle = ref(false)
@@ -146,7 +163,6 @@ function fetchUser() {
   })
   .then((json) => {
     authenticatedGoogle.value = json.authenticate
-    /*
     workingTimes.value['morningStartHour'] = json.morningStartHour
     workingTimes.value['morningStartMinit'] = json.morningStartMinit
     workingTimes.value['morningEndHour'] = json.morningEndHour
@@ -159,7 +175,6 @@ function fetchUser() {
     workingTimes.value['fullTimeStartMinit'] = json.fullTimeStartMinit
     workingTimes.value['fullTimeEndHour'] = json.fullTimeEndHour
     workingTimes.value['fullTimeEndMinit'] = json.fullTimeEndMinit
-    */
   })
   .catch((error) => {
     console.warn(error)
@@ -168,27 +183,6 @@ function fetchUser() {
 onMounted(() => {
   fetchUser()
 })
-function fetchTimes() {
-  fetch('api/times', {
-  method: 'PUT',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(workingTimes.value),
-  credentials: 'same-origin'
-  })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-   
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
-}
 // ページング
 const currentPage = ref(1)
 const pageLimit = ref(5)
