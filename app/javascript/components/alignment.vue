@@ -169,8 +169,6 @@ onMounted(() => {
   fetchUser()
 })
 function fetchTimes() {
-  const workingTimes = generateWorkingTimes()
-  console.log(workingTimes)
   fetch('api/times', {
   method: 'PUT',
   headers: {
@@ -178,7 +176,7 @@ function fetchTimes() {
     'X-CSRF-Token': token(),
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify(workingTimes),
+  body: JSON.stringify(workingTimes.value),
   credentials: 'same-origin'
   })
   .then((response) => {
