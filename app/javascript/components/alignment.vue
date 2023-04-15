@@ -42,14 +42,7 @@ import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
 import { useToast } from "vue-toastification"
-/*
-function updateMorningStartHour(hour) {
-  console.log(hour)
-  selectedMorningStartHour.value = parseInt(hour)
-}*/
-function kakunin() {
-  console.log(morningStartHour.value)
-}
+
 const toast = useToast()
 const props = defineProps({
   calendars: Array
@@ -68,46 +61,21 @@ const fullTimeStartHour = ref(8)
 const fullTimeStartMinit = ref(0)
 const fullTimeEndHour = ref(17)
 const fullTimeEndMinit = ref(0)
-
-/*{          morningStartHour,
-        morningStartMinit,
-        morningEndHour,
-        morningEndMinit,
-        afterNoonStartHour,
-        afterNoonStartMinit,
-        afterNoonStartHour,
-        afterNoonEndMinit,
-        fullTimeStartHour,
-        fullTimeStartMinit,
-        fullTimeEndHour,
-        fullTimeEndMinit}
-       )
-       */
-/*
-function changeMorningStartHour(hour) {
-  MorningStartHour.value = hour
-}*/
-
-function generateWorkingTimes() {
-  const workingTimes = ref({
-    morningStartHour: morningStartHour.value,
-    morningStartMinit: morningStartMinit.value,
-    morningEndHour: morningEndHour.value,
-    morningEndMinit: morningEndMinit.value,
-    afterNoonStartHour: afterNoonStartHour.value,
-    afterNoonStartMinit: afterNoonStartMinit.value,
-    afterNoonEndHour: afterNoonEndHour.value,
-    afterNoonEndMinit: afterNoonEndMinit.value,
-    fullTimeStartHour: fullTimeStartHour.value,
-    fullTimeStartMinit: fullTimeStartMinit.value,
-    fullTimeEndHour: fullTimeEndHour.value,
-    fullTimeEndMinit: fullTimeEndMinit.value,
-  })
-  return workingTimes
-}
-const timeParams = generateWorkingTimes()
-provide('timeParams', timeParams
-)
+const workingTimes = ref({
+  morningStartHour: morningStartHour.value,
+  morningStartMinit: morningStartMinit.value,
+  morningEndHour: morningEndHour.value,
+  morningEndMinit: morningEndMinit.value,
+  afterNoonStartHour: afterNoonStartHour.value,
+  afterNoonStartMinit: afterNoonStartMinit.value,
+  afterNoonEndHour: afterNoonEndHour.value,
+  afterNoonEndMinit: afterNoonEndMinit.value,
+  fullTimeStartHour: fullTimeStartHour.value,
+  fullTimeStartMinit: fullTimeStartMinit.value,
+  fullTimeEndHour: fullTimeEndHour.value,
+  fullTimeEndMinit: fullTimeEndMinit.value,
+})
+provide('workingTimes', workingTimes)
 // Google
 const authenticatedGoogle = ref(false)
 const notAuthenticatedGoogle = computed(() => {
@@ -137,7 +105,6 @@ const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
   isFetching.value = true
   cancelConfirm()
-  const workingTimes = generateWorkingTimes()
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
   headers: {
@@ -179,20 +146,19 @@ function fetchUser() {
   })
   .then((json) => {
     authenticatedGoogle.value = json.authenticate
-    timeParams.value['morningStartHour'] = 9
     /*
-    selectedMorningStartHour.value = json.morningStartHour
-    selectedMorningStartMinit.value = json.morningStartMinit
-    selectedMorningEndHour.value = json.morningEndHour
-    selectedMorningEndMinit.value = json.morningEndMinit
-    selectedAfterNoonStartHour.value = json.afterNoonStartHour
-    selectedAfterNoonStartMinit.value = json.afterNoonStartMinit
-    selectedAfterNoonEndHour.value = json.afterNoonEndHour
-    selectedAfterNoonEndMinit.value = json.afterNoonEndMinit
-    selectedFullTimeStartHour.value = json.fullTimeStartHour
-    selectedFullTimeStartMinit.value = json.fullTimeStartMinit
-    selectedFullTimeEndHour.value = json.fullTimeEndHour
-    selectedFullTimeEndMinit.value = json.fullTimeEndMinit
+    workingTimes.value['morningStartHour'] = json.morningStartHour
+    workingTimes.value['morningStartMinit'] = json.morningStartMinit
+    workingTimes.value['morningEndHour'] = json.morningEndHour
+    workingTimes.value['morningEndMinit'] = json.morningEndMinit
+    workingTimes.value['afterNoonStartHour'] = json.afterNoonStartHour
+    workingTimes.value['afterNoonStartMinit'] = json.afterNoonStartMinit
+    workingTimes.value['afterNoonEndHour'] = json.afterNoonEndHour
+    workingTimes.value['afterNoonEndMinit'] = json.afterNoonEndMinit
+    workingTimes.value['fullTimeStartHour'] = json.fullTimeStartHour
+    workingTimes.value['fullTimeStartMinit'] = json.fullTimeStartMinit
+    workingTimes.value['fullTimeEndHour'] = json.fullTimeEndHour
+    workingTimes.value['fullTimeEndMinit'] = json.fullTimeEndMinit
     */
   })
   .catch((error) => {
@@ -225,7 +191,6 @@ function fetchTimes() {
     console.warn(error)
   })
 }
-
 // ページング
 const currentPage = ref(1)
 const pageLimit = ref(5)

@@ -21,8 +21,4 @@ class User < ApplicationRecord
     Rails.cache.write(uid, auth.credentials.token)
     Rails.cache.write(uid + id.to_s, auth.credentials.refresh_token)
   end
-
-  def set_time_params(time_params)
-    time_params[]
-  end
 end
