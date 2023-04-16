@@ -61,18 +61,18 @@ const fullTimeStartMinit = ref(0)
 const fullTimeEndHour = ref(17)
 const fullTimeEndMinit = ref(0)
 const workingTimes = ref({
-  morningStartHour: morningStartHour.value,
-  morningStartMinit: morningStartMinit.value,
-  morningEndHour: morningEndHour.value,
-  morningEndMinit: morningEndMinit.value,
-  afterNoonStartHour: afterNoonStartHour.value,
-  afterNoonStartMinit: afterNoonStartMinit.value,
-  afterNoonEndHour: afterNoonEndHour.value,
-  afterNoonEndMinit: afterNoonEndMinit.value,
-  fullTimeStartHour: fullTimeStartHour.value,
-  fullTimeStartMinit: fullTimeStartMinit.value,
-  fullTimeEndHour: fullTimeEndHour.value,
-  fullTimeEndMinit: fullTimeEndMinit.value,
+  morningStartHour,
+  morningStartMinit,
+  morningEndHour,
+  morningEndMinit,
+  afterNoonStartHour,
+  afterNoonStartMinit,
+  afterNoonEndHour,
+  afterNoonEndMinit,
+  fullTimeStartHour,
+  fullTimeStartMinit,
+  fullTimeEndHour,
+  fullTimeEndMinit,
 })
 function fetchTimes() {
   fetch('api/times', {
