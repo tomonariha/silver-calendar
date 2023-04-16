@@ -163,18 +163,20 @@ function fetchUser() {
   })
   .then((json) => {
     authenticatedGoogle.value = json.authenticate
-    workingTimes.value['morningStartHour'] = json.morningStartHour
-    workingTimes.value['morningStartMinit'] = json.morningStartMinit
-    workingTimes.value['morningEndHour'] = json.morningEndHour
-    workingTimes.value['morningEndMinit'] = json.morningEndMinit
-    workingTimes.value['afterNoonStartHour'] = json.afterNoonStartHour
-    workingTimes.value['afterNoonStartMinit'] = json.afterNoonStartMinit
-    workingTimes.value['afterNoonEndHour'] = json.afterNoonEndHour
-    workingTimes.value['afterNoonEndMinit'] = json.afterNoonEndMinit
-    workingTimes.value['fullTimeStartHour'] = json.fullTimeStartHour
-    workingTimes.value['fullTimeStartMinit'] = json.fullTimeStartMinit
-    workingTimes.value['fullTimeEndHour'] = json.fullTimeEndHour
-    workingTimes.value['fullTimeEndMinit'] = json.fullTimeEndMinit
+    Object.assign(workingTimes.value, {
+      morningStartHour: json.morningStartHour,
+      morningStartMinit: json.morningStartMinit,
+      morningEndHour: json.morningEndHour,
+      morningEndMinit: json.morningEndMinit,
+      afterNoonStartHour: json.afterNoonStartHour,
+      afterNoonStartMinit: json.afterNoonStartMinit,
+      afterNoonEndHour: json.afterNoonEndHour,
+      afterNoonEndMinit: json.afterNoonEndMinit,
+      fullTimeStartHour: json.fullTimeStartHour,
+      fullTimeStartMinit: json.fullTimeStartMinit,
+      fullTimeEndHour: json.fullTimeEndHour,
+      fullTimeEndMinit: json.fullTimeEndMinit,
+    })
   })
   .catch((error) => {
     console.warn(error)
