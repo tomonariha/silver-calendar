@@ -1,24 +1,24 @@
 <template>
-  <span>{{props.dayOfSchedule}}</span>
-  <select v-model="selectedStartHour" v-on:change="updateStartHour">
+  <span>{{ schedules[props.dayOfSchedule] }}</span>
+  <select v-model="workingTimes[`${props.dayOfSchedule}StartHour`]" >
     <option v-for="hour in 24" :key="hour">
       {{ hour -1 }}
     </option>
   </select>
   <span>時</span>
-  <select v-model="selectedStartMinit" v-on:change="updateStartMinit">
+  <select v-model="workingTimes[`${props.dayOfSchedule}StartMinit`]">
     <option v-for="minit in minits" :key="minit">
       {{ minit }}
     </option>
   </select>
   <span>分〜</span>
-  <select v-model="selectedEndHour" v-on:change="updateEndHour">
+  <select v-model="workingTimes[`${props.dayOfSchedule}EndHour`]">
     <option v-for="hour in 24" :key="hour">
       {{ hour -1 }}
     </option>
   </select>
   <span>時</span>
-  <select v-model="selectedEndMinit" v-on:change="updateEndMinit">
+  <select v-model="workingTimes[`${props.dayOfSchedule}EndMinit`]">
     <option v-for="minit in minits" :key="minit">
       {{ minit }}
     </option>
@@ -28,36 +28,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject} from 'vue'
 const props = defineProps({
-  dayOfSchedule: String,
-  selectedStartHour: Number,
-  selectedStartMinit: Number,
-  selectedEndHour: Number,
-  selectedEndMinit: Number,
+  dayOfSchedule: String
 })
-onMounted(() => {
-  selectedStartHour.value = props.selectedStartHour,
-  selectedStartMinit.value = props.selectedStartMinit,
-  selectedEndHour.value = props.selectedEndHour,
-  selectedEndMinit.value = props.selectedEndMinit
-})
-const emit = defineEmits(['selectedStartHour', 'selectedStartMinit', 'selectedEndHour', 'selectedEndMinit'])
-const selectedStartHour = ref(0)
-const selectedStartMinit = ref(0)
-const selectedEndHour = ref(0)
-const selectedEndMinit = ref(0)
+const schedules = { 'morning':'午前: ', 'afterNoon':'午後: ', 'fullTime': '全日: ' }
+const workingTimes = inject('workingTimes')
 const minits = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
-function updateStartHour() {
-  emit('selectedStartHour', selectedStartHour)
-}
-function updateStartMinit() {
-  emit('selectedStartMinit', selectedStartMinit)
-}
-function updateEndHour() {
-  emit('selectedEndHour', selectedEndHour)
-}
-function updateEndMinit() {
-  emit('selectedEndMinit', selectedEndMinit)
-}
 </script>

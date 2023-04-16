@@ -1,23 +1,12 @@
 <template>
   <p>連携機能</p>
-  <Time v-bind:dayOfSchedule="'午前：'"
-        v-bind:selectedStartHour="selectedMorningStartHour"
-        v-bind:selectedStartMinit="selectedMorningStartMinit"
-        v-bind:selectedEndHour="selectedMorningEndHour"
-        v-bind:selectedEndMinit="selectedMorningEndMinit">
+  <Time v-bind:dayOfSchedule="'morning'">
   </Time>
-  <Time v-bind:dayOfSchedule="'午後：'"
-        v-bind:selectedStartHour="selectedAfterNoonStartHour"
-        v-bind:selectedStartMinit="selectedAfterNoonStartMinit"
-        v-bind:selectedEndHour="selectedAfterNoonEndHour"
-        v-bind:selectedEndMinit="selectedAfterNoonEndMinit">
+  <Time v-bind:dayOfSchedule="'afterNoon'">
   </Time>
-  <Time v-bind:dayOfSchedule="'全日：'"
-        v-bind:selectedStartHour="selectedFullTimeStartHour"
-        v-bind:selectedStartMinit="selectedFullTimeStartMinit"
-        v-bind:selectedEndHour="selectedFullTimeEndHour"
-        v-bind:selectedEndMinit="selectedFullTimeEndMinit">
+  <Time v-bind:dayOfSchedule="'fullTime'">
   </Time>
+  <button v-on:click="fetchTimes">保存</button>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -48,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
 import { useToast } from "vue-toastification"
@@ -59,35 +48,51 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
 // 時刻設定用
-const selectedMorningStartHour = ref(8)
-const selectedMorningStartMinit = ref(0)
-const selectedMorningEndHour = ref(12)
-const selectedMorningEndMinit = ref(0)
-const selectedAfterNoonStartHour = ref(13)
-const selectedAfterNoonStartMinit = ref(0)
-const selectedAfterNoonEndHour = ref(17)
-const selectedAfterNoonEndMinit = ref(0)
-const selectedFullTimeStartHour = ref(8)
-const selectedFullTimeStartMinit = ref(0)
-const selectedFullTimeEndHour = ref(17)
-const selectedFullTimeEndMinit = ref(0)
-function generateWorkingTimes() {
-  const workingTimes = {
-    morningStartHour: selectedMorningStartHour.value,
-    morningStartMinit: selectedMorningStartMinit.value,
-    morningEndHour: selectedMorningEndHour.value,
-    morningEndMinit: selectedMorningEndMinit.value,
-    afterNoonStartHour: selectedAfterNoonStartHour.value,
-    afterNoonStartMinit: selectedAfterNoonStartMinit.value,
-    afterNoonEndHour: selectedAfterNoonEndHour.value,
-    afterNoonEndMinit: selectedAfterNoonEndMinit.value,
-    fullTimeStartHour: selectedFullTimeStartHour.value,
-    fullTimeStartMinit: selectedFullTimeStartMinit.value,
-    fullTimeEndHour: selectedFullTimeEndHour.value,
-    fullTimeEndMinit: selectedFullTimeEndMinit.value,
-  }
-  return workingTimes
+const morningStartHour = ref(8)
+const morningStartMinit = ref(0)
+const morningEndHour = ref(12)
+const morningEndMinit = ref(0)
+const afterNoonStartHour = ref(13)
+const afterNoonStartMinit = ref(0)
+const afterNoonEndHour = ref(17)
+const afterNoonEndMinit = ref(0)
+const fullTimeStartHour = ref(8)
+const fullTimeStartMinit = ref(0)
+const fullTimeEndHour = ref(17)
+const fullTimeEndMinit = ref(0)
+const workingTimes = ref({
+  morningStartHour,
+  morningStartMinit,
+  morningEndHour,
+  morningEndMinit,
+  afterNoonStartHour,
+  afterNoonStartMinit,
+  afterNoonEndHour,
+  afterNoonEndMinit,
+  fullTimeStartHour,
+  fullTimeStartMinit,
+  fullTimeEndHour,
+  fullTimeEndMinit,
+})
+function fetchTimes() {
+  fetch('api/times', {
+  method: 'PUT',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Token': token(),
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(workingTimes.value),
+  credentials: 'same-origin'
+  })
+  .then(() => {
+     toast(`保存しました`)
+  })
+  .catch((error) => {
+    console.warn(error)
+  })
 }
+provide('workingTimes', workingTimes)
 // Google
 const authenticatedGoogle = ref(false)
 const notAuthenticatedGoogle = computed(() => {
@@ -117,7 +122,6 @@ const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
   isFetching.value = true
   cancelConfirm()
-  const workingTimes = generateWorkingTimes()
   fetch(`api/calendars/${calendar.year}/alignment`, {
   method: method,
   headers: {
@@ -159,6 +163,20 @@ function fetchUser() {
   })
   .then((json) => {
     authenticatedGoogle.value = json.authenticate
+    Object.assign(workingTimes.value, {
+      morningStartHour: json.morningStartHour,
+      morningStartMinit: json.morningStartMinit,
+      morningEndHour: json.morningEndHour,
+      morningEndMinit: json.morningEndMinit,
+      afterNoonStartHour: json.afterNoonStartHour,
+      afterNoonStartMinit: json.afterNoonStartMinit,
+      afterNoonEndHour: json.afterNoonEndHour,
+      afterNoonEndMinit: json.afterNoonEndMinit,
+      fullTimeStartHour: json.fullTimeStartHour,
+      fullTimeStartMinit: json.fullTimeStartMinit,
+      fullTimeEndHour: json.fullTimeEndHour,
+      fullTimeEndMinit: json.fullTimeEndMinit,
+    })
   })
   .catch((error) => {
     console.warn(error)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_08_045457) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_15_150710) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -65,6 +65,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_08_045457) do
     t.string "provider"
     t.string "uid"
     t.string "username"
+    t.integer "morning_start_hour", default: 8
+    t.integer "morning_start_minit", default: 0
+    t.integer "morning_end_hour", default: 12
+    t.integer "morning_end_minit", default: 0
+    t.integer "after_noon_start_hour", default: 13
+    t.integer "after_noon_start_minit", default: 0
+    t.integer "after_noon_end_hour", default: 17
+    t.integer "after_noon_end_minit", default: 0
+    t.integer "full_time_start_hour", default: 8
+    t.integer "full_time_start_minit", default: 0
+    t.integer "full_time_end_hour", default: 17
+    t.integer "full_time_end_minit", default: 0
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
