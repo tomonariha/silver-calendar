@@ -43,7 +43,7 @@ function deleteDate() {
     emit('delete', date)
     return
   }
-  fetch(`days/${date.year}/${date.month}/${date.date}`, {
+  fetch(`api/days/${date.year}/${date.month}/${date.date}`, {
   method: 'DELETE',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
@@ -65,7 +65,7 @@ function updateCalendar(schedule) {
     emit('update', dateState)
     return
   }
-  fetch(`days/${date.year}/${date.month}`, {
+  fetch(`api/days/${date.year}/${date.month}`, {
   method: 'POST',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
