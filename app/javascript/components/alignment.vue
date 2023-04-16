@@ -129,7 +129,7 @@ function fetchGoogleCalendar(calendar, method) {
     'X-CSRF-Token': token(),
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify(workingTimes),
+  body: JSON.stringify(workingTimes.value),
   credentials: 'same-origin'
   })
   .then((response) => {
