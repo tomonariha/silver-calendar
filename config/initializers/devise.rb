@@ -275,6 +275,7 @@ Devise.setup do |config|
     provider :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'],
     {
       scope: 'userinfo.email, userinfo.profile, https://www.googleapis.com/auth/calendar',
+      prompt: 'consent', access_type: 'offline'
     }
   end
   OmniAuth.config.allowed_request_methods = %i[get post]
