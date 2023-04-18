@@ -1,5 +1,6 @@
 footer.footer
+  - unless current_page?(root_path)
+    = link_to 'トップページ', root_path
   = link_to 'プライバシーポリシー', privacy_policy_path
   = link_to '利用規約', tos_path
   p ©︎ 2023 tomonari
-  
