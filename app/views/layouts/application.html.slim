@@ -12,4 +12,5 @@ html
   body
     = render 'header'
     = yield
-    = render 'footer'
+    - unless current_page?(calendar_path)
+      = render 'footer'
