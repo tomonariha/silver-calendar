@@ -310,7 +310,7 @@ function confirmDialog(setting){
 function cancelConfirm() {
   confirmedSetting.value = null
 }
-// ヴァリデーションメソッド
+// バリデーション
 const errors = ref([])
 function periodValidation(startDay, endDay) {
   errors.value = []
