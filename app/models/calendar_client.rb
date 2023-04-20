@@ -20,8 +20,6 @@ class CalendarClient
   def insert_events(calendar_days, google_calendar_id, working_times)
     return if calendar_days.empty?
 
-    time_zone = Time.zone.name
-    time_offset = Time.zone.now.strftime('%z')
     morning_start_at = format_time(working_times['morningStartHour'], working_times['morningStartMinit'])
     morning_end_at = format_time(working_times['morningEndHour'], working_times['morningEndMinit'])
     after_noon_start_at = format_time(working_times['afterNoonStartHour'], working_times['afterNoonStartMinit'])
@@ -34,23 +32,23 @@ class CalendarClient
       case day.schedule
       when 'full-time'
         schedule = '全日出勤'
-        start_at = DateTime.parse("#{date} #{full_time_start_at}#{time_offset}")
-        end_at = DateTime.parse("#{date} #{full_time_end_at}#{time_offset}")
+        start_at = Time.zone.parse("#{date} #{full_time_start_at}")
+        end_at = Time.zone.parse("#{date} #{full_time_end_at}")
       when 'morning'
         schedule = '午前出勤'
-        start_at = DateTime.parse("#{date} #{morning_start_at}#{time_offset}")
-        end_at = DateTime.parse("#{date} #{morning_end_at}#{time_offset}")
+        start_at = Time.zone.parse("#{date} #{morning_start_at}")
+        end_at = Time.zone.parse("#{date} #{morning_end_at}")
       when 'after-noon'
         schedule = '午後出勤'
-        start_at = DateTime.parse("#{date} #{after_noon_start_at}#{time_offset}")
-        end_at = DateTime.parse("#{date} #{after_noon_end_at}#{time_offset}")
+        start_at = Time.zone.parse("#{date} #{after_noon_start_at}")
+        end_at = Time.zone.parse("#{date} #{after_noon_end_at}")
       end
       event = Google::Apis::CalendarV3::Event.new(
         summary: schedule,
-        start: { date_time: start_at,
-                 time_zone: },
-        end: { date_time: end_at,
-               time_zone: },
+        start: Google::Apis::CalendarV3::EventDateTime.new(
+          date_time: start_at.strftime('%Y-%m-%dT%H:%M:%S%z')),
+        end: Google::Apis::CalendarV3::EventDateTime.new(
+          date_time: end_at.strftime('%Y-%m-%dT%H:%M:%S%z')),
         description: '今日の予定'
       )
       events << event
