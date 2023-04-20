@@ -69,20 +69,6 @@ class CalendarClient
     calendar.update!(google_calendar_id: nil)
   end
 
-  # Googleカレンダーからの予定取得用
-  # def get_event
-  # page_token = nil
-  # now = Time.now.iso8601
-  # authorize
-  # result = @service.list_events('primary')
-  # result = @service.list_events('primary',
-  #                             single_events: true,
-  #                            order_by: 'startTime',
-  #                           time_min: now,
-  #                          page_token: page_token,
-  #                         fields: 'items(id,summary,start),next_page_token')
-  # end
-
   def create_calendar(calendar)
     new_calendar = Google::Apis::CalendarV3::Calendar.new(
       summary: "WDD #{calendar.year}年",
