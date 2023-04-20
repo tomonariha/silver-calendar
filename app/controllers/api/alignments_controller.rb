@@ -24,11 +24,6 @@ class Api::AlignmentsController < ApplicationController
     calendar_days = @calendar.days
     @client.insert_events(calendar_days, @result.id, @working_times)
   end
-  # Googleカレンダーからの予定取得用
-  # def get_event
-  # @client.get_event
-  # redirect_to root_path, notice: '予定を取得しました'
-  # end
 
   private
 
