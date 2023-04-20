@@ -7,6 +7,12 @@
   <Time v-bind:dayOfSchedule="'fullTime'">
   </Time>
   <button v-on:click="fetchTimes">保存</button>
+  <p v-show="errors.length > 0">
+    <b>Please correct the following error(s):</b>
+    <ul>
+      <li v-for="error in errors" :key="error.id">{{ error }}</li>
+    </ul>
+  </p>
   <div id=overlay  v-show="confirmedCalendar">
     <div id=content>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -75,6 +81,7 @@ const workingTimes = ref({
   fullTimeEndMinit,
 })
 function fetchTimes() {
+  if (timesValidation()) { return }
   fetch('api/times', {
   method: 'PUT',
   headers: {
@@ -86,7 +93,7 @@ function fetchTimes() {
   credentials: 'same-origin'
   })
   .then(() => {
-     toast(`保存しました`)
+    toast(`保存しました`)
   })
   .catch((error) => {
     console.warn(error)
@@ -120,6 +127,7 @@ const toActionString = {
 }
 const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
+  if ((method != 'DELETE') && (timesValidation())) { return }
   isFetching.value = true
   cancelConfirm()
   fetch(`api/calendars/${calendar.year}/alignment`, {
@@ -136,7 +144,7 @@ function fetchGoogleCalendar(calendar, method) {
     return response.json()
   })
   .then((json) => {
-    if (method != 'delete') {
+    if (method != 'DELETE') {
       calendar["google_calendar_id"] = json.google_calendar_id
     }
     toast(`${toActionString[method]}しました`)
@@ -209,5 +217,22 @@ function confirmDialog(calendar){
 }
 function cancelConfirm() {
   confirmedCalendar.value = null
+}
+// バリデーション
+const errors = ref([])
+const schedules = ['morning', 'afterNoon', 'fullTime']
+function timesValidation() {
+  errors.value = []
+  for (let schedule of schedules) {
+    if(workingTimes.value[`${schedule}StartHour`] > workingTimes.value[`${schedule}EndHour`]) {
+      errors.value.push(`開始時が終了時以前になるようにしてください。ue`)
+      return true
+    }
+    if((workingTimes.value[`${schedule}StartHour`] === workingTimes.value[`${schedule}EndHour`]) && (workingTimes.value[`${schedule}StartMinit`] > workingTimes.value[`${schedule}EndMinit`])) {
+      errors.value.push(`開始時が終了時以前になるようにしてください。`)
+      return true
+    }
+  }
+  return false
 }
 </script>
