@@ -224,11 +224,9 @@ const schedules = ['morning', 'afterNoon', 'fullTime']
 function timesValidation() {
   errors.value = []
   for (let schedule of schedules) {
-    if(workingTimes.value[`${schedule}StartHour`] > workingTimes.value[`${schedule}EndHour`]) {
-      errors.value.push(`開始時が終了時以前になるようにしてください。ue`)
-      return true
-    }
-    if((workingTimes.value[`${schedule}StartHour`] === workingTimes.value[`${schedule}EndHour`]) && (workingTimes.value[`${schedule}StartMinit`] > workingTimes.value[`${schedule}EndMinit`])) {
+    if((workingTimes.value[`${schedule}StartHour`] > workingTimes.value[`${schedule}EndHour`])
+      || ((workingTimes.value[`${schedule}StartHour`] === workingTimes.value[`${schedule}EndHour`]) 
+      && (workingTimes.value[`${schedule}StartMinit`] > workingTimes.value[`${schedule}EndMinit`]))) {
       errors.value.push(`開始時が終了時以前になるようにしてください。`)
       return true
     }
