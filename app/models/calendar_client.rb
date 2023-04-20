@@ -74,7 +74,7 @@ class CalendarClient
     new_calendar = Google::Apis::CalendarV3::Calendar.new(
       summary: "WDD #{calendar.year}年",
       time_zone: 'Asia/Tokyo',
-      descrition: 'テスト'
+      descrition: 'made by WDD'
     )
     authorize
     result = @service.insert_calendar(new_calendar)
