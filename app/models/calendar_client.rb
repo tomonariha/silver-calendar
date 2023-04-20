@@ -46,10 +46,11 @@ class CalendarClient
       event = Google::Apis::CalendarV3::Event.new(
         summary: schedule,
         start: Google::Apis::CalendarV3::EventDateTime.new(
-          date_time: start_at.strftime('%Y-%m-%dT%H:%M:%S%z')),
+          date_time: start_at.strftime('%Y-%m-%dT%H:%M:%S%z')
+        ),
         end: Google::Apis::CalendarV3::EventDateTime.new(
-          date_time: end_at.strftime('%Y-%m-%dT%H:%M:%S%z')),
-        description: '今日の予定'
+          date_time: end_at.strftime('%Y-%m-%dT%H:%M:%S%z')
+        )
       )
       events << event
     end
