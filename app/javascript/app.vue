@@ -88,7 +88,7 @@
       </div>
     </div>
   </div>
-  <button v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
+  <button class="btn btn-primary" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Setting v-bind:year="calendarYear"
