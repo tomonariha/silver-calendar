@@ -101,9 +101,9 @@
         </Setting>
       </div>
     </div>
-  <button v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
-  <button v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
-  <button v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
+  <button type="button" class="btn btn-secondary" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  <button type="button" class="btn btn-secondary" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
+  <button type="button" class="btn btn-primary" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
