@@ -1,10 +1,34 @@
 <template>
   <Popper arrow>
-    <button class="calendar__day-body">{{ currentSchedule() }}</button>
+    <button class="calendar__day-button">
+      <span v-if="props.date.schedule==='full-time'">
+        <img :src="fullTime" alt="fullTime" width="24" height="24"/>
+      </span>
+      <span v-else-if="props.date.schedule==='morning'">
+        <img :src="morning" alt="morning" width="24" height="24"/>
+      </span>
+      <span v-else-if="props.date.schedule==='afternoon'">
+        <img :src="afterNoon" alt="afternoon" width="24" height="24"/>
+      </span>
+      <span v-else-if="props.date.schedule==='off'">
+        <img :src="off" alt="off" width="24" height="24"/>
+      </span>
+    </button>
     <template #content>
-      <div v-for="scheduleMark in scheduleMarks" :key="scheduleMark">
-        <button v-on:click="changeSchedule(scheduleMark)">{{ scheduleMark }}</button>
-      </div>
+      <button v-on:click="changeSchedule('full-time')">
+        <img :src="fullTime" alt="fullTime" width="24" height="24"/>
+      </button>
+      <button v-on:click="changeSchedule('morning')">
+        <img :src="morning" alt="morning" width="24" height="24"/>
+      </button>
+      <button v-on:click="changeSchedule('afternoon')">
+        <img :src="afterNoon" alt="afternoon" width="24" height="24"/>
+      </button>
+      <button v-on:click="changeSchedule('off')">
+        <img :src="off" alt="off" width="24" height="24"/>
+      </button>
+      <button class="calendar__day-button" v-on:click="changeSchedule('none')">無
+      </button>
     </template>
   </Popper>
 </template>
@@ -12,10 +36,12 @@
 <script setup>
 import { ref } from 'vue'
 import Popper from 'vue3-popper'
+import fullTime from '../../assets/images/full-time.svg?url'
+import morning from '../../assets/images/morning.svg?url'
+import afterNoon from '../../assets/images/afternoon.svg?url'
+import off from '../../assets/images/off.svg?url'
 
-const scheduleMarks = [ "●", "▲", "△", "□", "指定なし"]
-const markToSchedule = { "●":"full-time", "▲":"morning", "△":"afternoon", "□":"off" , "指定なし":"" }
-const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
+const schedules = [ "full-time", "morning", "afternoon", "off", "none"]
 const props = defineProps({ 
   date: Object,
   autoAdjusted: Boolean
@@ -25,17 +51,14 @@ function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta ? meta.getAttribute('content') : ''
 }
-function currentSchedule() {
-  return scheduleToMark[props.date.schedule]
-}
 const dayOfSchedule = ref("")
-function changeSchedule(scheduleMark) {
-  if (scheduleMark === "指定なし") {
+function changeSchedule(schedule) {
+  if (schedule === "none") {
     deleteDate()
   } else {
-    updateCalendar(scheduleMark)
+    updateCalendar(schedule)
   }
-  dayOfSchedule.value = markToSchedule[scheduleMark]
+  dayOfSchedule.value = schedule
 }
 function deleteDate() {
   const date = props.date
@@ -60,7 +83,7 @@ function deleteDate() {
 }
 function updateCalendar(schedule) {
   const date = props.date
-  const dateState = {year: date.year, month: date.month, date: date.date, schedule: markToSchedule[schedule]}
+  const dateState = {year: date.year, month: date.month, date: date.date, schedule: schedule}
   if (props.autoAdjusted) {
     emit('update', dateState)
     return
@@ -83,3 +106,10 @@ function updateCalendar(schedule) {
   })
 }
 </script>
+<style scoped>
+  .calendar__day-button{
+    width: 32px;
+    height: 32px;
+    padding: 1px;
+  }
+</style>
