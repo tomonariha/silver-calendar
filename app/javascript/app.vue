@@ -7,11 +7,13 @@
   <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
+  <button class="btn btn-danger btn-sm m-2" 
+    v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除
+  </button>
   <div v-show="autoAdjusted">
     <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
-  <button v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除</button>
   <div id=overlay v-show="showConfirm">
     <div id=content>
       <Confirm v-on:delete='deleteCalendar'
@@ -21,7 +23,7 @@
   </div>
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
-    <button v-on:click="toYearyCalendar">年間カレンダー</button>
+    <button class="btn btn-secondary m-2" v-on:click="toYearyCalendar">年間カレンダー</button>
     <table class="calendar">
       <thead class="calendar__header">
         <tr>
@@ -88,7 +90,7 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-primary m-3" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
+  <button class="btn btn-primary m-2" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Setting v-bind:year="calendarYear"
@@ -101,9 +103,9 @@
         </Setting>
       </div>
     </div>
-  <button type="button" class="btn btn-secondary m-3" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
-  <button type="button" class="btn btn-secondary m-3" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
-  <button type="button" class="btn btn-primary m-3" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
+  <button type="button" class="btn btn-success m-2" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  <button type="button" class="btn btn-secondary m-2" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
+  <button type="button" class="btn btn-primary m-2" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
