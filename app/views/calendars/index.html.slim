@@ -1,4 +1,4 @@
-h1 #{current_user.email}のカレンダー
-= button_to 'ログアウト', destroy_user_session_path, method: :delete
-= link_to "Change your password", edit_user_registration_path
+.d-flex
+  = button_to "Change your password", edit_user_registration_path, class: 'm-2'
+  = button_to 'ログアウト', destroy_user_session_path, method: :delete, class: 'm-2'
 #app(data-user-id="#{current_user.id}")
