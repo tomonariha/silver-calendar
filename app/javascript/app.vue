@@ -88,7 +88,7 @@
       </div>
     </div>
   </div>
-  <button class="btn btn-primary" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
+  <button class="btn btn-primary m-3" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Setting v-bind:year="calendarYear"
@@ -101,9 +101,9 @@
         </Setting>
       </div>
     </div>
-  <button type="button" class="btn btn-secondary" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
-  <button type="button" class="btn btn-secondary" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
-  <button type="button" class="btn btn-primary" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
+  <button type="button" class="btn btn-secondary m-3" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  <button type="button" class="btn btn-secondary m-3" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
+  <button type="button" class="btn btn-primary m-3" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
