@@ -61,33 +61,31 @@
   </div>
   <div v-else>
     <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
-    <div class="calendar-month" v-for="month in 12" :key="month">{{ month }}月 合計:{{ totalWorkingDays[month] }}
-      <div v-on:click="toMonthlyCalendar(month)"> 
-        <table class="calendar">
-          <thead class="calendar__header">
-            <tr>
-              <th class="calendar__header-day">日</th>
-              <th class="calendar__header-day">月</th>
-              <th class="calendar__header-day">火</th>
-              <th class="calendar__header-day">水</th>
-              <th class="calendar__header-day">木</th>
-              <th class="calendar__header-day">金</th>
-              <th class="calendar__header-day">土</th>
-            </tr>
-          </thead>
-          <tbody v-for="week in calendarWeeks(month)" :key="week.id">
-            <tr class="calendar__week">
-              <td class="calendar__day" 
-                v-for='date in week.value'
-                :key='date.date'
-                :id="'day' + date.date">
-                <div class="calendar__day-label">{{ date.date }}</div>
-                <div>{{ scheduleToMark[date.schedule] }}</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="calendar-month rounded" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+      <table class="calendar">
+        <thead class="calendar__header">
+          <tr>
+            <th class="calendar__header-day">日</th>
+            <th class="calendar__header-day">月</th>
+            <th class="calendar__header-day">火</th>
+            <th class="calendar__header-day">水</th>
+            <th class="calendar__header-day">木</th>
+            <th class="calendar__header-day">金</th>
+            <th class="calendar__header-day">土</th>
+          </tr>
+        </thead>
+        <tbody v-for="week in calendarWeeks(month)" :key="week.id">
+          <tr class="calendar__week">
+            <td class="calendar__day" 
+              v-for='date in week.value'
+              :key='date.date'
+              :id="'day' + date.date">
+              <div class="calendar__day-label">{{ date.date }}</div>
+              <div>{{ scheduleToMark[date.schedule] }}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <button class="btn btn-primary m-2" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
@@ -705,5 +703,8 @@ function updateAlignment(calendar) {
 }
 .calendar-month{
   display: inline-block;
+}
+.calendar-month:hover{
+  border: 3px solid #0099ff;
 }
 </style>
