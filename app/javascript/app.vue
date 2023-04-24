@@ -24,25 +24,25 @@
   <div v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
     <button class="btn btn-secondary m-2" v-on:click="toYearyCalendar">年間カレンダー</button>
-    <table class="calendar">
-      <thead class="calendar__header">
+    <table class="monthly-calendar">
+      <thead class="monthly-calendar__header">
         <tr>
-          <th class="calendar__header-day">日</th>
-          <th class="calendar__header-day">月</th>
-          <th class="calendar__header-day">火</th>
-          <th class="calendar__header-day">水</th>
-          <th class="calendar__header-day">木</th>
-          <th class="calendar__header-day">金</th>
-          <th class="calendar__header-day">土</th>
+          <th class="monthly-calendar__header-day">日</th>
+          <th class="monthly-calendar__header-day">月</th>
+          <th class="monthly-calendar__header-day">火</th>
+          <th class="monthly-calendar__header-day">水</th>
+          <th class="monthly-calendar__header-day">木</th>
+          <th class="monthly-calendar__header-day">金</th>
+          <th class="monthly-calendar__header-day">土</th>
         </tr>
       </thead>
       <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
-        <tr class="calendar__week">
-          <td class="calendar__day" 
+        <tr class="monthly-calendar__week">
+          <td class="monthly-calendar__day" 
             v-for='date in week.value'
             :key='date.date'
             :id="'day' + date.date">
-            <div class="calendar__day-label">{{ date.date }}</div>
+            <div class="monthly-calendar__day-label">{{ date.date }}</div>
             <div v-if="autoAdjusted && outsideWithinPeriod(date, reflectedSetting)">
               <button v-on:click="alertUnChangeable">{{ scheduleToMark[date.schedule] }}</button>
             </div>
@@ -61,27 +61,40 @@
   </div>
   <div v-else>
     <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
-    <div class="calendar-month rounded" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
-      <table class="calendar">
-        <thead class="calendar__header">
+    <div class="yeary-calendar-month rounded p-1" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+      <table class="yeary-calendar">
+        <thead class="yeary-calendar__header">
           <tr>
-            <th class="calendar__header-day">日</th>
-            <th class="calendar__header-day">月</th>
-            <th class="calendar__header-day">火</th>
-            <th class="calendar__header-day">水</th>
-            <th class="calendar__header-day">木</th>
-            <th class="calendar__header-day">金</th>
-            <th class="calendar__header-day">土</th>
+            <th class="yeary-calendar__header-day">日</th>
+            <th class="yeary-calendar__header-day">月</th>
+            <th class="yeary-calendar__header-day">火</th>
+            <th class="yeary-calendar__header-day">水</th>
+            <th class="yeary-calendar__header-day">木</th>
+            <th class="yeary-calendar__header-day">金</th>
+            <th class="yeary-calendar__header-day">土</th>
           </tr>
         </thead>
         <tbody v-for="week in calendarWeeks(month)" :key="week.id">
-          <tr class="calendar__week">
-            <td class="calendar__day" 
+          <tr class="yeary-calendar__week">
+            <td class="yeary-calendar__day" 
               v-for='date in week.value'
               :key='date.date'
               :id="'day' + date.date">
-              <div class="calendar__day-label">{{ date.date }}</div>
-              <div>{{ scheduleToMark[date.schedule] }}</div>
+              <div class="yeary-calendar__day-label">{{ date.date }}</div>
+              <div class="yeary-calendar__day-body">
+                <span v-if="date.schedule==='full-time'">
+                  <img :src="fullTime" alt="fullTime" width="12" height="12"/>
+                </span>
+                <span v-else-if="date.schedule==='morning'">
+                  <img :src="morning" alt="morning" width="12" height="12"/>
+                </span>
+                <span v-else-if="date.schedule==='afternoon'">
+                  <img :src="afterNoon" alt="afternoon" width="12" height="12"/>
+                </span>
+                <span v-else-if="date.schedule==='off'">
+                  <img :src="off" alt="off" width="12" height="12"/>
+                </span>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -123,6 +136,10 @@ import Setting from './components/setting.vue'
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
+import fullTime from '../assets/images/full-time.svg?url'
+import morning from '../assets/images/morning.svg?url'
+import afterNoon from '../assets/images/afternoon.svg?url'
+import off from '../assets/images/off.svg?url'
 
 const toast = useToast()
 const props = defineProps({ userId: String })
@@ -701,10 +718,16 @@ function updateAlignment(calendar) {
   padding: 1em;
   background:#fff;
 }
-.calendar-month{
+.yeary-calendar-month{
   display: inline-block;
+  height: 340px;
 }
-.calendar-month:hover{
+.yeary-calendar-month:hover{
   border: 3px solid #0099ff;
 }
+.yeary-calendar__day-body{
+  height: 20px;
+  border: 3px;
+}
+
 </style>
