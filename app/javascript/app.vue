@@ -79,18 +79,18 @@
               :key='date.date'
               :id="'day' + date.date">
               <div class="yeary-calendar__day-label">{{ date.date }}</div>
-              <div class="yeary-calendar__day-body">
+              <div v-show="date.date" class="yeary-calendar__day-body" v-bind:class="{'auto-adjusted': autoAdjusted && !outsideWithinPeriod(date, reflectedSetting)}">
                 <span v-if="date.schedule==='full-time'">
-                  <img :src="fullTime" alt="fullTime" width="12" height="12"/>
+                  <img :src="fullTime" alt="fullTime" width="16" height="16"/>
                 </span>
                 <span v-else-if="date.schedule==='morning'">
-                  <img :src="morning" alt="morning" width="12" height="12"/>
+                  <img :src="morning" alt="morning" width="16" height="16"/>
                 </span>
                 <span v-else-if="date.schedule==='afternoon'">
-                  <img :src="afterNoon" alt="afternoon" width="12" height="12"/>
+                  <img :src="afterNoon" alt="afternoon" width="16" height="16"/>
                 </span>
                 <span v-else-if="date.schedule==='off'">
-                  <img :src="off" alt="off" width="12" height="12"/>
+                  <img :src="off" alt="off" width="16" height="16"/>
                 </span>
               </div>
             </td>
@@ -725,9 +725,13 @@ function updateAlignment(calendar) {
 }
 .yeary-calendar__day-body{
   height: 20px;
-  border: 3px;
+  display: table-cell;
+  vertical-align: middle;
 }
 .disabled{
   pointer-events: none;
+}
+.auto-adjusted{
+  background-color: lightskyblue;
 }
 </style>

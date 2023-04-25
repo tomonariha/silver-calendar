@@ -1,6 +1,6 @@
 <template>
   <Popper arrow>
-    <button class="calendar__day-button">
+    <button class="calendar__day-button" v-bind:class="{'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')}">
       <span v-if="props.date.schedule==='full-time'">
         <img :src="fullTime" alt="fullTime" width="24" height="24"/>
       </span>
@@ -111,5 +111,8 @@ function updateCalendar(schedule) {
     width: 32px;
     height: 32px;
     padding: 1px;
+  }
+  .auto-adjusted{
+    background-color: lightskyblue;
   }
 </style>
