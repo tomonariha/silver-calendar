@@ -43,12 +43,10 @@
             :key='date.date'
             :id="'day' + date.date">
             <div class="monthly-calendar__day-label">{{ date.date }}</div>
-            <div v-if="autoAdjusted && outsideWithinPeriod(date, reflectedSetting)">
-              <button v-on:click="alertUnChangeable">{{ scheduleToMark[date.schedule] }}</button>
-            </div>
-            <div v-else>
+            <div>
               <Day v-bind:date="date"
                    v-bind:autoAdjusted="autoAdjusted"
+                   v-bind:class="{'disabled': autoAdjusted && outsideWithinPeriod(date, reflectedSetting)}"
                    v-if="date.date"
                    v-on:update="updateDay"
                    v-on:delete="deleteDay">
@@ -729,5 +727,7 @@ function updateAlignment(calendar) {
   height: 20px;
   border: 3px;
 }
-
+.disabled{
+  pointer-events: none;
+}
 </style>
