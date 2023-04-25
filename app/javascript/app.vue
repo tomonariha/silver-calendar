@@ -11,7 +11,11 @@
     v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除
   </button>
   <div v-show="autoAdjusted">
-    <div v-if="workingDaysRequired">{{ numberOfWorkingDays }} / {{ workingDaysRequired }}</div>
+    <div class="auto-adjust-info rounded col-3" v-if="workingDaysRequired"  v-bind:class="{'not-just': numberOfWorkingDays !== workingDaysRequired}">
+      <p>期間:{{showPeriod()}}</p>
+      <p class="current-working-days">
+        (現在の日数){{ numberOfWorkingDays }} / {{ workingDaysRequired }}(必要日数)</p>
+    </div>
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
   <div id=overlay v-show="showConfirm">
@@ -139,6 +143,12 @@ import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
 
+function showPeriod() {
+  if (reflectedSetting.value) {
+    const periodOfReflectedSetting = `${reflectedSetting.value.period_start_at} ~ ${reflectedSetting.value.period_end_at}` 
+    return periodOfReflectedSetting
+  }
+}
 const toast = useToast()
 const props = defineProps({ userId: String })
 onMounted(() => {
@@ -733,5 +743,11 @@ function updateAlignment(calendar) {
 }
 .auto-adjusted{
   background-color: lightskyblue;
+}
+.auto-adjust-info{
+  border: 3px solid lightgreen;
+}
+.not-just{
+  border:2px solid #ff6600
 }
 </style>
