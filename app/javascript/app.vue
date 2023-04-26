@@ -1,6 +1,6 @@
 <template>
-  <button class="calendar-nav__previous" v-show="monthly" @click='previousMonth'>前</button>
-  <button class="calendar-nav__next" v-show="monthly" @click='nextMonth'>後</button>
+  <button class="calendar-nav__previous" v-show="monthly" @click='previousMonth'>＜</button>
+  <button class="calendar-nav__next" v-show="monthly" @click='nextMonth'>＞</button>
   <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
     <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
   </select>
@@ -138,10 +138,10 @@ import Setting from './components/setting.vue'
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
-import fullTime from '../assets/images/full-time.svg?url'
-import morning from '../assets/images/morning.svg?url'
-import afterNoon from '../assets/images/afternoon.svg?url'
-import off from '../assets/images/off.svg?url'
+import fullTime from '../assets/images/full-time2.svg?url'
+import morning from '../assets/images/morning2.svg?url'
+import afterNoon from '../assets/images/afternoon2.svg?url'
+import off from '../assets/images/off2.svg?url'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -728,10 +728,10 @@ function updateAlignment(calendar) {
 }
 .yeary-calendar-month{
   display: inline-block;
-  height: 340px;
+  height: 350px;
 }
 .yeary-calendar-month:hover{
-  border: 3px solid #0099ff;
+  box-shadow: 0px 0px 0px 4px #0099ff;
 }
 .yeary-calendar__day-body{
   height: 20px;
