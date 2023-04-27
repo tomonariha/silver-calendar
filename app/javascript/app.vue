@@ -7,9 +7,6 @@
   <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
-  <button class="btn btn-danger btn-sm m-2" 
-    v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">この年のカレンダーを削除
-  </button>
   <div v-show="autoAdjusted">
     <div class="auto-adjust-info rounded col-3" v-if="workingDaysRequired"  v-bind:class="{'not-just': numberOfWorkingDays !== workingDaysRequired}">
       <p>期間:{{showPeriod()}}</p>
@@ -129,6 +126,9 @@
         </Alignment>
       </div>
     </div>
+  <span class="delete-calendar m-2" 
+    v-show="unAutoAdjusted" v-on:click="confirmDeleteCalendar">削除する
+  </span>
 </template>
 
 <script setup>
@@ -138,10 +138,10 @@ import Setting from './components/setting.vue'
 import Day from './components/day.vue' 
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
-import fullTime from '../assets/images/full-time2.svg?url'
-import morning from '../assets/images/morning2.svg?url'
-import afterNoon from '../assets/images/afternoon2.svg?url'
-import off from '../assets/images/off2.svg?url'
+import fullTime from '../assets/images/fulltime.svg?url'
+import morning from '../assets/images/morning.svg?url'
+import afterNoon from '../assets/images/afternoon.svg?url'
+import off from '../assets/images/off.svg?url'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -749,5 +749,9 @@ function updateAlignment(calendar) {
 }
 .not-just{
   border:2px solid #ff6600
+}
+.delete-calendar{
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

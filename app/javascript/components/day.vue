@@ -36,10 +36,10 @@
 <script setup>
 import { ref } from 'vue'
 import Popper from 'vue3-popper'
-import fullTime from '../../assets/images/full-time2.svg?url'
-import morning from '../../assets/images/morning2.svg?url'
-import afterNoon from '../../assets/images/afternoon2.svg?url'
-import off from '../../assets/images/off2.svg?url'
+import fullTime from '../../assets/images/fulltime.svg?url'
+import morning from '../../assets/images/morning.svg?url'
+import afterNoon from '../../assets/images/afternoon.svg?url'
+import off from '../../assets/images/off.svg?url'
 
 const schedules = [ "full-time", "morning", "afternoon", "off", "none"]
 const props = defineProps({ 
