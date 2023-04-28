@@ -106,7 +106,7 @@ function updateCalendar(schedule) {
   })
 }
 </script>
-<style scoped>
+<style>
   .calendar__day-button{
     width: 32px;
     height: 32px;

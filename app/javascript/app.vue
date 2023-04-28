@@ -16,7 +16,7 @@
     <div v-else>{{ numberOfWorkingDays }}</div>
   </div>
   <div id=overlay v-show="showConfirm">
-    <div id=content>
+    <div id=confirm>
       <Confirm v-on:delete='deleteCalendar'
                v-on:cancel='cancelConfirm'>
       </Confirm>
@@ -349,6 +349,7 @@ function alertUnChangeable() {
 function autoAdjust(setting) {
   const startDate = new Date(setting.period_start_at)
   const endDate = new Date(setting.period_end_at)
+  calendarMonth.value = (startDate.getMonth() + 1)
   let availableDays = new Array()
   let anyDays = new Array()
   workingDaysRequired.value = setting.total_working_days
@@ -408,7 +409,6 @@ function autoAdjust(setting) {
   }
   reflectedSetting.value = setting
   autoAdjusted.value = true
-  calendarMonth.value = (startDate.getMonth() + 1)
 }
 function equalDays(availableDate, date) {
   if (availableDate.getMonth() !== date.getMonth()) { return false }
@@ -724,6 +724,12 @@ function updateAlignment(calendar) {
   z-index:2;
   width:70%;
   padding: 1em;
+  background:#fff;
+}
+#confirm{
+  z-index:3;
+  width:60%;
+  padding: 2em;
   background:#fff;
 }
 .yeary-calendar-month{

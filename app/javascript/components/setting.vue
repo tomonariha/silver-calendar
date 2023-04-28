@@ -1,49 +1,57 @@
 <template>
-  <p>条件の設定</p>
+  <h2>条件の設定</h2>
   <div id=overlay  v-show="confirmedSetting">
-    <div id=content>
+    <div id=confirm>
       <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
                v-on:cancel="cancelConfirm">
       </Confirm>
     </div>
   </div>
-  <div v-for="setting in props.settings" :key="setting.id">
-    <span>{{ setting.period_start_at }} 〜 {{ setting.period_end_at }}</span>
-    <button v-on:click="editSetting(setting)">編集</button>
-    <button v-on:click="confirmDialog(setting)">削除</button>
-    <button v-on:click="reflectSetting(setting)">適用</button>
+  <div v-for="setting in props.settings" :key="setting.id" class="my-2">
+    <span class="m-2 fs-5 rounded" v-bind:class="{'selected': settingId === setting.id}">
+      {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+    </span>
+    <button v-on:click="editSetting(setting)" class="btn btn-dark ms-1">編集</button>
+    <button v-on:click="confirmDialog(setting)" class="btn btn-secondary ms-1">削除</button>
+    <button v-on:click="reflectSetting(setting)" class="btn btn-primary ms-1">適用</button>
   </div>
-  <div v-for="pageNumber in totalPages" :key="pageNumber">
+  <div class="my-2" v-for="pageNumber in totalPages" :key="pageNumber">
     <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
   </div>
-  <button v-on:click="resetSettingParams()">new</button>
+  <div class="new-setting rounded col-3 fs-5" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
   <br>
-  <select id="start_month_select" v-model="selectedStartMonth">
+  <span class="fs-6 m-1">開始日：</span>
+  <select id="start_month_select m-1" v-model="selectedStartMonth">
     <option v-for="month in 12" :key="month">
       {{ month }}
     </option>
   </select>
-  <select id="start_day_select" v-model="selectedStartDay">
+  <span class="fs-6 m-1">月</span>
+  <select id="start_day_select m-1" v-model="selectedStartDay">
     <option v-for="date in lastDate(selectedStartMonth)" :key="date">
       {{ date }}
     </option>
   </select>
+  <span class="fs-6 m-1">日</span>
   <br>
-  <select id="end_month_select" v-model="selectedEndMonth">
+  <span class="fs-6 m-1">終了日：</span>
+  <select id="end_month_select m-1" v-model="selectedEndMonth">
     <option v-for="month in 12" :key="month">
       {{ month }}
     </option>
   </select>
-  <select id="end_day_select" v-model="selectedEndDay">
+  <span class="fs-6 m-1">月</span>
+  <select id="end_day_select m-1" v-model="selectedEndDay">
     <option v-for="date in lastDate(selectedEndMonth)" :key="date">
       {{ date }}
     </option>
   </select>
+  <span class="fs-6 m-1">日</span>
   <div>この期間の勤務日数:
-    <input id="specified_total_days" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+    <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
   </div>
   <label for="check_specified_total_days">指定しない</label>
-  <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays" />
+  <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
   <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
   <button @click='previousWeekday'>前</button>
   <button @click='nextWeekday'>後</button>
@@ -349,3 +357,21 @@ function totalDaysValidation(startDay, endDay) {
   }
 }
 </script>
+
+<style>
+#confirm{
+  z-index:3;
+  width:60%;
+  padding: 2em;
+  background:#fff;
+}
+.new-setting{
+  padding: 2px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.selected{
+  padding: 4px;
+  box-shadow:0px 0px 0px 4px #0099ff;
+}
+</style>

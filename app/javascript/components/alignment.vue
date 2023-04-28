@@ -14,7 +14,7 @@
     </ul>
   </p>
   <div id=overlay  v-show="confirmedCalendar">
-    <div id=content>
+    <div id=confirm>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
                v-on:cancel="cancelConfirm">
       </Confirm>
@@ -234,3 +234,12 @@ function timesValidation() {
   return false
 }
 </script>
+
+<style>
+#confirm{
+  z-index:3;
+  width:60%;
+  padding: 2em;
+  background:#fff;
+}
+</style>
