@@ -13,7 +13,10 @@
       <p class="current-working-days">
         (現在の日数){{ numberOfWorkingDays }} / {{ workingDaysRequired }}(必要日数)</p>
     </div>
-    <div v-else>{{ numberOfWorkingDays }}</div>
+    <div class="auto-adjust-info rounded col-3" v-else>
+      <p>期間:{{showPeriod()}}</p>
+      <p class="current-working-days rounded"> (現在の日数){{ numberOfWorkingDays }}</p>
+    </div>
   </div>
   <div id=overlay v-show="showConfirm">
     <div id=confirm>
