@@ -1,5 +1,5 @@
 <template>
-  <h2>条件の設定</h2>
+  <h3>条件の設定</h3>
   <div id=overlay  v-show="confirmedSetting">
     <div id=confirm>
       <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
@@ -7,18 +7,18 @@
       </Confirm>
     </div>
   </div>
-  <div v-for="setting in props.settings" :key="setting.id" class="my-2">
-    <span class="m-2 fs-5 rounded" v-bind:class="{'selected': settingId === setting.id}">
+  <div v-for="setting in slicedSettings" :key="setting.id" class="my-2">
+    <span class="m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
       {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
     </span>
-    <button v-on:click="editSetting(setting)" class="btn btn-dark ms-1">編集</button>
-    <button v-on:click="confirmDialog(setting)" class="btn btn-secondary ms-1">削除</button>
-    <button v-on:click="reflectSetting(setting)" class="btn btn-primary ms-1">適用</button>
+    <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
+    <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
+    <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
   </div>
-  <div class="my-2" v-for="pageNumber in totalPages" :key="pageNumber">
+  <span class="my-2" v-for="pageNumber in totalPages" :key="pageNumber">
     <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
-  </div>
-  <div class="new-setting rounded col-3 fs-5" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
+  </span>
+  <div class="new-setting rounded col-3 fs-6" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
   <br>
   <span class="fs-6 m-1">開始日：</span>
   <select id="start_month_select m-1" v-model="selectedStartMonth">
@@ -71,9 +71,9 @@
   <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
   <label for="off">休み</label>
   <br/>
-  <button v-on:click="emit('close')">閉じる</button>
-  <button v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
-  <button v-else v-on:click="createSetting()">新規作成</button>
+  <button class="btn btn-dark m-2" v-on:click="emit('close')">閉じる</button>
+  <button class="btn btn-success m-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
+  <button class="btn btn-primary m-2" v-else v-on:click="createSetting()">新規作成</button>
   <p v-if="errors.value">
     <b>Please correct the following error(s):</b>
     <ul>
@@ -298,16 +298,16 @@ function nextWeekday() {
 }
 // ページング
 const currentPage = ref(1)
-const pageLimit = ref(5)
+const pageLimit = 5
 const totalPages = computed(() => {
-  return Math.ceil(props.settings.length / pageLimit.value)
+  return Math.ceil(props.settings.length / pageLimit)
 })
 function updatePageNumber(pageNumber) {
   currentPage.value = pageNumber
 }
 const slicedSettings = computed(() => {
-  let start = (currentPage.value -1) * pageLimit.value
-  let end = start + pageLimit.value
+  let start = (currentPage.value -1) * pageLimit
+  let end = start + pageLimit
   return props.settings.slice(start, end) 
 })
 // 確認ダイアログ
@@ -373,5 +373,9 @@ function totalDaysValidation(startDay, endDay) {
 .selected{
   padding: 4px;
   box-shadow:0px 0px 0px 4px #0099ff;
+}
+.delete-button{
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
