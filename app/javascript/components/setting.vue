@@ -318,7 +318,7 @@ const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.settings.length / pageLimit)
   const displayRange = 1
-  if(totalPages === 0) {
+  if(totalPages < 2) {
     return
   }
   pages.push(1)
@@ -346,6 +346,17 @@ function cancelConfirm() {
 }
 // バリデーション
 const errors = ref([])
+
+function formatMonth(month) {
+  return month.toString().padStart(2, '0')
+}
+function formatDay(day) {
+  return day.toString().padStart(2, '0')
+}
+function formatDate(date){
+  return (date.getFullYear() + "-" + formatMonth(date.getMonth()+1) + "-" + formatDay(date.getDate()))
+}
+
 function periodValidation(startDay, endDay) {
   errors.value = []
   let invalid = false
@@ -359,12 +370,14 @@ function periodValidation(startDay, endDay) {
   }
   for (let setting of props.settings) {
     if (setting.id === settingId.value) { continue }
-    const settingStartAt = new Date(setting.period_start_at)
-    const settingEndAt = new Date(setting.period_end_at)
-    if (((startDay <= settingStartAt) && (endDay >= settingStartAt)) ||
-      ((startDay <= settingEndAt) && (endDay >= settingEndAt)) ||
-      ((startDay > settingStartAt) && (endDay < settingEndAt))) {
-      errors.push("他の条件の期間と重ならないようにしてください。")
+    const settingStartAt = setting.period_start_at
+    const settingEndAt = setting.period_end_at
+    const formatedStartDay = formatDate(startDay)
+    const formatedEndDay = formatDate(endDay)
+    if ((formatedStartDay <= settingStartAt) && (formatedEndDay >= settingStartAt) ||
+      (formatedStartDay <= settingEndAt) && (formatedEndDay >= settingEndAt) ||
+      (formatedStartDay > settingStartAt) && (formatedEndDay < settingEndAt)) {
+      errors.value.push("他の条件の期間と重ならないようにしてください。")
       invalid = true
       break
     }

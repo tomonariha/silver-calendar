@@ -35,9 +35,9 @@
       <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
     </div>
   </div>
-  <div v-for="pageNumber in totalPages" :key="pageNumber">
-    <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
-  </div>
+  <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
+    <span v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
+  </span>
   <br>
   <button v-on:click="emit('close')">閉じる</button>
 </template>
@@ -195,21 +195,40 @@ onMounted(() => {
 })
 // ページング
 const currentPage = ref(1)
-const pageLimit = ref(5)
+const pageLimit = 5
 const haveNoCalendars = computed(() => {
   return !(props.calendars.length > 0)
 })
 const slicedCalendars = computed(() => {
-  let start = (currentPage.value -1) * pageLimit.value
-  let end = start + pageLimit.value
+  let start = (currentPage.value -1) * pageLimit
+  let end = start + pageLimit
   return props.calendars.slice(start, end)
-})
-const totalPages = computed(() => {
-  return Math.ceil(props.calendars.length / pageLimit.value)
 })
 function updatePageNumber(pageNumber) {
   currentPage.value = pageNumber
 }
+const displayPageNumbers = computed(() => {
+  let pages = []
+  const totalPages = Math.ceil(props.calendars.length / pageLimit)
+  const displayRange = 1
+  if(totalPages < 2) {
+    return
+  }
+  pages.push(1)
+  if ((currentPage.value - displayRange) > 2){
+    pages.push('...')
+  }
+  for (let i = 0; i <= displayRange * 2; i++) {
+    if ((currentPage.value - displayRange + i > 1) && (currentPage.value - displayRange + i < totalPages)){
+      pages.push(currentPage.value - displayRange + i)
+    }
+  }
+  if ((currentPage.value + displayRange) < (totalPages - 1)){
+    pages.push('...')
+  }
+  pages.push(totalPages)
+  return pages
+})
 // 確認ダイアログ
 const confirmedCalendar = ref(null)
 function confirmDialog(calendar){
