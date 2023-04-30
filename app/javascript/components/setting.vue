@@ -19,7 +19,11 @@
     </div>
   </div>
   <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
-    <span class="page-number m-1 fs-5" v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
+    <span class="page-number m-1 fs-5"
+          v-bind:class="{'current-page':currentPage === pageNumber}"
+          v-on:click="updatePageNumber(pageNumber)">
+      {{ pageNumber }}
+    </span>
   </span>
   <div class="new-setting rounded fs-6 my-2" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
   <br>
@@ -415,5 +419,8 @@ function totalDaysValidation(startDay, endDay) {
 .have-no-settings{
   display: inline-block;
   vertical-align: middle;
+}
+.current-page{
+  font-weight:bold;
 }
 </style>
