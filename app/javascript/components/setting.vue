@@ -7,18 +7,21 @@
       </Confirm>
     </div>
   </div>
-  <div v-for="setting in slicedSettings" :key="setting.id" class="my-2">
-    <span class="m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
-      {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
-    </span>
-    <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
-    <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
-    <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
+  <div class="settings-area ">
+    <span class="have-no-settings" v-show="props.settings.length === 0">まだ条件がありません</span>
+    <div v-for="setting in slicedSettings" :key="setting.id">
+      <span class="setting m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
+        {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+      </span>
+      <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
+      <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
+      <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
+    </div>
   </div>
-  <span class="my-2" v-for="pageNumber in totalPages" :key="pageNumber">
-    <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
+  <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
+    <span class="page-number m-1 fs-5" v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
   </span>
-  <div class="new-setting rounded col-3 fs-6" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
+  <div class="new-setting rounded fs-6 my-2" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
   <br>
   <span class="fs-6 m-1">開始日：</span>
   <select id="start_month_select m-1" v-model="selectedStartMonth">
@@ -299,9 +302,6 @@ function nextWeekday() {
 // ページング
 const currentPage = ref(1)
 const pageLimit = 5
-const totalPages = computed(() => {
-  return Math.ceil(props.settings.length / pageLimit)
-})
 function updatePageNumber(pageNumber) {
   currentPage.value = pageNumber
 }
@@ -309,6 +309,32 @@ const slicedSettings = computed(() => {
   let start = (currentPage.value -1) * pageLimit
   let end = start + pageLimit
   return props.settings.slice(start, end) 
+})
+const displayPageNumbers = computed(() => {
+  let pages = []
+  const totalPages = Math.ceil(props.settings.length / pageLimit)
+  const displayRange = 2
+  if(totalPages === 0) {
+    return
+  }
+  pages.push(1)
+  if ((currentPage.value - displayRange) > 2){
+    pages.push('...')
+  }
+  if ((currentPage.value - displayRange) > 1){
+    pages.push(currentPage.value - displayRange)
+  }
+  if ((currentPage.value > 1) && (currentPage.value < totalPages)){
+    pages.push(currentPage.value)
+  }
+  if ((currentPage.value + displayRange) < totalPages){
+    pages.push(currentPage.value + displayRange)
+  }
+  if ((currentPage.value + displayRange) < (totalPages - 1)){
+    pages.push('...')
+  }
+  pages.push(totalPages)
+  return pages
 })
 // 確認ダイアログ
 const confirmedSetting = ref(null)
@@ -367,6 +393,7 @@ function totalDaysValidation(startDay, endDay) {
 }
 .new-setting{
   padding: 2px;
+  width:200px;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -377,5 +404,20 @@ function totalDaysValidation(startDay, endDay) {
 .delete-button{
   text-decoration: underline;
   cursor: pointer;
+}
+.settings-area{
+  height: 200px;
+}
+.setting{
+  display: inline-block;
+  width: 220px;
+}
+.page-number{
+  text-decoration: underline;
+  cursor: pointer;
+}
+.have-no-settings{
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
