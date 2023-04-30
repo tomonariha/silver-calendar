@@ -325,9 +325,9 @@ const displayPageNumbers = computed(() => {
   if ((currentPage.value - displayRange) > 2){
     pages.push('...')
   }
-  for (let i = 0; i <= displayRange * 2; i++) {
-    if ((currentPage.value - displayRange + i > 1) && (currentPage.value - displayRange + i < totalPages)){
-      pages.push(currentPage.value - displayRange + i)
+  for (let i = -displayRange; i <= displayRange; i++) {
+    if ((currentPage.value  + i > 1) && (currentPage.value + i < totalPages)){
+      pages.push(currentPage.value + i)
     }
   }
   if ((currentPage.value + displayRange) < (totalPages - 1)){
@@ -346,7 +346,6 @@ function cancelConfirm() {
 }
 // バリデーション
 const errors = ref([])
-
 function formatMonth(month) {
   return month.toString().padStart(2, '0')
 }
@@ -356,7 +355,6 @@ function formatDay(day) {
 function formatDate(date){
   return (date.getFullYear() + "-" + formatMonth(date.getMonth()+1) + "-" + formatDay(date.getDate()))
 }
-
 function periodValidation(startDay, endDay) {
   errors.value = []
   let invalid = false

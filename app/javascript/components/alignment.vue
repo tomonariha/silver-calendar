@@ -218,9 +218,9 @@ const displayPageNumbers = computed(() => {
   if ((currentPage.value - displayRange) > 2){
     pages.push('...')
   }
-  for (let i = 0; i <= displayRange * 2; i++) {
-    if ((currentPage.value - displayRange + i > 1) && (currentPage.value - displayRange + i < totalPages)){
-      pages.push(currentPage.value - displayRange + i)
+  for (let i = -displayRange; i <= displayRange; i++) {
+    if ((currentPage.value + i > 1) && (currentPage.value + i < totalPages)){
+      pages.push(currentPage.value + i)
     }
   }
   if ((currentPage.value + displayRange) < (totalPages - 1)){
