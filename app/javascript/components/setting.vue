@@ -313,7 +313,7 @@ const slicedSettings = computed(() => {
 const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.settings.length / pageLimit)
-  const displayRange = 2
+  const displayRange = 1
   if(totalPages === 0) {
     return
   }
@@ -321,14 +321,10 @@ const displayPageNumbers = computed(() => {
   if ((currentPage.value - displayRange) > 2){
     pages.push('...')
   }
-  if ((currentPage.value - displayRange) > 1){
-    pages.push(currentPage.value - displayRange)
-  }
-  if ((currentPage.value > 1) && (currentPage.value < totalPages)){
-    pages.push(currentPage.value)
-  }
-  if ((currentPage.value + displayRange) < totalPages){
-    pages.push(currentPage.value + displayRange)
+  for (let i = 0; i <= displayRange * 2; i++) {
+    if ((currentPage.value - displayRange + i > 1) && (currentPage.value - displayRange + i < totalPages)){
+      pages.push(currentPage.value - displayRange + i)
+    }
   }
   if ((currentPage.value + displayRange) < (totalPages - 1)){
     pages.push('...')
