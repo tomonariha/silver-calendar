@@ -1,5 +1,5 @@
 <template>
-  <p>連携機能</p>
+  <h2>連携機能</h2>
   <p v-show="errors.length > 0">
     <b>Please correct the following error(s):</b>
     <ul>
@@ -14,41 +14,51 @@
     </div>
   </div>
   <div id=overlay v-show="isFetching">
-    <p id="content">反映しています。しばらくお待ちください</p>
+    <p id="fetching">反映しています。しばらくお待ちください</p>
   </div>
-  <p>Googleカレンダー</p>
-  <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
-  <p v-else>認証済</p>
-  <div v-if="haveNoCalendars">カレンダーがまだありません</div>
-  <div v-else>
-    <div v-for="calendar in slicedCalendars" :key="calendar.year">
-      <div class="calendar_year__body">{{ calendar.year }}</div>
-      <button v-bind:disabled="calendar.google_calendar_id || isFetching"
-              v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
+  <div class="google-calendar">
+    <h3>Googleカレンダー</h3>
+    <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
+    <p v-else>認証済</p>
+    <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+    <div v-else>
+      <div v-for="calendar in slicedCalendars" :key="calendar.year">
+        <div class="calendar_year__body">{{ calendar.year }}</div>
+        <button v-bind:disabled="calendar.google_calendar_id || isFetching"
+                v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
+        </button>
+        <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
+        </button>
+        <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                v-on:click="confirmDialog(calendar)">削除
+        </button>
+      </div>
+    </div>
+    <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
+      <span v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
+    </span>
+  </div>
+  <button class="btn btn-primary"
+          v-on:click="showTimeForm=true">時刻の設定
+  </button>
+  <div id=overlay  v-show="showTimeForm">
+    <div id=time-form>
+      <h3>時刻の設定</h3>
+      <Time v-bind:dayOfSchedule="'morning'">
+      </Time>
+      <Time v-bind:dayOfSchedule="'afterNoon'">
+      </Time>
+      <Time v-bind:dayOfSchedule="'fullTime'">
+      </Time>
+      <button class="btn btn-primary" 
+              v-on:click="fetchTimes">保存
       </button>
-      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
-              v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
-      </button>
-      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
-              v-on:click="confirmDialog(calendar)">削除
+      <button class="btn btn-dark"
+        v-on:click="showTimeForm=false">閉じる
       </button>
     </div>
   </div>
-  <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
-    <span v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
-  </span>
-  <br>
-  <p>時刻の設定</p>
-  <Time v-bind:dayOfSchedule="'morning'">
-  </Time>
-  <Time v-bind:dayOfSchedule="'afterNoon'">
-  </Time>
-  <Time v-bind:dayOfSchedule="'fullTime'">
-  </Time>
-  <button class="btn btn-primary" 
-          v-on:click="fetchTimes">保存
-  </button>
-  <br>
   <button class="btn btn-dark"
           v-on:click="emit('close')">閉じる
   </button>
@@ -65,6 +75,7 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
+const showTimeForm = ref(false)
 // 時刻設定用
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
@@ -267,10 +278,34 @@ function timesValidation() {
 </script>
 
 <style>
+#overlay{
+  z-index:1;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#time-form{
+  z-index:2;
+  width:60%;
+  padding: 1em;
+  background:#fff;
+}
 #confirm{
   z-index:3;
   width:60%;
   padding: 2em;
+  background:#fff;
+}
+#fetching{
+  z-index:4;
+  width:60%;
+  padding: 1em;
   background:#fff;
 }
 </style>
