@@ -25,68 +25,75 @@
       {{ pageNumber }}
     </span>
   </span>
-  <div class="new-setting rounded fs-6 my-2" v-bind:class="{'selected': !settingId}" v-on:click="resetSettingParams()">新しい条件を作る</div>
-  <br>
-  <span class="fs-6 m-1">開始日：</span>
-  <select id="start_month_select m-1" v-model="selectedStartMonth">
-    <option v-for="month in 12" :key="month">
-      {{ month }}
-    </option>
-  </select>
-  <span class="fs-6 m-1">月</span>
-  <select id="start_day_select m-1" v-model="selectedStartDay">
-    <option v-for="date in lastDate(selectedStartMonth)" :key="date">
-      {{ date }}
-    </option>
-  </select>
-  <span class="fs-6 m-1">日</span>
-  <br>
-  <span class="fs-6 m-1">終了日：</span>
-  <select id="end_month_select m-1" v-model="selectedEndMonth">
-    <option v-for="month in 12" :key="month">
-      {{ month }}
-    </option>
-  </select>
-  <span class="fs-6 m-1">月</span>
-  <select id="end_day_select m-1" v-model="selectedEndDay">
-    <option v-for="date in lastDate(selectedEndMonth)" :key="date">
-      {{ date }}
-    </option>
-  </select>
-  <span class="fs-6 m-1">日</span>
-  <div>この期間の勤務日数:
-    <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+  <div class="new-setting rounded fs-6 my-2"
+       v-bind:class="{'selected': !settingId}"
+       v-on:click="resetSettingParams()">新しい条件を作る
   </div>
-  <label for="check_specified_total_days">指定しない</label>
-  <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
-  <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
-  <button @click='previousWeekday'>前</button>
-  <button @click='nextWeekday'>後</button>
-  <br/>
-  <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
-  <label for="none">予定なし</label>
-  <br/>
-  <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
-  <label for="full-time">全日出勤</label>
-  <br/>
-  <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
-  <label for="morning">午前出勤</label>
-  <br/>
-  <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
-  <label for="afternoon">午後出勤</label>
-  <br/>
-  <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
-  <label for="off">休み</label>
-  <br/>
+  <div id=overlay v-show="showFormContent">
+    <div id=form>
+      <span class="fs-6 m-1">開始日：</span>
+      <select id="start_month_select m-1" v-model="selectedStartMonth">
+        <option v-for="month in 12" :key="month">
+          {{ month }}
+        </option>
+      </select>
+      <span class="fs-6 m-1">月</span>
+      <select id="start_day_select m-1" v-model="selectedStartDay">
+        <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+          {{ date }}
+        </option>
+      </select>
+      <span class="fs-6 m-1">日</span>
+      <br>
+      <span class="fs-6 m-1">終了日：</span>
+      <select id="end_month_select m-1" v-model="selectedEndMonth">
+        <option v-for="month in 12" :key="month">
+          {{ month }}
+        </option>
+      </select>
+      <span class="fs-6 m-1">月</span>
+      <select id="end_day_select m-1" v-model="selectedEndDay">
+        <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+          {{ date }}
+        </option>
+      </select>
+      <span class="fs-6 m-1">日</span>
+      <div>この期間の勤務日数:
+        <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+      </div>
+      <label for="check_specified_total_days">指定しない</label>
+      <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
+      <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
+      <button @click='previousWeekday'>前</button>
+      <button @click='nextWeekday'>後</button>
+      <br/>
+      <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
+      <label for="none">予定なし</label>
+      <br/>
+      <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
+      <label for="full-time">全日出勤</label>
+      <br/>
+      <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
+      <label for="morning">午前出勤</label>
+      <br/>
+      <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
+      <label for="afternoon">午後出勤</label>
+      <br/>
+      <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
+      <label for="off">休み</label>
+      <br/>
+      <button class="btn btn-success m-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
+      <button class="btn btn-primary m-2" v-else v-on:click="createSetting()">新規作成</button>
+      <button class="btn btn-dark m-2" v-on:click="showFormContent=false">閉じる</button>
+      <p v-if="errors.value">
+        <b>Please correct the following error(s):</b>
+        <ul>
+          <li v-for="error in errors.value" :key="error.id">{{ error }}</li>
+        </ul>
+      </p>
+    </div>
+  </div>
   <button class="btn btn-dark m-2" v-on:click="emit('close')">閉じる</button>
-  <button class="btn btn-success m-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
-  <button class="btn btn-primary m-2" v-else v-on:click="createSetting()">新規作成</button>
-  <p v-if="errors.value">
-    <b>Please correct the following error(s):</b>
-    <ul>
-      <li v-for="error in errors.value" :key="error.id">{{ error }}</li>
-    </ul>
-  </p>
 </template>
 
 <script setup>
@@ -101,6 +108,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
 const settingId = ref("")
+const showFormContent = ref(false)
 // CRUD
 function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
@@ -144,6 +152,7 @@ function createSetting() {
   .catch((error) => {
     console.warn(error)
   })
+  showFormContent.value = false
 }
 function updateSetting(settingId) {
   const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
@@ -179,7 +188,8 @@ function updateSetting(settingId) {
   })
   .catch((error) => {
     console.warn(error)
-  }) 
+  })
+  showFormContent.value = false
 }
 function editSetting(setting) {
   const startDay = new Date(setting.period_start_at)
@@ -203,6 +213,7 @@ function editSetting(setting) {
   } else {
     notSpecifiedTotalDays.value = true
   }
+  showFormContent.value = true
 }
 function deleteSetting(id) {
   cancelConfirm()
@@ -239,6 +250,7 @@ function resetSettingParams() {
   totalWorkingDays.value = 0
   weekdayNumber.value = 0
   notSpecifiedTotalDays.value = true
+  showFormContent.value = true
 }
 function reflectSetting(setting){
   emit('reflect', setting)
@@ -396,6 +408,24 @@ function totalDaysValidation(startDay, endDay) {
 </script>
 
 <style>
+#overlay{
+  z-index:1;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#form{
+  z-index:2;
+  width:60%;
+  padding: 1em;
+  background:#fff;
+}
 #confirm{
   z-index:3;
   width:60%;
