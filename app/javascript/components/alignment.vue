@@ -45,9 +45,13 @@
   </Time>
   <Time v-bind:dayOfSchedule="'fullTime'">
   </Time>
-  <button v-on:click="fetchTimes">保存</button>
+  <button class="btn btn-primary" 
+          v-on:click="fetchTimes">保存
+  </button>
   <br>
-  <button v-on:click="emit('close')">閉じる</button>
+  <button class="btn btn-dark"
+          v-on:click="emit('close')">閉じる
+  </button>
 </template>
 
 <script setup>
