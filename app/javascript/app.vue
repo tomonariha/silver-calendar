@@ -725,6 +725,7 @@ function updateAlignment(calendar) {
 }
 #content{
   z-index:2;
+  height:70%;
   width:70%;
   padding: 1em;
   background:#fff;

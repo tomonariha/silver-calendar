@@ -1,5 +1,5 @@
 <template>
-  <h2>連携機能</h2>
+  <h3>連携機能</h3>
   <p v-show="errors.length > 0">
     <b>Please correct the following error(s):</b>
     <ul>
@@ -17,51 +17,60 @@
     <p id="fetching">反映しています。しばらくお待ちください</p>
   </div>
   <div class="google-calendar">
-    <h3>Googleカレンダー</h3>
+    <h4>Googleカレンダー</h4>
     <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
     <p v-else>認証済</p>
-    <div v-if="haveNoCalendars">カレンダーがまだありません</div>
-    <div v-else>
-      <div v-for="calendar in slicedCalendars" :key="calendar.year">
-        <div class="calendar_year__body">{{ calendar.year }}</div>
-        <button v-bind:disabled="calendar.google_calendar_id || isFetching"
-                v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
-        </button>
-        <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
-                v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
-        </button>
-        <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
-                v-on:click="confirmDialog(calendar)">削除
-        </button>
+    <div class="exist-calendars-area my-2">
+      <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+      <div v-else>
+        <div class="my-1" v-for="calendar in slicedCalendars" :key="calendar.year">
+          <span class="calendar_year__body">{{ calendar.year }}年</span>
+          <button class="ms-1"
+                  v-bind:disabled="calendar.google_calendar_id || isFetching"
+                  v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
+          </button>
+          <button class="ms-1"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
+          </button>
+          <button class="ms-1"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-on:click="confirmDialog(calendar)">削除
+          </button>
+        </div>
       </div>
     </div>
     <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
-      <span v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</span>
+      <span class="page-number m-1 fs-5"
+            v-bind:class="{'current-page':currentPage === pageNumber}"
+            v-on:click="updatePageNumber(pageNumber)">
+        {{ pageNumber }}
+      </span>
     </span>
   </div>
-  <button class="btn btn-primary"
+  <button class="btn btn-primary m-2"
           v-on:click="showTimeForm=true">時刻の設定
+  </button>
+  <button class="btn btn-dark m-2"
+          v-on:click="emit('close')">閉じる
   </button>
   <div id=overlay  v-show="showTimeForm">
     <div id=time-form>
-      <h3>時刻の設定</h3>
+      <h4>時刻の設定</h4>
       <Time v-bind:dayOfSchedule="'morning'">
       </Time>
       <Time v-bind:dayOfSchedule="'afterNoon'">
       </Time>
       <Time v-bind:dayOfSchedule="'fullTime'">
       </Time>
-      <button class="btn btn-primary" 
+      <button class="btn btn-primary m-2" 
               v-on:click="fetchTimes">保存
       </button>
-      <button class="btn btn-dark"
+      <button class="btn btn-dark m-2"
         v-on:click="showTimeForm=false">閉じる
       </button>
     </div>
   </div>
-  <button class="btn btn-dark"
-          v-on:click="emit('close')">閉じる
-  </button>
 </template>
 
 <script setup>
@@ -307,5 +316,18 @@ function timesValidation() {
   width:60%;
   padding: 1em;
   background:#fff;
+}
+.google-calendar{
+  height: 300px;
+}
+.exist-calendars-area{
+  height: 180px;
+}
+.page-number{
+  text-decoration: underline;
+  cursor: pointer;
+}
+.current-page{
+  font-weight:bold;
 }
 </style>
