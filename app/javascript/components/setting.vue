@@ -29,12 +29,14 @@
       </span>
     </div>
     <button class="btn btn-primary my-2"
-            v-on:click="resetSettingParams()">新しい条件を作る
+            v-on:click="newSetting()">新しい条件を作る
     </button>
   </div>
   <div id=overlay v-show="showFormContent">
     <div id=form>
       <div class="form-area">
+        <h4 v-if="settingId">条件の編集</h4>
+        <h4 v-else>条件の作成</h4>
         <span class="fs-6 m-1">開始日：</span>
         <select id="start_month_select m-1" v-model="selectedStartMonth">
           <option v-for="month in 12" :key="month">
@@ -67,10 +69,11 @@
         </div>
         <label for="check_specified_total_days">指定しない</label>
         <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
-        <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
-        <button @click='previousWeekday'>前</button>
-        <button @click='nextWeekday'>後</button>
-        <br/>
+        <div class="weekday-nav">
+          <button @click='previousWeekday'>＜</button>
+          <button @click='nextWeekday'>＞</button>
+          <span>{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
+        </div>
         <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
         <label for="none">予定なし</label>
         <br/>
@@ -257,6 +260,9 @@ function resetSettingParams() {
   totalWorkingDays.value = 0
   weekdayNumber.value = 0
   notSpecifiedTotalDays.value = true
+}
+function newSetting() {
+  resetSettingParams()
   showFormContent.value = true
 }
 function reflectSetting(setting){

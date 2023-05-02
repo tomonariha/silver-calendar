@@ -50,7 +50,7 @@
       </span>
     </div>
     <button class="btn btn-primary my-2"
-          v-on:click="showTimeForm=true">時刻の設定
+            v-on:click="showTimeForm=true">時刻の設定
     </button>
   </div>
   <button class="btn btn-dark my-2"
