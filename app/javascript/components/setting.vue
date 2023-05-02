@@ -7,93 +7,99 @@
       </Confirm>
     </div>
   </div>
-  <div class="settings-area ">
-    <span class="have-no-settings" v-show="props.settings.length < 1">まだ条件がありません</span>
-    <div v-for="setting in slicedSettings" :key="setting.id">
-      <span class="setting m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
-        {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
-      </span>
-      <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
-      <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
-      <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
+  <div class="setting">
+    <div class="settings-area ">
+      <span class="have-no-settings" v-show="props.settings.length < 1">まだ条件がありません</span>
+      <div v-for="setting in slicedSettings" :key="setting.id">
+        <span class="setting-periods m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
+          {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+        </span>
+        <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
+        <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
+        <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
+      </div>
     </div>
-  </div>
-  <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
-    <span class="page-number m-1 fs-5"
-          v-bind:class="{'current-page':currentPage === pageNumber}"
-          v-on:click="updatePageNumber(pageNumber)">
-      {{ pageNumber }}
-    </span>
-  </span>
-  <div class="new-setting rounded fs-6 my-2"
-       v-bind:class="{'selected': !settingId}"
-       v-on:click="resetSettingParams()">新しい条件を作る
+    <div class="pagenation my-2">
+      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span class="page-number m-1 fs-5"
+              v-on:click="updatePageNumber(pageNumber, index)">
+          {{ pageNumber }}
+        </span>
+      </span>
+    </div>
+    <button class="btn btn-primary my-2"
+            v-on:click="resetSettingParams()">新しい条件を作る
+    </button>
   </div>
   <div id=overlay v-show="showFormContent">
     <div id=form>
-      <span class="fs-6 m-1">開始日：</span>
-      <select id="start_month_select m-1" v-model="selectedStartMonth">
-        <option v-for="month in 12" :key="month">
-          {{ month }}
-        </option>
-      </select>
-      <span class="fs-6 m-1">月</span>
-      <select id="start_day_select m-1" v-model="selectedStartDay">
-        <option v-for="date in lastDate(selectedStartMonth)" :key="date">
-          {{ date }}
-        </option>
-      </select>
-      <span class="fs-6 m-1">日</span>
-      <br>
-      <span class="fs-6 m-1">終了日：</span>
-      <select id="end_month_select m-1" v-model="selectedEndMonth">
-        <option v-for="month in 12" :key="month">
-          {{ month }}
-        </option>
-      </select>
-      <span class="fs-6 m-1">月</span>
-      <select id="end_day_select m-1" v-model="selectedEndDay">
-        <option v-for="date in lastDate(selectedEndMonth)" :key="date">
-          {{ date }}
-        </option>
-      </select>
-      <span class="fs-6 m-1">日</span>
-      <div>この期間の勤務日数:
-        <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+      <div class="form-area">
+        <span class="fs-6 m-1">開始日：</span>
+        <select id="start_month_select m-1" v-model="selectedStartMonth">
+          <option v-for="month in 12" :key="month">
+            {{ month }}
+          </option>
+        </select>
+        <span class="fs-6 m-1">月</span>
+        <select id="start_day_select m-1" v-model="selectedStartDay">
+          <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+            {{ date }}
+          </option>
+        </select>
+        <span class="fs-6 m-1">日</span>
+        <br>
+        <span class="fs-6 m-1">終了日：</span>
+        <select id="end_month_select m-1" v-model="selectedEndMonth">
+          <option v-for="month in 12" :key="month">
+            {{ month }}
+          </option>
+        </select>
+        <span class="fs-6 m-1">月</span>
+        <select id="end_day_select m-1" v-model="selectedEndDay">
+          <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+            {{ date }}
+          </option>
+        </select>
+        <span class="fs-6 m-1">日</span>
+        <div>この期間の勤務日数:
+          <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+        </div>
+        <label for="check_specified_total_days">指定しない</label>
+        <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
+        <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
+        <button @click='previousWeekday'>前</button>
+        <button @click='nextWeekday'>後</button>
+        <br/>
+        <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
+        <label for="none">予定なし</label>
+        <br/>
+        <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
+        <label for="full-time">全日出勤</label>
+        <br/>
+        <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
+        <label for="morning">午前出勤</label>
+        <br/>
+        <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
+        <label for="afternoon">午後出勤</label>
+        <br/>
+        <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
+        <label for="off">休み</label>
+        <br/>
+        <button class="btn btn-success my-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
+        <button class="btn btn-primary my-2" v-else v-on:click="createSetting()">新規作成</button>
       </div>
-      <label for="check_specified_total_days">指定しない</label>
-      <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
-      <div>{{ weekdayJp[weekdayNumber] }}曜日の予定</div>
-      <button @click='previousWeekday'>前</button>
-      <button @click='nextWeekday'>後</button>
-      <br/>
-      <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
-      <label for="none">予定なし</label>
-      <br/>
-      <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
-      <label for="full-time">全日出勤</label>
-      <br/>
-      <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
-      <label for="morning">午前出勤</label>
-      <br/>
-      <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
-      <label for="afternoon">午後出勤</label>
-      <br/>
-      <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
-      <label for="off">休み</label>
-      <br/>
-      <button class="btn btn-success m-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
-      <button class="btn btn-primary m-2" v-else v-on:click="createSetting()">新規作成</button>
-      <button class="btn btn-dark m-2" v-on:click="showFormContent=false">閉じる</button>
-      <p v-if="errors.value">
-        <b>Please correct the following error(s):</b>
-        <ul>
-          <li v-for="error in errors.value" :key="error.id">{{ error }}</li>
-        </ul>
-      </p>
+      <button class="btn btn-dark my-2" v-on:click="showFormContent=false">閉じる</button>
+      <div class="error-area">
+        <p v-if="errors.value">
+          <b>Please correct the following error(s):</b>
+          <ul>
+            <li v-for="error in errors.value" :key="error.id">{{ error }}</li>
+          </ul>
+        </p>
+      </div>
     </div>
   </div>
-  <button class="btn btn-dark m-2" v-on:click="emit('close')">閉じる</button>
+  <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
 </template>
 
 <script setup>
@@ -318,8 +324,17 @@ function nextWeekday() {
 // ページング
 const currentPage = ref(1)
 const pageLimit = 5
-function updatePageNumber(pageNumber) {
-  currentPage.value = pageNumber
+const displayRange = 1
+function updatePageNumber(pageNumber, index) {
+  if(typeof(pageNumber) === 'number'){
+    currentPage.value = pageNumber
+    return
+  }
+  if(index < currentPage.value){
+    currentPage.value -= displayRange
+    return
+  }
+  currentPage.value += displayRange
 }
 const slicedSettings = computed(() => {
   let start = (currentPage.value -1) * pageLimit
@@ -329,7 +344,6 @@ const slicedSettings = computed(() => {
 const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.settings.length / pageLimit)
-  const displayRange = 1
   if(totalPages < 2) {
     return
   }
@@ -432,16 +446,6 @@ function totalDaysValidation(startDay, endDay) {
   padding: 2em;
   background:#fff;
 }
-.new-setting{
-  padding: 2px;
-  width:200px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.selected{
-  padding: 4px;
-  box-shadow:0px 0px 0px 4px #0099ff;
-}
 .delete-button{
   text-decoration: underline;
   cursor: pointer;
@@ -449,7 +453,7 @@ function totalDaysValidation(startDay, endDay) {
 .settings-area{
   height: 200px;
 }
-.setting{
+.setting-periods{
   display: inline-block;
   width: 220px;
 }

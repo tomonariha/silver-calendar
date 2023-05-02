@@ -16,7 +16,7 @@
   <div id=overlay v-show="isFetching">
     <p id="fetching">反映しています。しばらくお待ちください</p>
   </div>
-  <div class="google-calendar">
+  <div class="google-calendar my-2">
     <h4>Googleカレンダー</h4>
     <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
     <p v-else>認証済</p>
@@ -40,33 +40,37 @@
         </div>
       </div>
     </div>
-    <span v-for="pageNumber in displayPageNumbers" :key="pageNumber">
-      <span class="page-number m-1 fs-5"
-            v-bind:class="{'current-page':currentPage === pageNumber}"
-            v-on:click="updatePageNumber(pageNumber)">
-        {{ pageNumber }}
+    <div class="pagenation">
+      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span class="page-number m-1 fs-5"
+              v-bind:class="{'current-page':currentPage === pageNumber}"
+              v-on:click="updatePageNumber(pageNumber, index)">
+          {{ pageNumber }}
+        </span>
       </span>
-    </span>
-  </div>
-  <button class="btn btn-primary m-2"
+    </div>
+    <button class="btn btn-primary my-2"
           v-on:click="showTimeForm=true">時刻の設定
-  </button>
-  <button class="btn btn-dark m-2"
+    </button>
+  </div>
+  <button class="btn btn-dark my-2"
           v-on:click="emit('close')">閉じる
   </button>
   <div id=overlay  v-show="showTimeForm">
-    <div id=time-form>
-      <h4>時刻の設定</h4>
-      <Time v-bind:dayOfSchedule="'morning'">
-      </Time>
-      <Time v-bind:dayOfSchedule="'afterNoon'">
-      </Time>
-      <Time v-bind:dayOfSchedule="'fullTime'">
-      </Time>
-      <button class="btn btn-primary m-2" 
-              v-on:click="fetchTimes">保存
-      </button>
-      <button class="btn btn-dark m-2"
+    <div id=time>
+      <div class="time-form">
+        <h4>時刻の設定</h4>
+        <Time v-bind:dayOfSchedule="'morning'">
+        </Time>
+        <Time v-bind:dayOfSchedule="'afterNoon'">
+        </Time>
+        <Time v-bind:dayOfSchedule="'fullTime'">
+        </Time>
+        <button class="btn btn-primary my-2" 
+                v-on:click="fetchTimes">保存
+        </button>
+      </div>
+      <button class="btn btn-dark my-2"
         v-on:click="showTimeForm=false">閉じる
       </button>
     </div>
@@ -228,6 +232,7 @@ onMounted(() => {
 // ページング
 const currentPage = ref(1)
 const pageLimit = 5
+const displayRange = 1
 const haveNoCalendars = computed(() => {
   return !(props.calendars.length > 0)
 })
@@ -236,13 +241,20 @@ const slicedCalendars = computed(() => {
   let end = start + pageLimit
   return props.calendars.slice(start, end)
 })
-function updatePageNumber(pageNumber) {
-  currentPage.value = pageNumber
+function updatePageNumber(pageNumber, index) {
+  if(typeof(pageNumber) === 'number'){
+    currentPage.value = pageNumber
+    return
+  }
+  if(index < currentPage.value){
+    currentPage.value -= displayRange
+    return
+  }
+  currentPage.value += displayRange
 }
 const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.calendars.length / pageLimit)
-  const displayRange = 1
   if(totalPages < 2) {
     return
   }
@@ -299,7 +311,7 @@ function timesValidation() {
   align-items: center;
   justify-content: center;
 }
-#time-form{
+#time{
   z-index:2;
   width:60%;
   padding: 1em;
