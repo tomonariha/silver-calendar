@@ -8,12 +8,12 @@
     <option v-for="month in 12" :key="month">{{ month }}</option>
   </select>
   <div v-show="autoAdjusted">
-    <div class="auto-adjust-info rounded col-3" v-if="workingDaysRequired"  v-bind:class="{'not-just': numberOfWorkingDays !== workingDaysRequired}">
+    <div class="auto-adjust-info rounded" v-if="workingDaysRequired"  v-bind:class="{'not-just': numberOfWorkingDays !== workingDaysRequired}">
       <p>期間:{{showPeriod()}}</p>
       <p class="current-working-days">
         (現在の日数){{ numberOfWorkingDays }} / {{ workingDaysRequired }}(必要日数)</p>
     </div>
-    <div class="auto-adjust-info rounded col-3" v-else>
+    <div class="auto-adjust-info rounded" v-else>
       <p>期間:{{showPeriod()}}</p>
       <p class="current-working-days rounded"> (現在の日数){{ numberOfWorkingDays }}</p>
     </div>
@@ -755,10 +755,11 @@ function updateAlignment(calendar) {
   background-color: lightskyblue;
 }
 .auto-adjust-info{
-  border: 3px solid lightgreen;
+  width: 240px;
+  box-shadow: 0px 0px 0px 4px lightgreen;
 }
 .not-just{
-  border:2px solid #ff6600
+  box-shadow: 0px 0px 0px 4px #ff6600;
 }
 .delete-calendar{
   text-decoration: underline;
