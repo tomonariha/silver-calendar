@@ -22,6 +22,7 @@
     <div class="pagenation my-2">
       <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
         <span class="page-number m-1 fs-5"
+              v-bind:class="{'current-page':currentPage === pageNumber}"
               v-on:click="updatePageNumber(pageNumber, index)">
           {{ pageNumber }}
         </span>
