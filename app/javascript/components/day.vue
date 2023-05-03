@@ -27,7 +27,8 @@
       <button v-on:click="changeSchedule('off')">
         <img :src="off" alt="off" width="24" height="24"/>
       </button>
-      <button class="calendar__day-button" v-on:click="changeSchedule('none')">無
+      <button v-on:click="changeSchedule('none')">
+        <img :src="none" alt="none" width="24" height="24"/>
       </button>
     </template>
   </Popper>
@@ -40,6 +41,7 @@ import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
 import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
+import none from '../../assets/images/none.svg?url'
 
 const schedules = [ "full-time", "morning", "afternoon", "off", "none"]
 const props = defineProps({ 
