@@ -1,11 +1,5 @@
 <template>
   <h3>連携機能</h3>
-  <p v-show="errors.length > 0">
-    <b>Please correct the following error(s):</b>
-    <ul>
-      <li v-for="error in errors" :key="error.id">{{ error }}</li>
-    </ul>
-  </p>
   <div id=overlay v-show="confirmedCalendar">
     <div id=confirm>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -70,6 +64,12 @@
                 v-on:click="fetchTimes">保存
         </button>
       </div>
+      <p v-show="errors.length > 0">
+        <b>Please correct the following error(s):</b>
+          <ul>
+            <li v-for="error in errors" :key="error.id">{{ error }}</li>
+          </ul>
+      </p>
       <button class="btn btn-dark my-2"
         v-on:click="showTimeForm=false">閉じる
       </button>
