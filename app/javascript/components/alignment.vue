@@ -247,10 +247,10 @@ function updatePageNumber(pageNumber, index) {
     return
   }
   if(index < currentPage.value){
-    currentPage.value -= displayRange
+    currentPage.value -= (displayRange + 1)
     return
   }
-  currentPage.value += displayRange
+  currentPage.value += (displayRange + 1)
 }
 const displayPageNumbers = computed(() => {
   let pages = []

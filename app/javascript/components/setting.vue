@@ -343,10 +343,10 @@ function updatePageNumber(pageNumber, index) {
     return
   }
   if(index < currentPage.value){
-    currentPage.value -= displayRange
+    currentPage.value -= (displayRange + 1)
     return
   }
-  currentPage.value += displayRange
+  currentPage.value += (displayRange + 1)
 }
 const slicedSettings = computed(() => {
   let start = (currentPage.value -1) * pageLimit
