@@ -6,7 +6,7 @@
       <li v-for="error in errors" :key="error.id">{{ error }}</li>
     </ul>
   </p>
-  <div id=overlay  v-show="confirmedCalendar">
+  <div id=overlay v-show="confirmedCalendar">
     <div id=confirm>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
                v-on:cancel="cancelConfirm">

@@ -35,9 +35,9 @@
   <div id=overlay v-show="showFormContent">
     <div id=form>
       <div class="form-area">
-        <h4 v-if="settingId">条件の編集</h4>
-        <h4 v-else>条件の作成</h4>
-        <span class="fs-6 m-1">開始日：</span>
+        <h4 class="my-2" v-if="settingId">条件の編集</h4>
+        <h4 class="my-2" v-else>条件の作成</h4>
+        <span class="fs-6 m-2">開始日：</span>
         <select id="start_month_select m-1" v-model="selectedStartMonth">
           <option v-for="month in 12" :key="month">
             {{ month }}
@@ -51,7 +51,7 @@
         </select>
         <span class="fs-6 m-1">日</span>
         <br>
-        <span class="fs-6 m-1">終了日：</span>
+        <span class="fs-6 m-2">終了日：</span>
         <select id="end_month_select m-1" v-model="selectedEndMonth">
           <option v-for="month in 12" :key="month">
             {{ month }}
@@ -64,43 +64,48 @@
           </option>
         </select>
         <span class="fs-6 m-1">日</span>
-        <div class="my-2">この期間の勤務日数:
-          <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+        <div class="my-2">
+          <span class="me-2">この期間の勤務日数:</span>
+          <label for="check_specified_total_days">指定しない</label>
+          <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays"/>
+          <br>
+          <input id="specified_total_days" class="m-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
+          <span class="my-2" v-show="specifiedTotalDays">日</span>
         </div>
-        <label for="check_specified_total_days">指定しない</label>
-        <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays" />
-        <div class="weekday-nav">
-          <span>{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
-          <button @click='previousWeekday'>＜</button>
-          <button @click='nextWeekday'>＞</button>
+        <div class="weekday-nav my-2">
+          <span class="my-2 me-2">{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
+          <button class="me-1" v-on:click='previousWeekday'>＜</button>
+          <button class="me-1" v-on:click='nextWeekday'>＞</button>
         </div>
-        <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
-        <label for="none">予定なし</label>
-        <br/>
-        <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
-        <label for="full-time">全日出勤</label>
-        <br/>
-        <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
-        <label for="morning">午前出勤</label>
-        <br/>
-        <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
-        <label for="afternoon">午後出勤</label>
-        <br/>
-        <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
-        <label for="off">休み</label>
-        <br/>
+        <div class="m-2">
+          <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
+          <label for="none">予定なし</label>
+          <br/>
+          <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
+          <label for="full-time">全日出勤</label>
+          <br/>
+          <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
+          <label for="morning">午前出勤</label>
+          <br/>
+          <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
+          <label for="afternoon">午後出勤</label>
+          <br/>
+          <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
+          <label for="off">休み</label>
+          <br/>
+        </div>
         <button class="btn btn-success my-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
         <button class="btn btn-primary my-2" v-else v-on:click="createSetting()">新規作成</button>
       </div>
-      <button class="btn btn-dark my-2" v-on:click="showFormContent=false">閉じる</button>
-      <div class="error-area">
-        <p v-if="errors.value">
+      <div class="error-area" v-if="errors.length > 0">
+        <p>
           <b>Please correct the following error(s):</b>
           <ul>
-            <li v-for="error in errors.value" :key="error.id">{{ error }}</li>
+            <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
         </p>
       </div>
+      <button class="btn btn-dark my-2" v-on:click="showFormContent=false">閉じる</button>
     </div>
   </div>
   <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
@@ -457,9 +462,6 @@ function totalDaysValidation(startDay, endDay) {
   text-decoration: underline;
   cursor: pointer;
 }
-.settings-area{
-  height: 200px;
-}
 .setting-periods{
   display: inline-block;
   width: 220px;
@@ -474,5 +476,8 @@ function totalDaysValidation(startDay, endDay) {
 }
 .current-page{
   font-weight:bold;
+}
+#specified_total_days{
+  width: 60px;
 }
 </style>

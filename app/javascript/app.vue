@@ -1,13 +1,17 @@
 <template>
-  <button class="calendar-nav__previous" v-show="monthly" @click='previousMonth'>＜</button>
-  <button class="calendar-nav__next" v-show="monthly" @click='nextMonth'>＞</button>
-  <select id='specifiy_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
-    <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
-  </select>
-  <select id='specifiy_calendar_month' v-show="monthly" v-model.number="calendarMonth">
-    <option v-for="month in 12" :key="month">{{ month }}</option>
-  </select>
-  <div v-show="autoAdjusted">
+  <div class="my-2">
+    <select id='selected_calendar_year' v-model.number="calendarYear" @change="cancelAutoAdjust">
+      <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
+    </select>
+    <span class="mx-1">年</span>
+    <select id='selected_calendar_month' v-show="monthly" v-model.number="calendarMonth">
+      <option v-for="month in 12" :key="month">{{ month }}</option>
+    </select>
+    <span class="mx-1" v-show="monthly">月</span>
+    <button class="calendar-nav__previous me-1" v-show="monthly" @click='previousMonth'>＜</button>
+    <button class="calendar-nav__next me-1" v-show="monthly" @click='nextMonth'>＞</button>
+  </div>
+  <div class="my-2" v-show="autoAdjusted">
     <div class="auto-adjust-info rounded" v-if="workingDaysRequired"  v-bind:class="{'not-just': numberOfWorkingDays !== workingDaysRequired}">
       <p>期間:{{showPeriod()}}</p>
       <p class="current-working-days">
@@ -25,9 +29,9 @@
       </Confirm>
     </div>
   </div>
-  <div v-if="monthly">
+  <div class="my-2" v-if="monthly">
     <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
-    <button class="btn btn-secondary m-2" v-on:click="toYearyCalendar">年間カレンダー</button>
+    <button class="btn btn-secondary my-2" v-on:click="toYearyCalendar">年間カレンダー</button>
     <table class="monthly-calendar">
       <thead class="monthly-calendar__header">
         <tr>
@@ -63,7 +67,7 @@
   </div>
   <div v-else>
     <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
-    <div class="yeary-calendar-month rounded p-1" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+    <div class="yeary-calendar-month rounded p-1 me-2 my-1" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
       <table class="yeary-calendar">
         <thead class="yeary-calendar__header">
           <tr>
@@ -103,7 +107,7 @@
       </table>
     </div>
   </div>
-  <button class="btn btn-primary m-2" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
+  <button class="btn btn-primary my-2 me-2" v-show="unAutoAdjusted" v-on:click="openModal">条件の入力</button>
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Setting v-bind:year="calendarYear"
@@ -116,9 +120,9 @@
         </Setting>
       </div>
     </div>
-  <button type="button" class="btn btn-success m-2" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
-  <button type="button" class="btn btn-secondary m-2" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
-  <button type="button" class="btn btn-primary m-2" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
+  <button type="button" class="btn btn-success my-2 me-2" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  <button type="button" class="btn btn-secondary my-2 me-2" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
+  <button type="button" class="btn btn-primary my-2" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlignmentContent">
       <div id=content>
         <Alignment v-bind:calendars="calendarsIndex"
@@ -725,7 +729,6 @@ function updateAlignment(calendar) {
 }
 #content{
   z-index:2;
-  height:70%;
   width:70%;
   padding: 1em;
   background:#fff;
