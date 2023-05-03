@@ -25,15 +25,15 @@
       <div v-else>
         <div class="my-1" v-for="calendar in slicedCalendars" :key="calendar.year">
           <span class="calendar_year__body">{{ calendar.year }}年</span>
-          <button class="ms-1"
+          <button class="btn btn-dark ms-1"
                   v-bind:disabled="calendar.google_calendar_id || isFetching"
                   v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
           </button>
-          <button class="ms-1"
+          <button class="btn btn-dark ms-1"
                   v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
                   v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
           </button>
-          <button class="ms-1"
+          <button class="btn btn-dark ms-1"
                   v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
                   v-on:click="confirmDialog(calendar)">削除
           </button>

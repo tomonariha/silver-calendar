@@ -64,15 +64,15 @@
           </option>
         </select>
         <span class="fs-6 m-1">日</span>
-        <div>この期間の勤務日数:
+        <div class="my-2">この期間の勤務日数:
           <input id="specified_total_days my-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
         </div>
         <label for="check_specified_total_days">指定しない</label>
-        <input type="checkbox" id="check_specified_total_days my-2" v-model="notSpecifiedTotalDays" />
+        <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays" />
         <div class="weekday-nav">
+          <span>{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
           <button @click='previousWeekday'>＜</button>
           <button @click='nextWeekday'>＞</button>
-          <span>{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
         </div>
         <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
         <label for="none">予定なし</label>
