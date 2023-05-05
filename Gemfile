@@ -59,6 +59,7 @@ gem 'dotenv-rails'
 gem 'html2slim'
 gem 'slim-rails'
 gem 'vite_rails'
+gem 'meta-tags'
 
 gem 'google-api-client'
 gem 'google-apis-calendar_v3', '~> 0.15.0'
