@@ -51,15 +51,13 @@
             :key='date.date'
             :id="'day' + date.date">
             <div class="monthly-calendar__day-label">{{ date.date }}</div>
-            <div>
-              <Day v-bind:date="date"
-                   v-bind:autoAdjusted="autoAdjusted"
-                   v-bind:class="{'disabled': autoAdjusted && outsideWithinPeriod(date, reflectedSetting)}"
-                   v-if="date.date"
-                   v-on:update="updateDay"
-                   v-on:delete="deleteDay">
-              </Day>
-            </div>
+            <Day v-bind:date="date"
+                 v-bind:autoAdjusted="autoAdjusted"
+                 v-bind:class="{'disabled': autoAdjusted && outsideWithinPeriod(date, reflectedSetting)}"
+                 v-if="date.date"
+                 v-on:update="updateDay"
+                 v-on:delete="deleteDay">
+            </Day>
           </td>
         </tr>
       </tbody>

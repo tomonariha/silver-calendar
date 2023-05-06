@@ -38,13 +38,13 @@
         <h4 class="my-2" v-if="settingId">条件の編集</h4>
         <h4 class="my-2" v-else>条件の作成</h4>
         <span class="fs-6 m-2">開始日：</span>
-        <select id="start_month_select m-1" v-model="selectedStartMonth">
+        <select id="start_month_select" v-model="selectedStartMonth">
           <option v-for="month in 12" :key="month">
             {{ month }}
           </option>
         </select>
         <span class="fs-6 m-1">月</span>
-        <select id="start_day_select m-1" v-model="selectedStartDay">
+        <select id="start_day_select" v-model="selectedStartDay">
           <option v-for="date in lastDate(selectedStartMonth)" :key="date">
             {{ date }}
           </option>
@@ -52,13 +52,13 @@
         <span class="fs-6 m-1">日</span>
         <br>
         <span class="fs-6 m-2">終了日：</span>
-        <select id="end_month_select m-1" v-model="selectedEndMonth">
+        <select id="end_month_select" v-model="selectedEndMonth">
           <option v-for="month in 12" :key="month">
             {{ month }}
           </option>
         </select>
         <span class="fs-6 m-1">月</span>
-        <select id="end_day_select m-1" v-model="selectedEndDay">
+        <select id="end_day_select" v-model="selectedEndDay">
           <option v-for="date in lastDate(selectedEndMonth)" :key="date">
             {{ date }}
           </option>
