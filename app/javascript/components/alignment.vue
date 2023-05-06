@@ -1,5 +1,5 @@
 <template>
-  <h3>連携機能</h3>
+  <h2 class="fs-4 my-2">連携機能</h2>
   <div id=overlay v-show="confirmedCalendar">
     <div id=confirm>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
@@ -11,7 +11,7 @@
     <p id="fetching">反映しています。しばらくお待ちください</p>
   </div>
   <div class="google-calendar my-2">
-    <h4>Googleカレンダー</h4>
+    <h3 class="fs-5 my-2">Googleカレンダー</h3>
     <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
     <p v-else>認証済</p>
     <div class="exist-calendars-area my-2">
@@ -53,7 +53,7 @@
   <div id=overlay  v-show="showTimeForm">
     <div id=time>
       <div class="time-form">
-        <h4>時刻の設定</h4>
+        <h3 class="fs-5 my-2">時刻の設定</h3>
         <Time v-bind:dayOfSchedule="'morning'">
         </Time>
         <Time v-bind:dayOfSchedule="'afterNoon'">

@@ -1,5 +1,5 @@
 <template>
-  <h3>条件の設定</h3>
+  <h2 class="fs-4 my-2">条件一覧</h2>
   <div id=overlay  v-show="confirmedSetting">
     <div id=confirm>
       <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
