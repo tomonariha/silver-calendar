@@ -88,6 +88,7 @@ group :development do
   gem 'rubocop-fjord', require: false
   gem 'rubocop-rails', require: false
   gem 'slim_lint', require: false
+  gem 'letter_opener_web', '~> 2.0'
 end
 
 gem 'dockerfile-rails', '>= 1.2', group: :development

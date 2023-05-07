@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   draw :api
   get 'privacy_policy', to: 'home#privacy_policy', as: 'privacy_policy'
   get 'tos', to: 'home#tos', as: 'tos'
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end
