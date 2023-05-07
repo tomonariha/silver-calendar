@@ -1,27 +1,27 @@
 <% set_meta_tags(title:'ログイン', description:'勤務日自動調整アプリWDDのログイン画面です。') %>
 <div class="container-fluid col-9">
-  <h2 class="fs-4 my-2">Log in</h2>
-  
-  <%= form_with model: @user, url: session_path(resource_name) do |f| %>
-    <div class="field my-2">
-      <%= f.label :email, class: "form-label" %><br />
-      <%= f.email_field :email, autofocus: true, autocomplete: "email"%>
+  <h2 class="fs-4 my-2"><%= t('.sign_in') %></h2>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <div class="field">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
     </div>
   
-    <div class="field my-2">
-      <%= f.label :password, class: "form-label" %><br />
+    <div class="field">
+      <%= f.label :password %><br />
       <%= f.password_field :password, autocomplete: "current-password" %>
     </div>
   
     <% if devise_mapping.rememberable? %>
-      <div class="field my-2">
+      <div class="field">
         <%= f.check_box :remember_me %>
         <%= f.label :remember_me %>
       </div>
     <% end %>
   
-    <div class="actions my-2">
-      <%= f.submit "Log in" %>
+    <div class="actions">
+      <%= f.submit t('.sign_in') %>
     </div>
   <% end %>
   

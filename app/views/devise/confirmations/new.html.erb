@@ -1,6 +1,6 @@
-<h2>Resend confirmation instructions</h2>
+<h2><%= t('.resend_confirmation_instructions') %></h2>
 
-<%= form_with model: @user, url: confirmation_path(resource_name), html: { method: :post } do |f| %>
+<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="field">
@@ -9,9 +9,8 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
+    <%= f.submit t('.resend_confirmation_instructions') %>
   </div>
 <% end %>
-<%= button_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path, method: :post, data: {turbo: false} %>
 
 <%= render "devise/shared/links" %>
