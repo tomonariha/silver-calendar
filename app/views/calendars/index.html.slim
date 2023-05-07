@@ -1,5 +1,7 @@
-h1 #{current_user.email}のカレンダー
-= button_to 'ログアウト', destroy_user_session_path, method: :delete
-= link_to "Change your password", edit_user_registration_path
-= button_to '退会する', user_registration_path, method: :delete
-#app(data-user-id="#{current_user.id}")
+- set_meta_tags(title:'カレンダー', description:'勤務日自動調整アプリWDDのカレンダー画面です。')
+.container-fluid.col-9
+  .d-flex
+    = link_to "Change your password", edit_user_registration_path, class: 'my-2 me-2'
+    = button_to 'ログアウト', destroy_user_session_path, method: :delete, class: 'rounded my-2'
+  h1.fs-3 カレンダーの作成
+  #app(data-user-id="#{current_user.id}")

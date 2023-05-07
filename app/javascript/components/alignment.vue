@@ -1,45 +1,80 @@
 <template>
-  <p>連携機能</p>
-  <Time v-bind:dayOfSchedule="'morning'">
-  </Time>
-  <Time v-bind:dayOfSchedule="'afterNoon'">
-  </Time>
-  <Time v-bind:dayOfSchedule="'fullTime'">
-  </Time>
-  <button v-on:click="fetchTimes">保存</button>
-  <p v-show="errors.length > 0">
-    <b>Please correct the following error(s):</b>
-    <ul>
-      <li v-for="error in errors" :key="error.id">{{ error }}</li>
-    </ul>
-  </p>
-  <div id=overlay  v-show="confirmedCalendar">
-    <div id=content>
+  <h2 class="fs-4 my-2">連携機能</h2>
+  <div id=overlay v-show="confirmedCalendar">
+    <div id=confirm>
       <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
                v-on:cancel="cancelConfirm">
       </Confirm>
     </div>
   </div>
   <div id=overlay v-show="isFetching">
-    <p id="content">反映しています。しばらくお待ちください</p>
+    <p id="fetching">反映しています。しばらくお待ちください</p>
   </div>
-  <p>Googleカレンダー</p>
-  <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
-  <p v-else>認証済</p>
-  <div v-if="haveNoCalendars">カレンダーがまだありません</div>
-  <div v-else>
-    <div v-for="calendar in slicedCalendars" :key="calendar.year">
-      <div class="calendar_year__body">{{ calendar.year }}</div>
-      <button v-bind:disabled="calendar.google_calendar_id || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加</button>
-      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="confirmDialog(calendar)">削除</button>
-      <button v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching" v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新</button>
+  <div class="google-calendar my-2">
+    <h3 class="fs-5 my-2">Googleカレンダー</h3>
+    <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
+    <p v-else>認証済</p>
+    <div class="exist-calendars-area my-2">
+      <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+      <div v-else>
+        <div class="my-1" v-for="calendar in slicedCalendars" :key="calendar.year">
+          <span class="calendar_year__body">{{ calendar.year }}年</span>
+          <button class="btn btn-dark ms-1"
+                  v-bind:disabled="calendar.google_calendar_id || isFetching"
+                  v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
+          </button>
+          <button class="btn btn-dark ms-1"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
+          </button>
+          <button class="btn btn-dark ms-1"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-on:click="confirmDialog(calendar)">削除
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="pagenation">
+      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span class="page-number m-1 fs-5"
+              v-bind:class="{'current-page':currentPage === pageNumber}"
+              v-on:click="updatePageNumber(pageNumber, index)">
+          {{ pageNumber }}
+        </span>
+      </span>
+    </div>
+    <button class="btn btn-primary my-2"
+            v-on:click="showTimeForm=true">時刻の設定
+    </button>
+  </div>
+  <button class="btn btn-dark my-2"
+          v-on:click="emit('close')">閉じる
+  </button>
+  <div id=overlay  v-show="showTimeForm">
+    <div id=time>
+      <div class="time-form">
+        <h3 class="fs-5 my-2">時刻の設定</h3>
+        <Time v-bind:dayOfSchedule="'morning'">
+        </Time>
+        <Time v-bind:dayOfSchedule="'afterNoon'">
+        </Time>
+        <Time v-bind:dayOfSchedule="'fullTime'">
+        </Time>
+        <button class="btn btn-primary my-2" 
+                v-on:click="fetchTimes">保存
+        </button>
+      </div>
+      <p v-show="errors.length > 0">
+        <b>Please correct the following error(s):</b>
+          <ul>
+            <li v-for="error in errors" :key="error.id">{{ error }}</li>
+          </ul>
+      </p>
+      <button class="btn btn-dark my-2"
+        v-on:click="showTimeForm=false">閉じる
+      </button>
     </div>
   </div>
-  <div v-for="pageNumber in totalPages" :key="pageNumber">
-    <button v-on:click="updatePageNumber(pageNumber)">{{ pageNumber }}</button>
-  </div>
-  <br>
-  <button v-on:click="emit('close')">閉じる</button>
 </template>
 
 <script setup>
@@ -53,6 +88,7 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'delete', 'create', 'update'])
+const showTimeForm = ref(false)
 // 時刻設定用
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
@@ -195,21 +231,48 @@ onMounted(() => {
 })
 // ページング
 const currentPage = ref(1)
-const pageLimit = ref(5)
+const pageLimit = 5
+const displayRange = 1
 const haveNoCalendars = computed(() => {
   return !(props.calendars.length > 0)
 })
 const slicedCalendars = computed(() => {
-  let start = (currentPage.value -1) * pageLimit.value
-  let end = start + pageLimit.value
+  let start = (currentPage.value -1) * pageLimit
+  let end = start + pageLimit
   return props.calendars.slice(start, end)
 })
-const totalPages = computed(() => {
-  return Math.ceil(props.calendars.length / pageLimit.value)
-})
-function updatePageNumber(pageNumber) {
-  currentPage.value = pageNumber
+function updatePageNumber(pageNumber, index) {
+  if(typeof(pageNumber) === 'number'){
+    currentPage.value = pageNumber
+    return
+  }
+  if(index < currentPage.value){
+    currentPage.value -= (displayRange + 1)
+    return
+  }
+  currentPage.value += (displayRange + 1)
 }
+const displayPageNumbers = computed(() => {
+  let pages = []
+  const totalPages = Math.ceil(props.calendars.length / pageLimit)
+  if(totalPages < 2) {
+    return
+  }
+  pages.push(1)
+  if ((currentPage.value - displayRange) > 2){
+    pages.push('...')
+  }
+  for (let i = -displayRange; i <= displayRange; i++) {
+    if ((currentPage.value + i > 1) && (currentPage.value + i < totalPages)){
+      pages.push(currentPage.value + i)
+    }
+  }
+  if ((currentPage.value + displayRange) < (totalPages - 1)){
+    pages.push('...')
+  }
+  pages.push(totalPages)
+  return pages
+})
 // 確認ダイアログ
 const confirmedCalendar = ref(null)
 function confirmDialog(calendar){
@@ -234,3 +297,49 @@ function timesValidation() {
   return false
 }
 </script>
+
+<style>
+#overlay{
+  z-index:1;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#time{
+  z-index:2;
+  width:60%;
+  padding: 1em;
+  background:#fff;
+}
+#confirm{
+  z-index:3;
+  width:60%;
+  padding: 2em;
+  background:#fff;
+}
+#fetching{
+  z-index:4;
+  width:60%;
+  padding: 1em;
+  background:#fff;
+}
+.google-calendar{
+  height: 300px;
+}
+.exist-calendars-area{
+  height: 180px;
+}
+.page-number{
+  text-decoration: underline;
+  cursor: pointer;
+}
+.current-page{
+  font-weight:bold;
+}
+</style>

@@ -57,6 +57,7 @@ gem 'devise'
 gem 'devise-i18n'
 gem 'dotenv-rails'
 gem 'html2slim'
+gem 'meta-tags'
 gem 'slim-rails'
 gem 'vite_rails'
 
