@@ -12,16 +12,18 @@
   </div>
   <div class="google-calendar my-2">
     <h3 class="fs-5 my-2">Googleカレンダー</h3>
-    <div v-if="notAuthenticatedGoogle">
+    <div class="my-2" v-if="notAuthenticatedGoogle">
       <p>Googleカレンダーと連携するにはGoogle認証が必要です</p>
       <button v-on:click="redirectOAuth">Sign in with Google</button>
     </div>
-    <p v-else>認証済</p>
+    <div class="my-2" v-else>
+      <p >認証済</p>
+    </div>
     <div class="exist-calendars-area my-2">
       <div v-if="haveNoCalendars">カレンダーがまだありません</div>
       <div v-else>
-        <div class="my-2" v-for="calendar in slicedCalendars" :key="calendar.year">
-          <span class="calendar_year__body">{{ calendar.year }}年</span>
+        <div class="my-2" v-for="(calendar, index) in slicedCalendars" :key="index">
+          <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
           <button class="btn btn-dark ms-1"
                   v-bind:disabled="calendar.google_calendar_id || isFetching || notAuthenticatedGoogle"
                   v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
