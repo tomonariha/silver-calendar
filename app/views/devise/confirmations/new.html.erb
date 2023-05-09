@@ -1,17 +1,19 @@
-<h2>Resend confirmation instructions</h2>
+<% set_meta_tags(title:'メールアドレス確認', description:'勤務日自動調整アプリWDDのメールアドレス確認画面です。') %>
+<h2 class="fs-4 my-2"><%= t('.resend_confirmation_instructions') %></h2>
 
-<%= form_with model: @user, url: confirmation_path(resource_name), html: { method: :post } do |f| %>
+<%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
+  <div class="field my-2">
     <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
   </div>
 
   <div class="actions">
-    <%= f.submit "Resend confirmation instructions" %>
+    <%= f.submit t('.resend_confirmation_instructions'), class:"btn btn-primary my-2" %>
   </div>
 <% end %>
-<%= button_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path, method: :post, data: {turbo: false} %>
 
-<%= render "devise/shared/links" %>
+<div class="my-2">
+  <%= render "devise/shared/links" %>
+</div>
