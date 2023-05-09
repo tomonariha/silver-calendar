@@ -20,7 +20,7 @@
     <div class="exist-calendars-area my-2">
       <div v-if="haveNoCalendars">カレンダーがまだありません</div>
       <div v-else>
-        <div class="my-1" v-for="calendar in slicedCalendars" :key="calendar.year">
+        <div class="my-2" v-for="calendar in slicedCalendars" :key="calendar.year">
           <span class="calendar_year__body">{{ calendar.year }}年</span>
           <button class="btn btn-dark ms-1"
                   v-bind:disabled="calendar.google_calendar_id || isFetching || notAuthenticatedGoogle"
@@ -37,9 +37,9 @@
         </div>
       </div>
     </div>
-    <div class="pagenation">
-      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-        <span class="page-number m-1 fs-5"
+    <div class="pagenation my-2">
+      <span class="page-number m-1 fs-5" v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span 
               v-bind:class="{'current-page':currentPage === pageNumber}"
               v-on:click="updatePageNumber(pageNumber, index)">
           {{ pageNumber }}
@@ -332,11 +332,8 @@ function timesValidation() {
   padding: 1em;
   background:#fff;
 }
-.google-calendar{
-  height: 300px;
-}
 .exist-calendars-area{
-  height: 180px;
+  height: 220px;
 }
 .page-number{
   text-decoration: underline;
