@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
 import { useToast } from "vue-toastification"
 
@@ -431,6 +431,12 @@ function totalDaysValidation(startDay, endDay) {
     return true
   }
 }
+watch(
+  () => props.year,
+  () => {
+    errors.value = []
+  }
+)
 </script>
 
 <style>
