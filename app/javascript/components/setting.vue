@@ -1,6 +1,6 @@
 <template>
   <h2 class="fs-4 my-2">条件一覧</h2>
-  <div id=overlay  v-show="confirmedSetting">
+  <div id=overlay v-show="confirmedSetting">
     <div id=confirm>
       <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
                v-on:cancel="cancelConfirm">
@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="setting">
-    <div class="settings-area ">
+    <div class="settings-area">
       <span class="have-no-settings" v-show="props.settings.length < 1">まだ条件がありません</span>
       <div v-for="setting in slicedSettings" :key="setting.id">
         <span class="setting-periods m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
@@ -465,6 +465,9 @@ function totalDaysValidation(startDay, endDay) {
 .setting-periods{
   display: inline-block;
   width: 220px;
+}
+.settings-area{
+  height: 220px;
 }
 .page-number{
   text-decoration: underline;

@@ -109,12 +109,12 @@
     <div id=overlay  v-show="showContent">
       <div id=content>
         <Setting v-bind:year="calendarYear"
-               v-bind:settings="settings"
-               v-on:close="closeModal"
-               v-on:update="updateSetting"
-               v-on:create="createSetting"
-               v-on:delete="deleteSetting"
-               v-on:reflect="adjustAndReflect">
+                 v-bind:settings="settings"
+                 v-on:close="closeModal"
+                 v-on:update="updateSetting"
+                 v-on:create="createSetting"
+                 v-on:delete="deleteSetting"
+                 v-on:reflect="adjustAndReflect">
         </Setting>
       </div>
     </div>

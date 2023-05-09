@@ -12,31 +12,36 @@
   </div>
   <div class="google-calendar my-2">
     <h3 class="fs-5 my-2">Googleカレンダー</h3>
-    <button v-if="notAuthenticatedGoogle" v-on:click="redirectOAuth">Sign in with Google</button>
-    <p v-else>認証済</p>
+    <div class="my-2" v-if="notAuthenticatedGoogle">
+      <p>Googleカレンダーと連携するにはGoogle認証が必要です</p>
+      <button v-on:click="redirectOAuth">Sign in with Google</button>
+    </div>
+    <div class="my-2" v-else>
+      <p >認証済</p>
+    </div>
     <div class="exist-calendars-area my-2">
       <div v-if="haveNoCalendars">カレンダーがまだありません</div>
       <div v-else>
-        <div class="my-1" v-for="calendar in slicedCalendars" :key="calendar.year">
-          <span class="calendar_year__body">{{ calendar.year }}年</span>
+        <div class="my-2" v-for="(calendar, index) in slicedCalendars" :key="index">
+          <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
           <button class="btn btn-dark ms-1"
-                  v-bind:disabled="calendar.google_calendar_id || isFetching"
+                  v-bind:disabled="calendar.google_calendar_id || isFetching || notAuthenticatedGoogle"
                   v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
           </button>
           <button class="btn btn-dark ms-1"
-                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching || notAuthenticatedGoogle"
                   v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
           </button>
           <button class="btn btn-dark ms-1"
-                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching"
+                  v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching || notAuthenticatedGoogle"
                   v-on:click="confirmDialog(calendar)">削除
           </button>
         </div>
       </div>
     </div>
-    <div class="pagenation">
-      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-        <span class="page-number m-1 fs-5"
+    <div class="pagenation my-2">
+      <span class="page-number m-1 fs-5" v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span 
               v-bind:class="{'current-page':currentPage === pageNumber}"
               v-on:click="updatePageNumber(pageNumber, index)">
           {{ pageNumber }}
@@ -329,11 +334,8 @@ function timesValidation() {
   padding: 1em;
   background:#fff;
 }
-.google-calendar{
-  height: 300px;
-}
 .exist-calendars-area{
-  height: 180px;
+  height: 220px;
 }
 .page-number{
   text-decoration: underline;
