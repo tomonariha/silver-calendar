@@ -99,7 +99,7 @@
       </div>
       <div class="error-area" v-if="errors.length > 0">
         <p>
-          <b>Please correct the following error(s):</b>
+          <b>以下のエラーの修正をお願いします:</b>
           <ul>
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
 import { useToast } from "vue-toastification"
 
@@ -431,6 +431,12 @@ function totalDaysValidation(startDay, endDay) {
     return true
   }
 }
+watch(
+  () => props.year,
+  () => {
+    errors.value = []
+  }
+)
 </script>
 
 <style>
