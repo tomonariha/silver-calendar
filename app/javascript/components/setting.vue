@@ -99,7 +99,7 @@
       </div>
       <div class="error-area" v-if="errors.length > 0">
         <p>
-          <b>Please correct the following error(s):</b>
+          <b>以下のエラーの修正をお願いします:</b>
           <ul>
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>

@@ -70,7 +70,7 @@
         </button>
       </div>
       <p v-show="errors.length > 0">
-        <b>Please correct the following error(s):</b>
+        <b>以下のエラーの修正をお願いします:</b>
           <ul>
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
