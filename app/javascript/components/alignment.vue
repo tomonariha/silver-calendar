@@ -188,7 +188,9 @@ function fetchGoogleCalendar(calendar, method) {
     return response.json()
   })
   .then((json) => {
-    if (method != 'DELETE') {
+    if (method === 'DELETE') {
+      calendar["google_calendar_id"] = null
+    } else {
       calendar["google_calendar_id"] = json.google_calendar_id
     }
     toast(`${toActionString[method]}しました`)
