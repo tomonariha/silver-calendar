@@ -9,11 +9,17 @@
     | 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
     br
     | WDDで、あなたの生活と仕事をバランス良く調整しましょう
+    br
+    =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg'
     h2 使い方
-    ul
-      li 条件を入力します
-      li 「適用」を押すと自動で予定が入力されます。
-      li 「連携」からGoogleカレンダーに反映することができます。
+    p 条件を入力します
+    = image_tag('demo1.png', alt: '条件を入力', width: '50%', class: "img-thumbnail")
+    p「適用」を押すと
+    = image_tag('demo2.png', alt: '条件を適用', width: '50%', class: "img-thumbnail")
+    <br>
+    p 自動で予定が入力されます。
+    = image_tag('demo3.png', alt: '自動調整', width: '50%', class: "img-thumbnail")
+    p 「連携」からGoogleカレンダーに反映することができます。
     h3 Googleカレンダーとの連携について
     | WDDで作ったカレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
     br
