@@ -1,7 +1,7 @@
 - set_meta_tags(title:'トップ', description:'勤務日自動調整アプリWDDのホーム画面です。')
 .container-fluid.col-9 
   .justify-content-center
-    h1 WDDとは
+    h1.my-2 WDDとは
     | WDDは、あなたの勤務条件に合わせて自動的にシフトを調整するアプリです。
     br
     | 簡単な設定で、あなたの勤務スケジュールを最適化し、貴重な時間を節約できます。
@@ -10,18 +10,18 @@
     br
     | WDDで、あなたの生活と仕事をバランス良く調整しましょう
     br
-    =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg'
-    h2 使い方
+    =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
+    h2.my-2 使い方
     p 条件を入力します
-    = image_tag('demo1.png', alt: '条件を入力', width: '50%', class: "img-thumbnail")
+    = image_tag('demo1.png', alt: '条件を入力', width: '40%', class: "img-thumbnail")
     p「適用」を押すと
-    = image_tag('demo2.png', alt: '条件を適用', width: '50%', class: "img-thumbnail")
+    = image_tag('demo2.png', alt: '条件を適用', width: '40%', class: "img-thumbnail")
     <br>
     p 自動で予定が入力されます。
-    = image_tag('demo3.png', alt: '自動調整', width: '50%', class: "img-thumbnail")
+    = image_tag('demo3.png', alt: '自動調整', width: '40%', class: "img-thumbnail")
     p 「連携」からGoogleカレンダーに反映することができます。
-    = image_tag('demo4.png', alt: 'Googleカレンダーへ反映', width: '50%', class: "img-thumbnail")
-    h3 Googleカレンダーとの連携について
+    = image_tag('demo4.png', alt: 'Googleカレンダーへ反映', width: '40%', class: "img-thumbnail")
+    h3.my-2 Googleカレンダーとの連携について
     | WDDで作ったカレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
     br
     | 認証にはGoogleログインを利用するか、アプリ内の「連携」機能から行うことができます。
@@ -29,7 +29,7 @@
     | 本サービスでは、ユーザーアカウントに紐づくGoogleカレンダーに対し以下の操作を行います。
     ul 
       li 新しいカレンダーの作成
-      li その作成したカレンダーの削除
+      li 作成したカレンダーの削除
       li 作成したカレンダーへの予定の追加
       li 作成したカレンダーからの予定の削除
-  =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg'
+  =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
