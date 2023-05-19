@@ -30,7 +30,9 @@
     </div>
   </div>
   <div class="my-2" v-if="monthly">
-    <div class="calendar-nav__year--month">{{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }}</div>
+    <div class="calendar-nav__year--month">
+      {{ calendarYear }}年{{ calendarMonth }}月 合計:{{ totalWorkingDays[calendarMonth] }} 有給：{{ totalPaidLeaves[calendarMonth] }}
+    </div>
     <button class="btn btn-secondary my-2" v-on:click="toYearyCalendar">年間カレンダー</button>
     <table class="monthly-calendar">
       <thead class="monthly-calendar__header">
@@ -64,8 +66,11 @@
     </table>
   </div>
   <div v-else>
-    <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }}</div>
-    <div class="yeary-calendar-month rounded p-1 me-2 my-1" v-for="month in 12" :key="month" v-on:click="toMonthlyCalendar(month)">{{ month }}月 合計:{{ totalWorkingDays[month] }}
+    <div class="calendar-nav__year">{{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }} 有給：{{ yearyTotalPaidLeaves() }}</div>
+    <div class="yeary-calendar-month rounded p-1 me-2 my-1"
+         v-for="month in 12" :key="month"
+         v-on:click="toMonthlyCalendar(month)">
+         {{ month }}月 合計:{{ totalWorkingDays[month] }} 有給：{{ totalPaidLeaves[month] }}
       <table class="yeary-calendar">
         <thead class="yeary-calendar__header">
           <tr>
@@ -253,6 +258,7 @@ function calendarWeeks(month) {
 function calendarDates(month) {
   const calendar = []
   let monthlyTotalWorkingDays = 0
+  let monthlyTotalPaidLeaves = 0
   if (firstWday(month) > 0) {
     for (let blank = 0; blank < firstWday(month); blank++) {
       calendar.push(null)
@@ -272,7 +278,10 @@ function calendarDates(month) {
         year: calendarYear.value,
         month: month
       })
-      monthlyTotalWorkingDays += countWorkingDays(schedule) 
+      monthlyTotalWorkingDays += countWorkingDays(schedule)
+      if (schedule==='paidleave'){
+        monthlyTotalPaidLeaves += 1
+      }
     } else {
       calendar.push({
         date: date, 
@@ -283,6 +292,7 @@ function calendarDates(month) {
     }
   }
   totalWorkingDays.value[month] = monthlyTotalWorkingDays
+  totalPaidLeaves.value[month] = monthlyTotalPaidLeaves
   return calendar
 }
 function firstWday(month) {
@@ -313,6 +323,7 @@ function toYearyCalendar(){
 }
 //勤務日数カウント関連
 const totalWorkingDays = ref({})
+const totalPaidLeaves = ref({})
 function countWorkingDays(schedule) {
   if ((schedule === 'full-time')||(schedule === 'paidleave')) {
     return 1
@@ -325,6 +336,13 @@ function yearyTotalWorkingDays(){
   let totalDays = 0
   for (let i = 1; i <= 12; i++) {
     totalDays += totalWorkingDays.value[i]
+  }
+  return totalDays
+}
+function yearyTotalPaidLeaves(){
+  let totalDays = 0
+  for (let i = 1; i <= 12; i++) {
+    totalDays += totalPaidLeaves.value[i]
   }
   return totalDays
 }
