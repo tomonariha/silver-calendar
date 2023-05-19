@@ -98,6 +98,9 @@
                 <span v-else-if="date.schedule==='off'">
                   <img :src="off" alt="off" width="16" height="16"/>
                 </span>
+                <span v-else-if="date.schedule==='paidleave'">
+                  <img :src="paidleave" alt="paidleave" width="16" height="16"/>
+                </span>
               </div>
             </td>
           </tr>
@@ -147,6 +150,7 @@ import fullTime from '../assets/images/fulltime.svg?url'
 import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
+import paidleave from '../assets/images/paidleave.svg?url'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -163,7 +167,6 @@ onMounted(() => {
   fetchCalendarsIndex()
 })
 //カレンダー表示関連
-const scheduleToMark = { "full-time":"●", "morning":"▲", "afternoon":"△", "off":"□" }
 const calendarYear = ref(getCurrentYear())
 function getCurrentYear() {
   return new Date().getFullYear()
@@ -311,7 +314,7 @@ function toYearyCalendar(){
 //勤務日数カウント関連
 const totalWorkingDays = ref({})
 function countWorkingDays(schedule) {
-  if (schedule === 'full-time') {
+  if ((schedule === 'full-time')||(schedule === 'paidleave')) {
     return 1
   } else if ((schedule === 'morning') || (schedule === 'afternoon')) {
     return 0.5
