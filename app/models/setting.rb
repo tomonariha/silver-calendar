@@ -34,9 +34,8 @@ class Setting < ApplicationRecord
   def total_working_days_should_be_between_0_and_days_in_period
     return unless total_working_days
 
-    number_of_days_in_period = (period_start_at...period_end_at).count
+    number_of_days_in_period = (period_start_at..period_end_at).count
     return unless (total_working_days > number_of_days_in_period) || total_working_days.negative?
-
     errors.add(:total_working_days, '勤務日数は０以上期間内の日数以下にしてください')
   end
 end

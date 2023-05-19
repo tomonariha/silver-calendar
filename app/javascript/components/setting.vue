@@ -2,7 +2,8 @@
   <h2 class="fs-4 my-2">条件一覧</h2>
   <div id=overlay v-show="confirmedSetting">
     <div id=confirm>
-      <Confirm v-on:delete="deleteSetting(confirmedSetting.id)"
+      <Confirm v-bind:message="'削除します。よろしいですか？'"
+               v-on:execution="deleteSetting(confirmedSetting.id)"
                v-on:cancel="cancelConfirm">
       </Confirm>
     </div>
