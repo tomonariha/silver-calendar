@@ -3,8 +3,8 @@
 module MetaTagsHelper
   def default_meta_tags
     {
-      site: 'WorkingDayDeployer',
-      title: 'WDD',
+      site: 'SilverWorker',
+      title: 'SilverWorker',
       reverse: true,
       charset: 'utf-8',
       description: '勤務日程自動調整アプリ',
@@ -12,9 +12,9 @@ module MetaTagsHelper
       separator: '|',
       viewport: 'width=device-width, initial-scale=1.0',
       og: {
-        title: 'WorkingDayDeployer',
+        title: 'SilverWorker',
         type: 'website',
-        site_name: 'WorkingDayDeployer',
+        site_name: 'SilverWorker',
         description: :description,
         # image: image_url('ogp.png'),
         url: 'https://working-day-deployer.fly.dev/',

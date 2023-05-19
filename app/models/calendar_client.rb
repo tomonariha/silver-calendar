@@ -38,10 +38,12 @@ class CalendarClient
         schedule = '午前出勤'
         start_at = Time.zone.parse("#{date} #{morning_start_at}")
         end_at = Time.zone.parse("#{date} #{morning_end_at}")
-      when 'after-noon'
+      when 'afternoon'
         schedule = '午後出勤'
         start_at = Time.zone.parse("#{date} #{after_noon_start_at}")
         end_at = Time.zone.parse("#{date} #{after_noon_end_at}")
+      when 'off'
+        next
       end
       event = Google::Apis::CalendarV3::Event.new(
         summary: schedule,

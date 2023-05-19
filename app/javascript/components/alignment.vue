@@ -14,7 +14,9 @@
     <h3 class="fs-5 my-2">Googleカレンダー</h3>
     <div class="my-2" v-if="notAuthenticatedGoogle">
       <p>Googleカレンダーと連携するにはGoogle認証が必要です</p>
-      <button v-on:click="redirectOAuth">Sign in with Google</button>
+      <div v-on:click="redirectOAuth" class="google-button">
+        <img :src="googleButton" alt="google-login" />
+      </div>
     </div>
     <div class="my-2" v-else>
       <p >認証済</p>
@@ -86,7 +88,8 @@
 import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
-import { useToast } from "vue-toastification"
+import { useToast } from 'vue-toastification'
+import googleButton from '../../assets/images/btn_google_signin_dark_normal_web.png?url'
 
 const toast = useToast()
 const props = defineProps({
@@ -185,7 +188,9 @@ function fetchGoogleCalendar(calendar, method) {
     return response.json()
   })
   .then((json) => {
-    if (method != 'DELETE') {
+    if (method === 'DELETE') {
+      calendar["google_calendar_id"] = null
+    } else {
       calendar["google_calendar_id"] = json.google_calendar_id
     }
     toast(`${toActionString[method]}しました`)
@@ -343,5 +348,9 @@ function timesValidation() {
 }
 .current-page{
   font-weight:bold;
+}
+.google-button{
+  width: 192px;
+  cursor: pointer;
 }
 </style>

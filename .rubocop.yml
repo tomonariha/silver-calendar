@@ -6,6 +6,7 @@ inherit_gem:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - app/models/calendar_client.rb
 
 Metrics/ClassLength:
   Exclude:
