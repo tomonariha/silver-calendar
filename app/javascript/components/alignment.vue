@@ -2,7 +2,8 @@
   <h2 class="fs-4 my-2">連携機能</h2>
   <div id=overlay v-show="confirmedCalendar">
     <div id=confirm>
-      <Confirm v-on:delete="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
+      <Confirm v-bind:message="'削除します。よろしいですか？'"
+               v-on:execution="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
                v-on:cancel="cancelConfirm">
       </Confirm>
     </div>

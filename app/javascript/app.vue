@@ -22,10 +22,19 @@
       <p class="current-working-days rounded"> (現在の日数){{ numberOfWorkingDays }}</p>
     </div>
   </div>
-  <div id=overlay v-show="showConfirm">
+  <div id=overlay v-show="showJustNotConfirm">
     <div id=confirm>
-      <Confirm v-on:delete='deleteCalendar'
-               v-on:cancel='cancelConfirm'>
+      <Confirm v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
+               v-on:execution="determineAutoAdjust"
+               v-on:cancel="cancelJustNotConfirm">
+      </Confirm>
+    </div>
+  </div>
+  <div id=overlay v-show="showDeleteConfirm">
+    <div id=confirm>
+      <Confirm v-bind:message="'削除します。よろしいですか？'"
+               v-on:execution='deleteCalendar'
+               v-on:cancel='cancelDeleteConfirm'>
       </Confirm>
     </div>
   </div>
@@ -126,7 +135,12 @@
         </Setting>
       </div>
     </div>
-  <button type="button" class="btn btn-success my-2 me-2" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  <span v-if="numberOfWorkingDays !== workingDaysRequired">
+      <button type="button" class="btn btn-success my-2 me-2" v-show="autoAdjusted" v-on:click="confirmJustNot">確定</button>
+  </span>
+  <span v-else>
+    <button type="button" class="btn btn-success my-2 me-2" v-show="autoAdjusted" v-on:click="determineAutoAdjust">確定</button>
+  </span>
   <button type="button" class="btn btn-secondary my-2 me-2" v-show="autoAdjusted" v-on:click="cancelAutoAdjust">キャンセル</button>
   <button type="button" class="btn btn-primary my-2" v-show="unAutoAdjusted" v-on:click="openAlignmentModal">連携</button>
     <div id=overlay  v-show="showAlignmentContent">
@@ -487,6 +501,7 @@ function extractCalendarDaysWithinPeriod(startDate, endDate) {
   return calendar
 }
 function determineAutoAdjust() {
+  cancelJustNotConfirm()
   saveAdjustedCalendar()
   toast("適用しました")
   autoAdjusted.value = false
@@ -632,15 +647,15 @@ function deleteFromCalendarArray(calendarDays, formatedDay) {
   }
 }
 // 確認ダイアログ
-const showConfirm = ref(false)
+const showDeleteConfirm = ref(false)
 function confirmDeleteCalendar(){
   fetchCalendar().then(function() {
     fetchSettings();
   })
-  showConfirm.value = true
+  showDeleteConfirm.value = true
 }
-function cancelConfirm() {
-  showConfirm.value = false
+function cancelDeleteConfirm() {
+  showDeleteConfirm.value = false
 }
 function deleteCalendar() {
   fetch(`api/calendars/${calendarYear.value}`, {
@@ -660,7 +675,7 @@ function deleteCalendar() {
   .catch((error) => {
     console.warn(error)
   })
-  cancelConfirm()
+  cancelDeleteConfirm()
 }
 function deleteFromCalendarsIndex() {
   for (let calendar of calendarsIndex.value) {
@@ -669,6 +684,13 @@ function deleteFromCalendarsIndex() {
       break
     }
   }
+}
+const showJustNotConfirm = ref(false)
+function confirmJustNot() {
+  showJustNotConfirm.value = true
+}
+function cancelJustNotConfirm() {
+  showJustNotConfirm.value = false
 }
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
