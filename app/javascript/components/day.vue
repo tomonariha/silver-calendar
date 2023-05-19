@@ -13,6 +13,9 @@
       <span v-else-if="props.date.schedule==='off'">
         <img :src="off" alt="off" width="24" height="24"/>
       </span>
+      <span v-else-if="props.date.schedule==='paidleave'">
+        <img :src="paidleave" alt="paidleave" width="24" height="24"/>
+      </span>
     </button>
     <template #content>
       <button v-on:click="changeSchedule('full-time')">
@@ -26,6 +29,9 @@
       </button>
       <button v-on:click="changeSchedule('off')">
         <img :src="off" alt="off" width="24" height="24"/>
+      </button>
+      <button v-on:click="changeSchedule('paidleave')">
+        <img :src="paidleave" alt="paidleave" width="24" height="24"/>
       </button>
       <button v-on:click="changeSchedule('none')">
         <img :src="none" alt="none" width="24" height="24"/>
@@ -41,9 +47,10 @@ import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
 import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
+import paidleave from '../../assets/images/paidleave.svg?url'
 import none from '../../assets/images/none.svg?url'
 
-const schedules = [ "full-time", "morning", "afternoon", "off", "none"]
+const schedules = [ "full-time", "morning", "afternoon", "off", "paidleave", "none"]
 const props = defineProps({ 
   date: Object,
   autoAdjusted: Boolean

@@ -14,7 +14,8 @@ class Day < ApplicationRecord
     unless (schedule == 'full-time') ||
            (schedule == 'morning') ||
            (schedule == 'afternoon') ||
-           (schedule == 'off')
+           (schedule == 'off') ||
+           (schedule == 'paidleave')
       errors.add(:schedule, '無効な文字列です')
     end
   end

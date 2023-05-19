@@ -42,7 +42,7 @@ class CalendarClient
         schedule = '午後出勤'
         start_at = Time.zone.parse("#{date} #{after_noon_start_at}")
         end_at = Time.zone.parse("#{date} #{after_noon_end_at}")
-      when 'off'
+      when 'off' || 'paidleave'
         next
       end
       event = Google::Apis::CalendarV3::Event.new(
