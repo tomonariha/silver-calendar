@@ -474,6 +474,7 @@ watch(
   width: 220px;
 }
 .settings-area{
+  width: 600px;
   height: 220px;
 }
 .page-number{
