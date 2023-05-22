@@ -11,14 +11,16 @@
   br
   =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
   h2.my-2 使い方
-  p 条件を入力します
+  p.my-2 ログイン後、画面下にある青いボタンを「条件の入力」「新しく条件を作る」の順に押し、
+  = image_tag('demo5.png', alt: '条件入力画面へ', width: '40%', class: "img-thumbnail")
+  p.my-2 条件を入力し、青いボタンの「新規作成」を押します。
   = image_tag('demo1.png', alt: '条件を入力', width: '40%', class: "img-thumbnail")
-  p「適用」を押すと
+  p.my-2「適用」を押すと
   = image_tag('demo2.png', alt: '条件を適用', width: '40%', class: "img-thumbnail")
   <br>
-  p 自動で予定が入力されます。
+  p.my-2 自動で予定が入力されます。
   = image_tag('demo3.png', alt: '自動調整', width: '40%', class: "img-thumbnail")
-  p 「連携」からGoogleカレンダーに反映することができます。
+  p.my-2 「連携」からGoogleカレンダーに反映することができます。
   = image_tag('demo4.png', alt: 'Googleカレンダーへ反映', width: '40%', class: "img-thumbnail")
   h3.my-2 Googleカレンダーとの連携について
   | カレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
