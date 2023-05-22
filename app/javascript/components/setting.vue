@@ -10,7 +10,7 @@
   </div>
   <div class="setting">
     <div class="settings-area">
-      <span class="have-no-settings" v-show="props.settings.length < 1">まだ条件がありません</span>
+      <span class="have-no-settings" v-show="!(props.settings.length > 0)">まだ条件がありません</span>
       <div v-for="setting in slicedSettings" :key="setting.id">
         <span class="setting-periods m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
           {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
@@ -474,6 +474,7 @@ watch(
   width: 220px;
 }
 .settings-area{
+  width: 600px;
   height: 220px;
 }
 .page-number{

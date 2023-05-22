@@ -341,6 +341,7 @@ function timesValidation() {
   background:#fff;
 }
 .exist-calendars-area{
+  width: 600px;
   height: 220px;
 }
 .page-number{
