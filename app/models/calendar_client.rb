@@ -74,9 +74,9 @@ class CalendarClient
 
   def create_calendar(calendar)
     new_calendar = Google::Apis::CalendarV3::Calendar.new(
-      summary: "WDD #{calendar.year}年",
+      summary: "SilverCalendar #{calendar.year}年",
       time_zone: 'Asia/Tokyo',
-      descrition: 'made by WDD'
+      descrition: 'made by SilverCalendar(https://silver-calendar.com)'
     )
     authorize
     result = @service.insert_calendar(new_calendar)
