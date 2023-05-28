@@ -6,7 +6,6 @@ class Api::AlignmentsController < ApplicationController
   def create
     # resultにはGoogleカレンダーからのレスポンスが入る。
     # Googleカレンダーに新しく作ったカレンダーのIDを取得するための処理。
-    # 取得失敗時の処理も入れたい。
     @result = @client.create_calendar(@calendar)
     calendar_days = @calendar.days
     @client.insert_events(calendar_days, @result.id, @working_times)

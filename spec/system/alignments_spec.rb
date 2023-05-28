@@ -23,7 +23,7 @@ RSpec.describe 'Calendars', type: :system do
   before do
     sign_in user
     visit calendar_path
-    Rails.application.env_config["devise.mapping"] = Devise.mappings[:user] # If using Devise
+    Rails.application.env_config["devise.mapping"] = Devise.mappings[:user]
     Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:google_oauth2]
   end
 
