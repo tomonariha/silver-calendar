@@ -36,7 +36,7 @@ RSpec.describe 'Calendars', type: :system do
       click_button 'fullTime'
       click_button 'paidleave'
     end
-    
+
     expect(page).to have_content('2023年1月 合計:2 有給：2')
   end
 

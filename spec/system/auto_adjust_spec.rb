@@ -57,13 +57,13 @@ RSpec.describe 'AutoAdjust', type: :system do
       choose '全日出勤'
       click_button '新規作成'
     end
-  
+
     click_button '適用'
     expect(page).to have_content('(現在の日数)2 / 2(必要日数)')
     within '#day3' do
       expect(find('.calendar__day-button')).to have_selector("img[alt='fullTime']")
     end
-  
+
     within '#day4' do
       expect(find('.calendar__day-button')).to have_selector("img[alt='fullTime']")
     end

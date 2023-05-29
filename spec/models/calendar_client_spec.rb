@@ -2,6 +2,7 @@
 
 require 'json'
 require 'rails_helper'
+require 'webmock/rspec'
 
 RSpec.describe CalendarClient, type: :model do
   let!(:user) { FactoryBot.create(:user, uid: 100) }
@@ -11,39 +12,35 @@ RSpec.describe CalendarClient, type: :model do
   before do
     # リフレッシュトークン更新
     stub_request(:post, 'https://accounts.google.com/o/oauth2/token')
-    .to_return( status: 200,
-      body: '{
+      .to_return(status: 200,
+                 body: '{
         "access_token" : "access_token",
         "token_type" : "Bearer",
         "expires_in" : 3600,
         "refresh_token" : "refresh_token"
         }',
-      headers: { 'Content-Type' => 'application/json'}
-    )
+                 headers: { 'Content-Type' => 'application/json' })
     # Googleカレンダー新規作成
     stub_request(:post, 'https://www.googleapis.com/calendar/v3/calendars')
-    .to_return( status: 200,
-      body: '{
+      .to_return(status: 200,
+                 body: '{
         "id": "google_calendar_id",
         "status": "confirmed"}',
-      headers: { 'Content-Type' => 'application/json'}
-    )
+                 headers: { 'Content-Type' => 'application/json' })
     # Googleカレンダーに予定の挿入
     stub_request(:post, 'https://www.googleapis.com/calendar/v3/calendars/google_calendar_id/events')
-    .to_return( status: 200,
-      body: '{
+      .to_return(status: 200,
+                 body: '{
         "status": "confirmed"}',
-      headers: { 'Content-Type' => 'application/json'}
-    )
+                 headers: { 'Content-Type' => 'application/json' })
     # Googleカレンダー削除
     stub_request(:delete, 'https://www.googleapis.com/calendar/v3/calendars/google_calendar_id')
-    .to_return( status: 200,
-      body: '{
+      .to_return(status: 200,
+                 body: '{
         "status": "confirmed"}',
-      headers: { 'Content-Type' => 'application/json'}
-    )
+                 headers: { 'Content-Type' => 'application/json' })
   end
-  
+
   context 'with token refresh' do
     before do
       Rails.cache.write(user.uid, 'access_token')

@@ -11,20 +11,20 @@ RSpec.describe 'Calendars', type: :system do
   OmniAuth.config.test_mode = true
   OmniAuth.config.silence_get_warning = true
   OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new({
-    :provider => 'google_oauth2',
-    :uid => '123545',
-    credentials: {
-      token: 'token',
-      refresh_token: 'refresh_token',
-      expires_at: Time.zone.now.to_i
-    }
-  })
+                                                                       provider: 'google_oauth2',
+                                                                       uid: '123545',
+                                                                       credentials: {
+                                                                         token: 'token',
+                                                                         refresh_token: 'refresh_token',
+                                                                         expires_at: Time.zone.now.to_i
+                                                                       }
+                                                                     })
 
   before do
     sign_in user
     visit calendar_path
-    Rails.application.env_config["devise.mapping"] = Devise.mappings[:user]
-    Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:google_oauth2]
+    Rails.application.env_config['devise.mapping'] = Devise.mappings[:user]
+    Rails.application.env_config['omniauth.auth'] = OmniAuth.config.mock_auth[:google_oauth2]
   end
 
   scenario 'google oauth log in', js: true do
