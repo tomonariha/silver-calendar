@@ -4,6 +4,8 @@ require 'json'
 require 'rails_helper'
 require 'webmock/rspec'
 
+WebMock.allow_net_connect!
+
 RSpec.describe CalendarClient, type: :model do
   let!(:user) { FactoryBot.create(:user, uid: 100) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id, google_calendar_id: 'google_calendar_id') }
