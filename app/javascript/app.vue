@@ -830,6 +830,9 @@ function updateAlignment(calendar) {
   border: 1px solid black;
   padding: 4px;
 }
+th{
+  background: whitesmoke;
+}
 th:first-child {
   background: #fff0f0;
   color: #ff8d99;
