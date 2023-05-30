@@ -829,4 +829,39 @@ function updateAlignment(calendar) {
   text-decoration: underline;
   cursor: pointer;
 }
+<<<<<<< HEAD
+=======
+.monthly-calendar{
+  border: 2px solid black;
+  text-align: center;
+  width: 500px;
+}
+.monthly-calendar__header{
+  border: 2px solid black;
+}
+.monthly-calendar__header-day{
+  border: 1px solid black;
+}
+.monthly-calendar__week{
+  border: 1px solid black;
+}
+.monthly-calendar__day-label{
+  font-size: 24px;
+}
+.monthly-calendar__day{
+  border: 1px solid black;
+  padding: 4px;
+}
+th{
+  background: whitesmoke;
+}
+th:first-child {
+  background: #fff0f0;
+  color: #ff8d99;
+}
+th:nth-child(7) {
+  background: #e2f3ff;
+  color: #78a2e6;
+}
+>>>>>>> 5e40341 (カレンダーの色を調整)
 </style>
