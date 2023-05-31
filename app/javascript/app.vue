@@ -829,11 +829,6 @@ function updateAlignment(calendar) {
   text-decoration: underline;
   cursor: pointer;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 96b9ac2 (カレンダーのデザインを調整)
 .monthly-calendar{
   border: 2px solid black;
   text-align: center;
@@ -855,12 +850,9 @@ function updateAlignment(calendar) {
   border: 1px solid black;
   padding: 4px;
 }
-<<<<<<< HEAD
 th{
   background: whitesmoke;
 }
-=======
->>>>>>> 96b9ac2 (カレンダーのデザインを調整)
 th:first-child {
   background: #fff0f0;
   color: #ff8d99;
@@ -869,8 +861,4 @@ th:nth-child(7) {
   background: #e2f3ff;
   color: #78a2e6;
 }
-<<<<<<< HEAD
->>>>>>> 5e40341 (カレンダーの色を調整)
-=======
->>>>>>> 96b9ac2 (カレンダーのデザインを調整)
 </style>

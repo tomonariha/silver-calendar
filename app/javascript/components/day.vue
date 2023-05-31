@@ -25,12 +25,7 @@
         <img :src="morning" alt="morning" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('afternoon')">
-<<<<<<< HEAD
         <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
-=======
-        <img :src="afterNoon" alt="afternoon" />
->>>>>>> 96b9ac2 (カレンダーのデザインを調整)
-      </button>
       <button v-on:click="changeSchedule('off')">
         <img :src="off" alt="off" class="schedule-icon" />
       </button>
