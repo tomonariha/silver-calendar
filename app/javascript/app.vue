@@ -832,7 +832,8 @@ function updateAlignment(calendar) {
 .monthly-calendar{
   border: 2px solid black;
   text-align: center;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 }
 .monthly-calendar__header{
   border: 2px solid black;
