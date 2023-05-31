@@ -780,6 +780,26 @@ function updateAlignment(calendar) {
   padding: 2em;
   background:#fff;
 }
+.yeary-calendar{
+  border: 2px solid black;
+  text-align: center;
+}
+.yeary-calendar__header{
+  border: 2px solid black;
+}
+.yeary-calendar__header-day{
+  border: 1px solid black;
+}
+.yeary-calendar__week{
+  border: 1px solid black;
+}
+.yeary-calendar__day-label{
+  font-size: 12px;
+}
+.yeary-calendar__day{
+  border: 1px solid black;
+  padding: 1px;
+}
 .yeary-calendar-month{
   display: inline-block;
   height: 350px;
@@ -808,5 +828,38 @@ function updateAlignment(calendar) {
 .delete-calendar{
   text-decoration: underline;
   cursor: pointer;
+}
+.monthly-calendar{
+  border: 2px solid black;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+.monthly-calendar__header{
+  border: 2px solid black;
+}
+.monthly-calendar__header-day{
+  border: 1px solid black;
+}
+.monthly-calendar__week{
+  border: 1px solid black;
+}
+.monthly-calendar__day-label{
+  font-size: 24px;
+}
+.monthly-calendar__day{
+  border: 1px solid black;
+  padding: 4px;
+}
+th{
+  background: whitesmoke;
+}
+th:first-child {
+  background: #fff0f0;
+  color: #ff8d99;
+}
+th:nth-child(7) {
+  background: #e2f3ff;
+  color: #78a2e6;
 }
 </style>
