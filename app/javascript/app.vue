@@ -780,6 +780,26 @@ function updateAlignment(calendar) {
   padding: 2em;
   background:#fff;
 }
+.yeary-calendar{
+  border: 2px solid black;
+  text-align: center;
+}
+.yeary-calendar__header{
+  border: 2px solid black;
+}
+.yeary-calendar__header-day{
+  border: 1px solid black;
+}
+.yeary-calendar__week{
+  border: 1px solid black;
+}
+.yeary-calendar__day-label{
+  font-size: 12px;
+}
+.yeary-calendar__day{
+  border: 1px solid black;
+  padding: 1px;
+}
 .yeary-calendar-month{
   display: inline-block;
   height: 350px;

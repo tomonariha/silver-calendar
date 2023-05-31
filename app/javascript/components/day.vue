@@ -25,7 +25,7 @@
         <img :src="morning" alt="morning" width="24" height="24"/>
       </button>
       <button v-on:click="changeSchedule('afternoon')">
-        <img :src="afterNoon" alt="afternoon" width="24" height="24"/>
+        <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('off')">
         <img :src="off" alt="off" width="24" height="24"/>
