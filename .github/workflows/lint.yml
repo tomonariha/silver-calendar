@@ -30,4 +30,7 @@ jobs:
         run: bundle exec slim-lint app/views -c config/slim_lint.yml
 
       - name: JS Lint
-        run: bin/yarn lint
+        run: bin/yarn lint:eslint
+
+      - name: Prettier
+        run: bin/yarn lint:prettier
