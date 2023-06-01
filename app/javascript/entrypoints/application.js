@@ -1,11 +1,11 @@
 import { createApp } from 'vue'
 import App from '../app.vue'
-import Toast from "vue-toastification"
-import "vue-toastification/dist/index.css"
-import "../stylesheets/styles.scss"
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+import '../stylesheets/styles.scss'
 
 document.addEventListener('DOMContentLoaded', () => {
-  const Calendar = document.querySelector("#app")
+  const Calendar = document.querySelector('#app')
   const options = {
     timeout: 2000
   }

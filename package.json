@@ -16,8 +16,8 @@
   "scripts": {
     "build": "vite build",
     "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
-    "lint:eslint": "eslint 'app/javascript/**/*.{js,jsx,vue}' --max-warnings=0",
-    "lint:prettier": "prettier app/javascript/**/*.{js,jsx,vue} --check"
+    "lint:eslint": "eslint 'app/javascript/**/*.{js,vue}' --max-warnings=0",
+    "lint:prettier": "prettier app/javascript/**/*.{js,vue} --check"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.2.0",

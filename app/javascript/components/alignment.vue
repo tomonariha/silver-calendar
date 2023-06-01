@@ -1,15 +1,18 @@
 <template>
   <div>
     <h2 class="fs-4 my-2">連携機能</h2>
-    <div id=overlay v-show="confirmedCalendar">
-      <div id=confirm>
-        <Confirm v-bind:message="'削除します。よろしいですか？'"
-                 v-on:execution="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
-                 v-on:cancel="cancelConfirm">
+    <div id="overlay" v-show="confirmedCalendar">
+      <div id="confirm">
+        <Confirm
+          v-bind:message="'削除します。よろしいですか？'"
+          v-on:execution="
+            fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
+          "
+          v-on:cancel="cancelConfirm">
         </Confirm>
       </div>
     </div>
-    <div id=overlay v-show="isFetching">
+    <div id="overlay" v-show="isFetching">
       <p id="fetching">反映しています。しばらくお待ちください</p>
     </div>
     <div class="google-calendar my-2">
@@ -21,66 +24,89 @@
         </div>
       </div>
       <div class="my-2" v-else>
-        <p >認証済</p>
+        <p>認証済</p>
       </div>
       <div class="exist-calendars-area my-2">
         <div v-if="haveNoCalendars">カレンダーがまだありません</div>
         <div v-else>
-          <div class="my-2" v-for="(calendar, index) in slicedCalendars" :key="index">
+          <div
+            class="my-2"
+            v-for="(calendar, index) in slicedCalendars"
+            :key="index">
             <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
-            <button class="btn btn-dark ms-1"
-                    v-bind:disabled="calendar.google_calendar_id || isFetching || notAuthenticatedGoogle"
-                    v-on:click="fetchGoogleCalendar(calendar, requestMethods['create'])">追加
+            <button
+              class="btn btn-dark ms-1"
+              v-bind:disabled="
+                calendar.google_calendar_id ||
+                isFetching ||
+                notAuthenticatedGoogle
+              "
+              v-on:click="
+                fetchGoogleCalendar(calendar, requestMethods['create'])
+              ">
+              追加
             </button>
-            <button class="btn btn-dark ms-1"
-                    v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching || notAuthenticatedGoogle"
-                    v-on:click="fetchGoogleCalendar(calendar, requestMethods['update'])">更新
+            <button
+              class="btn btn-dark ms-1"
+              v-bind:disabled="
+                notExistsGoogleId(calendar.google_calendar_id) ||
+                isFetching ||
+                notAuthenticatedGoogle
+              "
+              v-on:click="
+                fetchGoogleCalendar(calendar, requestMethods['update'])
+              ">
+              更新
             </button>
-            <button class="btn btn-dark ms-1"
-                    v-bind:disabled="notExistsGoogleId(calendar.google_calendar_id) || isFetching || notAuthenticatedGoogle"
-                    v-on:click="confirmDialog(calendar)">削除
+            <button
+              class="btn btn-dark ms-1"
+              v-bind:disabled="
+                notExistsGoogleId(calendar.google_calendar_id) ||
+                isFetching ||
+                notAuthenticatedGoogle
+              "
+              v-on:click="confirmDialog(calendar)">
+              削除
             </button>
           </div>
         </div>
       </div>
       <div class="pagenation my-2">
-        <span class="page-number m-1 fs-5" v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-          <span 
-                v-bind:class="{'current-page':currentPage === pageNumber}"
-                v-on:click="updatePageNumber(pageNumber, index)">
+        <span
+          class="page-number m-1 fs-5"
+          v-for="(pageNumber, index) in displayPageNumbers"
+          :key="index">
+          <span
+            v-bind:class="{ 'current-page': currentPage === pageNumber }"
+            v-on:click="updatePageNumber(pageNumber, index)">
             {{ pageNumber }}
           </span>
         </span>
       </div>
-      <button class="btn btn-primary my-2"
-              v-on:click="showTimeForm=true">時刻の設定
+      <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
+        時刻の設定
       </button>
     </div>
-    <button class="btn btn-dark my-2"
-            v-on:click="emit('close')">閉じる
-    </button>
-    <div id=overlay  v-show="showTimeForm">
-      <div id=time>
+    <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
+    <div id="overlay" v-show="showTimeForm">
+      <div id="time">
         <div class="time-form">
           <h3 class="fs-5 my-2">時刻の設定</h3>
-          <Time v-bind:dayOfSchedule="'morning'">
-          </Time>
-          <Time v-bind:dayOfSchedule="'afterNoon'">
-          </Time>
-          <Time v-bind:dayOfSchedule="'fullTime'">
-          </Time>
-          <button class="btn btn-primary my-2" 
-                  v-on:click="fetchTimes">保存
+          <Time v-bind:dayOfSchedule="'morning'"> </Time>
+          <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
+          <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
+          <button class="btn btn-primary my-2" v-on:click="fetchTimes">
+            保存
           </button>
         </div>
         <div v-show="errors.length > 0">
           <b>以下のエラーの修正をお願いします:</b>
-            <ul>
-              <li v-for="error in errors" :key="error.id">{{ error }}</li>
-            </ul>
+          <ul>
+            <li v-for="error in errors" :key="error.id">{{ error }}</li>
+          </ul>
         </div>
-        <button class="btn btn-dark my-2"
-          v-on:click="showTimeForm=false">閉じる
+        <button class="btn btn-dark my-2" v-on:click="showTimeForm = false">
+          閉じる
         </button>
       </div>
     </div>
@@ -125,26 +151,28 @@ const workingTimes = ref({
   fullTimeStartHour,
   fullTimeStartMinit,
   fullTimeEndHour,
-  fullTimeEndMinit,
+  fullTimeEndMinit
 })
 function fetchTimes() {
-  if (timesValidation()) { return }
+  if (timesValidation()) {
+    return
+  }
   fetch('api/times', {
-  method: 'PUT',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(workingTimes.value),
-  credentials: 'same-origin'
+    method: 'PUT',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(workingTimes.value),
+    credentials: 'same-origin'
   })
-  .then(() => {
-    toast(`保存しました`)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      toast(`保存しました`)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 provide('workingTimes', workingTimes)
 // Google
@@ -162,82 +190,84 @@ function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta ? meta.getAttribute('content') : ''
 }
-const requestMethods = { 
-  'create': 'POST',
-  'delete': 'DELETE',
-  'update': 'PUT'
+const requestMethods = {
+  create: 'POST',
+  delete: 'DELETE',
+  update: 'PUT'
 }
 const toActionString = {
-  'POST': '作成',
-  'DELETE': '削除',
-  'PUT': '更新'
+  POST: '作成',
+  DELETE: '削除',
+  PUT: '更新'
 }
 const isFetching = ref(false)
 function fetchGoogleCalendar(calendar, method) {
-  if ((method != 'DELETE') && (timesValidation())) { return }
+  if (method != 'DELETE' && timesValidation()) {
+    return
+  }
   isFetching.value = true
   cancelConfirm()
   fetch(`api/calendars/${calendar.year}/alignment`, {
-  method: method,
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(workingTimes.value),
-  credentials: 'same-origin'
+    method: method,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(workingTimes.value),
+    credentials: 'same-origin'
   })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    if (method === 'DELETE') {
-      calendar["google_calendar_id"] = null
-    } else {
-      calendar["google_calendar_id"] = json.google_calendar_id
-    }
-    toast(`${toActionString[method]}しました`)
-    emit(method, calendar)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
-  .finally(() => {
-    isFetching.value = false
-  })
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      if (method === 'DELETE') {
+        calendar['google_calendar_id'] = null
+      } else {
+        calendar['google_calendar_id'] = json.google_calendar_id
+      }
+      toast(`${toActionString[method]}しました`)
+      emit(method, calendar)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
+    .finally(() => {
+      isFetching.value = false
+    })
 }
 function fetchUser() {
   fetch('api/users', {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token()
-  },
-  credentials: 'same-origin'
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
   })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    authenticatedGoogle.value = json.authenticate
-    Object.assign(workingTimes.value, {
-      morningStartHour: json.morningStartHour,
-      morningStartMinit: json.morningStartMinit,
-      morningEndHour: json.morningEndHour,
-      morningEndMinit: json.morningEndMinit,
-      afterNoonStartHour: json.afterNoonStartHour,
-      afterNoonStartMinit: json.afterNoonStartMinit,
-      afterNoonEndHour: json.afterNoonEndHour,
-      afterNoonEndMinit: json.afterNoonEndMinit,
-      fullTimeStartHour: json.fullTimeStartHour,
-      fullTimeStartMinit: json.fullTimeStartMinit,
-      fullTimeEndHour: json.fullTimeEndHour,
-      fullTimeEndMinit: json.fullTimeEndMinit,
+    .then((response) => {
+      return response.json()
     })
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then((json) => {
+      authenticatedGoogle.value = json.authenticate
+      Object.assign(workingTimes.value, {
+        morningStartHour: json.morningStartHour,
+        morningStartMinit: json.morningStartMinit,
+        morningEndHour: json.morningEndHour,
+        morningEndMinit: json.morningEndMinit,
+        afterNoonStartHour: json.afterNoonStartHour,
+        afterNoonStartMinit: json.afterNoonStartMinit,
+        afterNoonEndHour: json.afterNoonEndHour,
+        afterNoonEndMinit: json.afterNoonEndMinit,
+        fullTimeStartHour: json.fullTimeStartHour,
+        fullTimeStartMinit: json.fullTimeStartMinit,
+        fullTimeEndHour: json.fullTimeEndHour,
+        fullTimeEndMinit: json.fullTimeEndMinit
+      })
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 onMounted(() => {
   fetchUser()
@@ -250,37 +280,37 @@ const haveNoCalendars = computed(() => {
   return !(props.calendars.length > 0)
 })
 const slicedCalendars = computed(() => {
-  let start = (currentPage.value -1) * pageLimit
+  let start = (currentPage.value - 1) * pageLimit
   let end = start + pageLimit
   return props.calendars.slice(start, end)
 })
 function updatePageNumber(pageNumber, index) {
-  if(typeof(pageNumber) === 'number'){
+  if (typeof pageNumber === 'number') {
     currentPage.value = pageNumber
     return
   }
-  if(index < currentPage.value){
-    currentPage.value -= (displayRange + 1)
+  if (index < currentPage.value) {
+    currentPage.value -= displayRange + 1
     return
   }
-  currentPage.value += (displayRange + 1)
+  currentPage.value += displayRange + 1
 }
 const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.calendars.length / pageLimit)
-  if(totalPages < 2) {
+  if (totalPages < 2) {
     return
   }
   pages.push(1)
-  if ((currentPage.value - displayRange) > 2){
+  if (currentPage.value - displayRange > 2) {
     pages.push('...')
   }
   for (let i = -displayRange; i <= displayRange; i++) {
-    if ((currentPage.value + i > 1) && (currentPage.value + i < totalPages)){
+    if (currentPage.value + i > 1 && currentPage.value + i < totalPages) {
       pages.push(currentPage.value + i)
     }
   }
-  if ((currentPage.value + displayRange) < (totalPages - 1)){
+  if (currentPage.value + displayRange < totalPages - 1) {
     pages.push('...')
   }
   pages.push(totalPages)
@@ -288,7 +318,7 @@ const displayPageNumbers = computed(() => {
 })
 // 確認ダイアログ
 const confirmedCalendar = ref(null)
-function confirmDialog(calendar){
+function confirmDialog(calendar) {
   confirmedCalendar.value = calendar
 }
 function cancelConfirm() {
@@ -300,9 +330,14 @@ const schedules = ['morning', 'afterNoon', 'fullTime']
 function timesValidation() {
   errors.value = []
   for (let schedule of schedules) {
-    if((workingTimes.value[`${schedule}StartHour`] > workingTimes.value[`${schedule}EndHour`])
-      || ((workingTimes.value[`${schedule}StartHour`] === workingTimes.value[`${schedule}EndHour`]) 
-      && (workingTimes.value[`${schedule}StartMinit`] > workingTimes.value[`${schedule}EndMinit`]))) {
+    if (
+      workingTimes.value[`${schedule}StartHour`] >
+        workingTimes.value[`${schedule}EndHour`] ||
+      (workingTimes.value[`${schedule}StartHour`] ===
+        workingTimes.value[`${schedule}EndHour`] &&
+        workingTimes.value[`${schedule}StartMinit`] >
+          workingTimes.value[`${schedule}EndMinit`])
+    ) {
       errors.value.push(`開始時が終了時以前になるようにしてください。`)
       return true
     }
@@ -312,48 +347,48 @@ function timesValidation() {
 </script>
 
 <style>
-#overlay{
-  z-index:1;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.5);
+#overlay {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-#time{
-  z-index:2;
-  width:60%;
+#time {
+  z-index: 2;
+  width: 60%;
   padding: 1em;
-  background:#fff;
+  background: #fff;
 }
-#confirm{
-  z-index:3;
-  width:60%;
+#confirm {
+  z-index: 3;
+  width: 60%;
   padding: 2em;
-  background:#fff;
+  background: #fff;
 }
-#fetching{
-  z-index:4;
-  width:60%;
+#fetching {
+  z-index: 4;
+  width: 60%;
   padding: 1em;
-  background:#fff;
+  background: #fff;
 }
-.exist-calendars-area{
+.exist-calendars-area {
   width: 600px;
   height: 220px;
 }
-.page-number{
+.page-number {
   text-decoration: underline;
   cursor: pointer;
 }
-.current-page{
-  font-weight:bold;
+.current-page {
+  font-weight: bold;
 }
-.google-button{
+.google-button {
   width: 192px;
   cursor: pointer;
 }
