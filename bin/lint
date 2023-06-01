@@ -2,4 +2,5 @@
 
 bundle exec rubocop -a
 bundle exec slim-lint app/views -c config/slim_lint.yml
-bin/yarn lint
+bin/yarn bin/yarn lint:eslint
+bin/yarn bin/yarn lint:prettier
