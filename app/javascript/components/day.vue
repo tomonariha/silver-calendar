@@ -50,7 +50,6 @@ import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 import none from '../../assets/images/none.svg?url'
 
-const schedules = [ "full-time", "morning", "afternoon", "off", "paidleave", "none"]
 const props = defineProps({ 
   date: Object,
   autoAdjusted: Boolean

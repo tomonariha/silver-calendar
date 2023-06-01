@@ -6,12 +6,8 @@ import "../stylesheets/styles.scss"
 
 document.addEventListener('DOMContentLoaded', () => {
   const Calendar = document.querySelector("#app")
-  let userId
-  if (Calendar) {
-    userId = Calendar.getAttribute('data-user-id')
-  }
   const options = {
     timeout: 2000
   }
-  createApp(App, {userId: userId}).use(Toast, options).mount(Calendar)
+  createApp(App).use(Toast, options).mount(Calendar)
 })

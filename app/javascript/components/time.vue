@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { inject } from 'vue'
 const props = defineProps({
   dayOfSchedule: String
 })
