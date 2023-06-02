@@ -1,44 +1,40 @@
 <template>
   <Popper arrow>
-    <button
-      class="calendar__day-button"
-      v-bind:class="{
-        'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')
-      }">
-      <span v-if="props.date.schedule === 'full-time'">
-        <img :src="fullTime" alt="fullTime" width="24" height="24" />
+    <button class="calendar__day-button" v-bind:class="{'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')}">
+      <span v-if="props.date.schedule==='full-time'">
+        <img :src="fullTime" alt="fullTime" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule === 'morning'">
-        <img :src="morning" alt="morning" width="24" height="24" />
+      <span v-else-if="props.date.schedule==='morning'">
+        <img :src="morning" alt="morning" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule === 'afternoon'">
-        <img :src="afterNoon" alt="afternoon" width="24" height="24" />
+      <span v-else-if="props.date.schedule==='afternoon'">
+        <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule === 'off'">
-        <img :src="off" alt="off" width="24" height="24" />
+      <span v-else-if="props.date.schedule==='off'">
+        <img :src="off" alt="off" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule === 'paidleave'">
-        <img :src="paidleave" alt="paidleave" width="24" height="24" />
+      <span v-else-if="props.date.schedule==='paidleave'">
+        <img :src="paidleave" alt="paidleave" class="schedule-icon" />
       </span>
     </button>
     <template #content>
       <button v-on:click="changeSchedule('full-time')">
-        <img :src="fullTime" alt="fullTime" width="24" height="24" />
+        <img :src="fullTime" alt="fullTime" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('morning')">
-        <img :src="morning" alt="morning" width="24" height="24" />
+        <img :src="morning" alt="morning" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('afternoon')">
-        <img :src="afterNoon" alt="afternoon" width="24" height="24" />
+        <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('off')">
-        <img :src="off" alt="off" width="24" height="24" />
+        <img :src="off" alt="off" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('paidleave')">
-        <img :src="paidleave" alt="paidleave" width="24" height="24" />
+        <img :src="paidleave" alt="paidleave" class="schedule-icon" />
       </button>
       <button v-on:click="changeSchedule('none')">
-        <img :src="none" alt="none" width="24" height="24" />
+        <img :src="none" alt="none" class="schedule-icon" />
       </button>
     </template>
   </Popper>
@@ -124,12 +120,16 @@ function updateCalendar(schedule) {
 }
 </script>
 <style>
-.calendar__day-button {
-  width: 32px;
-  height: 32px;
-  padding: 1px;
-}
-.auto-adjusted {
-  background-color: lightskyblue;
-}
+  .calendar__day-button{
+    width: 48px;
+    height: 48px;
+    padding: 1px;
+  }
+  .schedule-icon{
+    width: 42px;
+    height: 42px;
+  }
+  .auto-adjusted{
+    background-color: lightskyblue;
+  }
 </style>
