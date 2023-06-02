@@ -1,129 +1,187 @@
 <template>
-  <h2 class="fs-4 my-2">条件一覧</h2>
-  <div id=overlay v-show="confirmedSetting">
-    <div id=confirm>
-      <Confirm v-bind:message="'削除します。よろしいですか？'"
-               v-on:execution="deleteSetting(confirmedSetting.id)"
-               v-on:cancel="cancelConfirm">
-      </Confirm>
-    </div>
-  </div>
-  <div class="setting">
-    <div class="settings-area">
-      <span class="have-no-settings" v-show="!(props.settings.length > 0)">まだ条件がありません</span>
-      <div v-for="setting in slicedSettings" :key="setting.id">
-        <span class="setting-periods m-2 fs-6 rounded" v-bind:class="{'selected': settingId === setting.id}">
-          {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
-        </span>
-        <button v-on:click="editSetting(setting)" class="btn btn-sm btn-dark ms-1">編集</button>
-        <button v-on:click="reflectSetting(setting)" class="btn btn-sm btn-primary ms-1">適用</button>
-        <span v-on:click="confirmDialog(setting)" class="delete-button ms-1">削除</span>
+  <div>
+    <h2 class="fs-4 my-2">条件一覧</h2>
+    <div id="overlay" v-show="confirmedSetting">
+      <div id="confirm">
+        <Confirm
+          v-bind:message="'削除します。よろしいですか？'"
+          v-on:execution="deleteSetting(confirmedSetting.id)"
+          v-on:cancel="cancelConfirm">
+        </Confirm>
       </div>
     </div>
-    <div class="pagenation my-2">
-      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-        <span class="page-number m-1 fs-5"
-              v-bind:class="{'current-page':currentPage === pageNumber}"
-              v-on:click="updatePageNumber(pageNumber, index)">
-          {{ pageNumber }}
-        </span>
-      </span>
-    </div>
-    <button class="btn btn-primary my-2"
-            v-on:click="newSetting()">新しい条件を作る
-    </button>
-  </div>
-  <div id=overlay v-show="showFormContent">
-    <div id=form>
-      <div class="form-area">
-        <h4 class="my-2" v-if="settingId">条件の編集</h4>
-        <h4 class="my-2" v-else>条件の作成</h4>
-        <span class="fs-6 m-2">開始日：</span>
-        <select id="start_month_select" v-model="selectedStartMonth">
-          <option v-for="month in 12" :key="month">
-            {{ month }}
-          </option>
-        </select>
-        <span class="fs-6 m-1">月</span>
-        <select id="start_day_select" v-model="selectedStartDay">
-          <option v-for="date in lastDate(selectedStartMonth)" :key="date">
-            {{ date }}
-          </option>
-        </select>
-        <span class="fs-6 m-1">日</span>
-        <br>
-        <span class="fs-6 m-2">終了日：</span>
-        <select id="end_month_select" v-model="selectedEndMonth">
-          <option v-for="month in 12" :key="month">
-            {{ month }}
-          </option>
-        </select>
-        <span class="fs-6 m-1">月</span>
-        <select id="end_day_select" v-model="selectedEndDay">
-          <option v-for="date in lastDate(selectedEndMonth)" :key="date">
-            {{ date }}
-          </option>
-        </select>
-        <span class="fs-6 m-1">日</span>
-        <div class="my-2">
-          <span class="me-2">この期間の勤務日数:</span>
-          <label for="check_specified_total_days">指定しない</label>
-          <input type="checkbox" id="check_specified_total_days" v-model="notSpecifiedTotalDays"/>
-          <br>
-          <input id="specified_total_days" class="m-2" type="number" v-show="specifiedTotalDays" v-model="totalWorkingDays"/>
-          <span class="my-2" v-show="specifiedTotalDays">日</span>
+    <div class="setting">
+      <div class="settings-area">
+        <span class="have-no-settings" v-show="!(props.settings.length > 0)"
+          >まだ条件がありません</span
+        >
+        <div v-for="setting in slicedSettings" :key="setting.id">
+          <span
+            class="setting-periods m-2 fs-6 rounded"
+            v-bind:class="{ selected: settingId === setting.id }">
+            {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+          </span>
+          <button
+            v-on:click="editSetting(setting)"
+            class="btn btn-sm btn-dark ms-1">
+            編集
+          </button>
+          <button
+            v-on:click="reflectSetting(setting)"
+            class="btn btn-sm btn-primary ms-1">
+            適用
+          </button>
+          <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+            >削除</span
+          >
         </div>
-        <div class="weekday-nav my-2">
-          <span class="my-2 me-2">{{ weekdayJp[weekdayNumber] }}曜日の予定</span>
-          <button class="me-1" v-on:click='previousWeekday'>＜</button>
-          <button class="me-1" v-on:click='nextWeekday'>＞</button>
-        </div>
-        <div class="m-2">
-          <input type="radio" id="none" value="None" v-model="schedules[weekdayNumber]" />
-          <label for="none">予定なし</label>
-          <br/>
-          <input type="radio" id="full-time" value="full-time" v-model="schedules[weekdayNumber]" />
-          <label for="full-time">全日出勤</label>
-          <br/>
-          <input type="radio" id="morning" value="morning" v-model="schedules[weekdayNumber]" />
-          <label for="morning">午前出勤</label>
-          <br/>
-          <input type="radio" id="afternoon" value="afternoon" v-model="schedules[weekdayNumber]" />
-          <label for="afternoon">午後出勤</label>
-          <br/>
-          <input type="radio" id="off" value="off" v-model="schedules[weekdayNumber]" />
-          <label for="off">休み</label>
-          <br/>
-        </div>
-        <button class="btn btn-success my-2" v-if="settingId" v-on:click="updateSetting(settingId)">変更</button>
-        <button class="btn btn-primary my-2" v-else v-on:click="createSetting()">新規作成</button>
       </div>
-      <div class="error-area" v-if="errors.length > 0">
-        <p>
+      <div class="pagenation my-2">
+        <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+          <span
+            class="page-number m-1 fs-5"
+            v-bind:class="{ 'current-page': currentPage === pageNumber }"
+            v-on:click="updatePageNumber(pageNumber, index)">
+            {{ pageNumber }}
+          </span>
+        </span>
+      </div>
+      <button class="btn btn-primary my-2" v-on:click="newSetting()">
+        新しい条件を作る
+      </button>
+    </div>
+    <div id="overlay" v-show="showFormContent">
+      <div id="form">
+        <div class="form-area">
+          <h4 class="my-2" v-if="settingId">条件の編集</h4>
+          <h4 class="my-2" v-else>条件の作成</h4>
+          <span class="fs-6 m-2">開始日：</span>
+          <select id="start_month_select" v-model="selectedStartMonth">
+            <option v-for="month in 12" :key="month">
+              {{ month }}
+            </option>
+          </select>
+          <span class="fs-6 m-1">月</span>
+          <select id="start_day_select" v-model="selectedStartDay">
+            <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+              {{ date }}
+            </option>
+          </select>
+          <span class="fs-6 m-1">日</span>
+          <br />
+          <span class="fs-6 m-2">終了日：</span>
+          <select id="end_month_select" v-model="selectedEndMonth">
+            <option v-for="month in 12" :key="month">
+              {{ month }}
+            </option>
+          </select>
+          <span class="fs-6 m-1">月</span>
+          <select id="end_day_select" v-model="selectedEndDay">
+            <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+              {{ date }}
+            </option>
+          </select>
+          <span class="fs-6 m-1">日</span>
+          <div class="my-2">
+            <span class="me-2">この期間の勤務日数:</span>
+            <label for="check_specified_total_days">指定しない</label>
+            <input
+              type="checkbox"
+              id="check_specified_total_days"
+              v-model="notSpecifiedTotalDays" />
+            <br />
+            <input
+              id="specified_total_days"
+              class="m-2"
+              type="number"
+              v-show="specifiedTotalDays"
+              v-model="totalWorkingDays" />
+            <span class="my-2" v-show="specifiedTotalDays">日</span>
+          </div>
+          <div class="weekday-nav my-2">
+            <span class="my-2 me-2"
+              >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
+            >
+            <button class="me-1" v-on:click="previousWeekday">＜</button>
+            <button class="me-1" v-on:click="nextWeekday">＞</button>
+          </div>
+          <div class="m-2">
+            <input
+              type="radio"
+              id="none"
+              value="None"
+              v-model="schedules[weekdayNumber]" />
+            <label for="none">予定なし</label>
+            <br />
+            <input
+              type="radio"
+              id="full-time"
+              value="full-time"
+              v-model="schedules[weekdayNumber]" />
+            <label for="full-time">全日出勤</label>
+            <br />
+            <input
+              type="radio"
+              id="morning"
+              value="morning"
+              v-model="schedules[weekdayNumber]" />
+            <label for="morning">午前出勤</label>
+            <br />
+            <input
+              type="radio"
+              id="afternoon"
+              value="afternoon"
+              v-model="schedules[weekdayNumber]" />
+            <label for="afternoon">午後出勤</label>
+            <br />
+            <input
+              type="radio"
+              id="off"
+              value="off"
+              v-model="schedules[weekdayNumber]" />
+            <label for="off">休み</label>
+            <br />
+          </div>
+          <button
+            class="btn btn-success my-2"
+            v-if="settingId"
+            v-on:click="updateSetting(settingId)">
+            変更
+          </button>
+          <button
+            class="btn btn-primary my-2"
+            v-else
+            v-on:click="createSetting()">
+            新規作成
+          </button>
+        </div>
+        <div class="error-area" v-if="errors.length > 0">
           <b>以下のエラーの修正をお願いします:</b>
           <ul>
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
-        </p>
+        </div>
+        <button class="btn btn-dark my-2" v-on:click="showFormContent = false">
+          閉じる
+        </button>
       </div>
-      <button class="btn btn-dark my-2" v-on:click="showFormContent=false">閉じる</button>
     </div>
+    <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
   </div>
-  <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
-import { useToast } from "vue-toastification"
+import { useToast } from 'vue-toastification'
 
 const toast = useToast()
-const props = defineProps({ 
+const props = defineProps({
   year: Number,
   settings: Array
 })
 const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
-const settingId = ref("")
+const settingId = ref('')
 const showFormContent = ref(false)
 // CRUD
 function token() {
@@ -131,10 +189,22 @@ function token() {
   return meta ? meta.getAttribute('content') : ''
 }
 function createSetting() {
-  const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
-  const endDay = new Date(props.year, (selectedEndMonth.value - 1), selectedEndDay.value)
-  if (totalDaysValidation(startDay, endDay)) { return }
-  if (periodValidation(startDay, endDay)) { return }
+  const startDay = new Date(
+    props.year,
+    selectedStartMonth.value - 1,
+    selectedStartDay.value
+  )
+  const endDay = new Date(
+    props.year,
+    selectedEndMonth.value - 1,
+    selectedEndDay.value
+  )
+  if (totalDaysValidation(startDay, endDay)) {
+    return
+  }
+  if (periodValidation(startDay, endDay)) {
+    return
+  }
   const setting = {
     period_start_at: startDay.toDateString(),
     period_end_at: endDay.toDateString(),
@@ -145,36 +215,48 @@ function createSetting() {
     schedule_of_wednesday: schedules.value[3],
     schedule_of_thursday: schedules.value[4],
     schedule_of_friday: schedules.value[5],
-    schedule_of_saturday: schedules.value[6],
+    schedule_of_saturday: schedules.value[6]
   }
   fetch(`api/calendars/${props.year}/settings`, {
-  method: 'POST',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(setting),
-  credentials: 'same-origin'
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(setting),
+    credentials: 'same-origin'
   })
-  .then((response) => {
-    return response.json()
-  })
-  .then((json) => {
-    toast("作成しました")
-    setting['id'] = json.id
-    emit('create', setting)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      toast('作成しました')
+      setting['id'] = json.id
+      emit('create', setting)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
   showFormContent.value = false
 }
 function updateSetting(settingId) {
-  const startDay = new Date(props.year, (selectedStartMonth.value - 1), selectedStartDay.value)
-  const endDay = new Date(props.year, (selectedEndMonth.value - 1), selectedEndDay.value)
-  if (totalDaysValidation(startDay, endDay)) { return }
-  if (periodValidation(startDay, endDay)) { return }
+  const startDay = new Date(
+    props.year,
+    selectedStartMonth.value - 1,
+    selectedStartDay.value
+  )
+  const endDay = new Date(
+    props.year,
+    selectedEndMonth.value - 1,
+    selectedEndDay.value
+  )
+  if (totalDaysValidation(startDay, endDay)) {
+    return
+  }
+  if (periodValidation(startDay, endDay)) {
+    return
+  }
   const setting = {
     period_start_at: startDay.toDateString(),
     period_end_at: endDay.toDateString(),
@@ -185,26 +267,26 @@ function updateSetting(settingId) {
     schedule_of_wednesday: schedules.value[3],
     schedule_of_thursday: schedules.value[4],
     schedule_of_friday: schedules.value[5],
-    schedule_of_saturday: schedules.value[6],
+    schedule_of_saturday: schedules.value[6]
   }
   fetch(`api/calendars/${props.year}/settings/${settingId}`, {
-  method: 'PUT',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(setting),
-  credentials: 'same-origin'
+    method: 'PUT',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(setting),
+    credentials: 'same-origin'
   })
-  .then(() => {
-    toast("更新しました")
-    setting['id'] = settingId
-    emit('update', setting)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      toast('更新しました')
+      setting['id'] = settingId
+      emit('update', setting)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
   showFormContent.value = false
 }
 function editSetting(setting) {
@@ -218,9 +300,9 @@ function editSetting(setting) {
   schedules.value[4] = setting.schedule_of_thursday
   schedules.value[5] = setting.schedule_of_friday
   schedules.value[6] = setting.schedule_of_saturday
-  selectedStartMonth.value = (startDay.getMonth() + 1)
+  selectedStartMonth.value = startDay.getMonth() + 1
   selectedStartDay.value = startDay.getDate()
-  selectedEndMonth.value = (endDay.getMonth() + 1)
+  selectedEndMonth.value = endDay.getMonth() + 1
   selectedEndDay.value = endDay.getDate()
   settingId.value = setting.id
   weekdayNumber.value = 0
@@ -234,35 +316,35 @@ function editSetting(setting) {
 function deleteSetting(id) {
   cancelConfirm()
   fetch(`api/calendars/${props.year}/settings/${id}`, {
-  method: 'DELETE',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-  },
-  credentials: 'same-origin'
+    method: 'DELETE',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
   })
-  .then(() => {
-    toast("削除しました")
-    resetSettingParams()
-    emit('delete', id)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      toast('削除しました')
+      resetSettingParams()
+      emit('delete', id)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 function resetSettingParams() {
-  schedules.value[0] = "off"
-  schedules.value[1] = "None"
-  schedules.value[2] = "None"
-  schedules.value[3] = "None"
-  schedules.value[4] = "None"
-  schedules.value[5] = "None"
-  schedules.value[6] = "off"
+  schedules.value[0] = 'off'
+  schedules.value[1] = 'None'
+  schedules.value[2] = 'None'
+  schedules.value[3] = 'None'
+  schedules.value[4] = 'None'
+  schedules.value[5] = 'None'
+  schedules.value[6] = 'off'
   selectedStartMonth.value = 1
   selectedStartDay.value = 1
   selectedEndMonth.value = 1
   selectedEndDay.value = 1
-  settingId.value = ""
+  settingId.value = ''
   totalWorkingDays.value = 0
   weekdayNumber.value = 0
   notSpecifiedTotalDays.value = false
@@ -271,7 +353,7 @@ function newSetting() {
   resetSettingParams()
   showFormContent.value = true
 }
-function reflectSetting(setting){
+function reflectSetting(setting) {
   emit('reflect', setting)
 }
 // フォーム：期間設定
@@ -290,17 +372,19 @@ const specifiedTotalDays = computed(() => {
   return !notSpecifiedTotalDays.value
 })
 function setTotalWorkingDays() {
-  if (notSpecifiedTotalDays.value) { return null } 
+  if (notSpecifiedTotalDays.value) {
+    return null
+  }
   return totalWorkingDays.value
 }
 // フォーム：曜日毎の予定入力
-const scheduleOfSunday = "off"
-const scheduleOfMonday = "None"
-const scheduleOfTuesday = "None"
-const scheduleOfWednesday = "None"
-const scheduleOfThursday = "None"
-const scheduleOfFriday = "None"
-const scheduleOfSaturday = "off"
+const scheduleOfSunday = 'off'
+const scheduleOfMonday = 'None'
+const scheduleOfTuesday = 'None'
+const scheduleOfWednesday = 'None'
+const scheduleOfThursday = 'None'
+const scheduleOfFriday = 'None'
+const scheduleOfSaturday = 'off'
 const schedules = ref([
   scheduleOfSunday,
   scheduleOfMonday,
@@ -312,13 +396,13 @@ const schedules = ref([
 ])
 const weekdayNumber = ref(0)
 const weekdayJp = {
-  0: "日",
-  1: "月",
-  2: "火",
-  3: "水",
-  4: "木",
-  5: "金",
-  6: "土",
+  0: '日',
+  1: '月',
+  2: '火',
+  3: '水',
+  4: '木',
+  5: '金',
+  6: '土'
 }
 function previousWeekday() {
   if (weekdayNumber.value === 0) {
@@ -339,37 +423,37 @@ const currentPage = ref(1)
 const pageLimit = 5
 const displayRange = 1
 function updatePageNumber(pageNumber, index) {
-  if(typeof(pageNumber) === 'number'){
+  if (typeof pageNumber === 'number') {
     currentPage.value = pageNumber
     return
   }
-  if(index < currentPage.value){
-    currentPage.value -= (displayRange + 1)
+  if (index < currentPage.value) {
+    currentPage.value -= displayRange + 1
     return
   }
-  currentPage.value += (displayRange + 1)
+  currentPage.value += displayRange + 1
 }
 const slicedSettings = computed(() => {
-  let start = (currentPage.value -1) * pageLimit
+  let start = (currentPage.value - 1) * pageLimit
   let end = start + pageLimit
-  return props.settings.slice(start, end) 
+  return props.settings.slice(start, end)
 })
 const displayPageNumbers = computed(() => {
   let pages = []
   const totalPages = Math.ceil(props.settings.length / pageLimit)
-  if(totalPages < 2) {
+  if (totalPages < 2) {
     return
   }
   pages.push(1)
-  if ((currentPage.value - displayRange) > 2){
+  if (currentPage.value - displayRange > 2) {
     pages.push('...')
   }
   for (let i = -displayRange; i <= displayRange; i++) {
-    if ((currentPage.value  + i > 1) && (currentPage.value + i < totalPages)){
+    if (currentPage.value + i > 1 && currentPage.value + i < totalPages) {
       pages.push(currentPage.value + i)
     }
   }
-  if ((currentPage.value + displayRange) < (totalPages - 1)){
+  if (currentPage.value + displayRange < totalPages - 1) {
     pages.push('...')
   }
   pages.push(totalPages)
@@ -377,7 +461,7 @@ const displayPageNumbers = computed(() => {
 })
 // 確認ダイアログ
 const confirmedSetting = ref(null)
-function confirmDialog(setting){
+function confirmDialog(setting) {
   confirmedSetting.value = setting
 }
 function cancelConfirm() {
@@ -391,44 +475,68 @@ function formatMonth(month) {
 function formatDay(day) {
   return day.toString().padStart(2, '0')
 }
-function formatDate(date){
-  return (date.getFullYear() + "-" + formatMonth(date.getMonth()+1) + "-" + formatDay(date.getDate()))
+function formatDate(date) {
+  return (
+    date.getFullYear() +
+    '-' +
+    formatMonth(date.getMonth() + 1) +
+    '-' +
+    formatDay(date.getDate())
+  )
 }
 function periodValidation(startDay, endDay) {
   errors.value = []
   let invalid = false
-  if (!selectedStartMonth.value || !selectedStartDay.value || !selectedEndMonth.value || !selectedEndDay.value) {
-    errors.values.push("開始日と終了日を入力してください。")
+  if (
+    !selectedStartMonth.value ||
+    !selectedStartDay.value ||
+    !selectedEndMonth.value ||
+    !selectedEndDay.value
+  ) {
+    errors.value.spush('開始日と終了日を入力してください。')
     return true
   }
   if (startDay > endDay) {
-    errors.value.push("開始日が終了日以前になるようにしてください。")
+    errors.value.push('開始日が終了日以前になるようにしてください。')
     return true
   }
   for (let setting of props.settings) {
-    if (setting.id === settingId.value) { continue }
+    if (setting.id === settingId.value) {
+      continue
+    }
     const settingStartAt = setting.period_start_at
     const settingEndAt = setting.period_end_at
     const formatedStartDay = formatDate(startDay)
     const formatedEndDay = formatDate(endDay)
-    if ((formatedStartDay <= settingStartAt) && (formatedEndDay >= settingStartAt) ||
-      (formatedStartDay <= settingEndAt) && (formatedEndDay >= settingEndAt) ||
-      (formatedStartDay > settingStartAt) && (formatedEndDay < settingEndAt)) {
-      errors.value.push("他の条件の期間と重ならないようにしてください。")
+    if (
+      (formatedStartDay <= settingStartAt &&
+        formatedEndDay >= settingStartAt) ||
+      (formatedStartDay <= settingEndAt && formatedEndDay >= settingEndAt) ||
+      (formatedStartDay > settingStartAt && formatedEndDay < settingEndAt)
+    ) {
+      errors.value.push('他の条件の期間と重ならないようにしてください。')
       invalid = true
       break
     }
   }
-  if (invalid) { return true }
+  if (invalid) {
+    return true
+  }
 }
 function totalDaysValidation(startDay, endDay) {
   errors.value = []
   let calendar = []
-  for (let day = new Date(startDay.getTime()); day <= endDay; day.setDate(day.getDate()+1)) {
+  for (
+    let day = new Date(startDay.getTime());
+    day <= endDay;
+    day.setDate(day.getDate() + 1)
+  ) {
     calendar.push(day)
   }
-  if ((totalWorkingDays.value < 0)||(totalWorkingDays.value > calendar.length)) {
-    errors.value.push(`勤務日数は０以上期間内の日数(${calendar.length})以下にしてください。`)
+  if (totalWorkingDays.value < 0 || totalWorkingDays.value > calendar.length) {
+    errors.value.push(
+      `勤務日数は０以上期間内の日数(${calendar.length})以下にしてください。`
+    )
     return true
   }
 }
@@ -441,54 +549,54 @@ watch(
 </script>
 
 <style>
-#overlay{
-  z-index:1;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.5);
+#overlay {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-#form{
-  z-index:2;
-  width:60%;
+#form {
+  z-index: 2;
+  width: 60%;
   padding: 1em;
-  background:#fff;
+  background: #fff;
 }
-#confirm{
-  z-index:3;
-  width:60%;
+#confirm {
+  z-index: 3;
+  width: 60%;
   padding: 2em;
-  background:#fff;
+  background: #fff;
 }
-.delete-button{
+.delete-button {
   text-decoration: underline;
   cursor: pointer;
 }
-.setting-periods{
+.setting-periods {
   display: inline-block;
   width: 220px;
 }
-.settings-area{
+.settings-area {
   width: 600px;
   height: 220px;
 }
-.page-number{
+.page-number {
   text-decoration: underline;
   cursor: pointer;
 }
-.have-no-settings{
+.have-no-settings {
   display: inline-block;
   vertical-align: middle;
 }
-.current-page{
-  font-weight:bold;
+.current-page {
+  font-weight: bold;
 }
-#specified_total_days{
+#specified_total_days {
   width: 60px;
 }
 </style>
