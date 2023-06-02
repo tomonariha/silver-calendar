@@ -50,8 +50,7 @@ import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 import none from '../../assets/images/none.svg?url'
 
-const schedules = [ "full-time", "morning", "afternoon", "off", "paidleave", "none"]
-const props = defineProps({ 
+const props = defineProps({
   date: Object,
   autoAdjusted: Boolean
 })
@@ -60,9 +59,9 @@ function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta ? meta.getAttribute('content') : ''
 }
-const dayOfSchedule = ref("")
+const dayOfSchedule = ref('')
 function changeSchedule(schedule) {
-  if (schedule === "none") {
+  if (schedule === 'none') {
     deleteDate()
   } else {
     updateCalendar(schedule)
@@ -76,43 +75,48 @@ function deleteDate() {
     return
   }
   fetch(`api/days/${date.year}/${date.month}/${date.date}`, {
-  method: 'DELETE',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-  },
-  credentials: 'same-origin'
+    method: 'DELETE',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
   })
-  .then(() => {
-    emit('delete', date)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      emit('delete', date)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 function updateCalendar(schedule) {
   const date = props.date
-  const dateState = {year: date.year, month: date.month, date: date.date, schedule: schedule}
+  const dateState = {
+    year: date.year,
+    month: date.month,
+    date: date.date,
+    schedule: schedule
+  }
   if (props.autoAdjusted) {
     emit('update', dateState)
     return
   }
   fetch(`api/days/${date.year}/${date.month}`, {
-  method: 'POST',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(dateState),
-  credentials: 'same-origin'
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(dateState),
+    credentials: 'same-origin'
   })
-  .then(() => {
-    emit('update', dateState)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      emit('update', dateState)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 </script>
 <style>
