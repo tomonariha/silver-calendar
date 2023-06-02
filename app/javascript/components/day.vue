@@ -1,19 +1,23 @@
 <template>
   <Popper arrow>
-    <button class="calendar__day-button" v-bind:class="{'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')}">
-      <span v-if="props.date.schedule==='full-time'">
+    <button
+      class="calendar__day-button"
+      v-bind:class="{
+        'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')
+      }">
+      <span v-if="props.date.schedule === 'full-time'">
         <img :src="fullTime" alt="fullTime" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='morning'">
+      <span v-else-if="props.date.schedule === 'morning'">
         <img :src="morning" alt="morning" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='afternoon'">
+      <span v-else-if="props.date.schedule === 'afternoon'">
         <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='off'">
+      <span v-else-if="props.date.schedule === 'off'">
         <img :src="off" alt="off" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='paidleave'">
+      <span v-else-if="props.date.schedule === 'paidleave'">
         <img :src="paidleave" alt="paidleave" class="schedule-icon" />
       </span>
     </button>
@@ -120,16 +124,16 @@ function updateCalendar(schedule) {
 }
 </script>
 <style>
-  .calendar__day-button{
-    width: 48px;
-    height: 48px;
-    padding: 1px;
-  }
-  .schedule-icon{
-    width: 42px;
-    height: 42px;
-  }
-  .auto-adjusted{
-    background-color: lightskyblue;
-  }
+.calendar__day-button {
+  width: 48px;
+  height: 48px;
+  padding: 1px;
+}
+.schedule-icon {
+  width: 42px;
+  height: 42px;
+}
+.auto-adjusted {
+  background-color: lightskyblue;
+}
 </style>
