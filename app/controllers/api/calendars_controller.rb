@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::CalendarsController < ApplicationController
+class API::CalendarsController < ApplicationController
   def show
     @calendar = User.find(current_user.id).calendars.find_by(year: params[:year])
     @days = @calendar&.days

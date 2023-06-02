@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::AlignmentsController < ApplicationController
+class API::AlignmentsController < ApplicationController
   before_action :set_user, :set_calendar, :set_calendar_client, :set_working_times
 
   def create

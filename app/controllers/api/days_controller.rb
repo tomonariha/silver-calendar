@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::DaysController < ApplicationController
+class API::DaysController < ApplicationController
   before_action :set_calendar
   before_action :set_target_day
 

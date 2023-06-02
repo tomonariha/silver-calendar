@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::UsersController < ApplicationController
+class API::UsersController < ApplicationController
   def show
     @user = current_user
     access_token = Rails.cache.read(@user.uid)
