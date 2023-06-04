@@ -20,7 +20,7 @@ https://silver-calendar.com
 - Vue.js(3.2.36)
 - Vite(3.2.0)
 - PostgreSQL
-- Google Calendar API
+- GoogleCalendarAPI
 - GithubActions
 - Fly.io
 
@@ -40,7 +40,7 @@ $ bin/setup
 
 ## 起動
 ```
-$ ralls s
+$ bin/dev
 ```
 
 ## テスト
