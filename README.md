@@ -52,3 +52,16 @@ $ bundle exec rspec
 ```
 $ bin/lint
 ```
+
+## キャプチャー
+### 勤務予定入力
+<img width="412" alt="スクリーンショット 2023-06-04 23 11 45-min" src="https://github.com/tomonariha/working-day-deployer/assets/96340764/c52d95ef-9673-4980-88a7-fd8d2e591a94">
+
+### 自動調整
+<img width="412" alt="スクリーンショット 2023-06-04 23 14 38-min" src="https://github.com/tomonariha/working-day-deployer/assets/96340764/222aa419-ebfb-4d29-96b6-2b9952842580">
+
+### 年間カレンダー
+<img width="412" alt="スクリーンショット 2023-06-04 23 08 45-min" src="https://github.com/tomonariha/working-day-deployer/assets/96340764/f49f2c9e-c84f-4333-93c7-0bfb1a0ba237">
+
+### Googleカレンダーへ反映
+<img width="412" alt="スクリーンショット 2023-05-16 1 49 20-min" src="https://github.com/tomonariha/working-day-deployer/assets/96340764/4bd0c017-e341-4586-855e-a59f7f32d5a9">
