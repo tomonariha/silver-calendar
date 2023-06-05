@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::SettingsController < ApplicationController
+class API::SettingsController < ApplicationController
   def index
     @calendar = User.find(current_user.id).calendars.find_by(year: params[:calendar_year])
     @settings = @calendar&.settings

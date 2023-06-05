@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::TimesController < ApplicationController
+class API::TimesController < ApplicationController
   def update
     user = current_user
     user.update!(time_params.transform_keys!(&:underscore))

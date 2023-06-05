@@ -1,19 +1,23 @@
 <template>
   <Popper arrow>
-    <button class="calendar__day-button" v-bind:class="{'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')}">
-      <span v-if="props.date.schedule==='full-time'">
+    <button
+      class="calendar__day-button"
+      v-bind:class="{
+        'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')
+      }">
+      <span v-if="props.date.schedule === 'full-time'">
         <img :src="fullTime" alt="fullTime" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='morning'">
+      <span v-else-if="props.date.schedule === 'morning'">
         <img :src="morning" alt="morning" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='afternoon'">
+      <span v-else-if="props.date.schedule === 'afternoon'">
         <img :src="afterNoon" alt="afternoon" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='off'">
+      <span v-else-if="props.date.schedule === 'off'">
         <img :src="off" alt="off" class="schedule-icon" />
       </span>
-      <span v-else-if="props.date.schedule==='paidleave'">
+      <span v-else-if="props.date.schedule === 'paidleave'">
         <img :src="paidleave" alt="paidleave" class="schedule-icon" />
       </span>
     </button>
@@ -50,8 +54,7 @@ import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 import none from '../../assets/images/none.svg?url'
 
-const schedules = [ "full-time", "morning", "afternoon", "off", "paidleave", "none"]
-const props = defineProps({ 
+const props = defineProps({
   date: Object,
   autoAdjusted: Boolean
 })
@@ -60,9 +63,9 @@ function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
   return meta ? meta.getAttribute('content') : ''
 }
-const dayOfSchedule = ref("")
+const dayOfSchedule = ref('')
 function changeSchedule(schedule) {
-  if (schedule === "none") {
+  if (schedule === 'none') {
     deleteDate()
   } else {
     updateCalendar(schedule)
@@ -76,56 +79,61 @@ function deleteDate() {
     return
   }
   fetch(`api/days/${date.year}/${date.month}/${date.date}`, {
-  method: 'DELETE',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-  },
-  credentials: 'same-origin'
+    method: 'DELETE',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token()
+    },
+    credentials: 'same-origin'
   })
-  .then(() => {
-    emit('delete', date)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      emit('delete', date)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 function updateCalendar(schedule) {
   const date = props.date
-  const dateState = {year: date.year, month: date.month, date: date.date, schedule: schedule}
+  const dateState = {
+    year: date.year,
+    month: date.month,
+    date: date.date,
+    schedule: schedule
+  }
   if (props.autoAdjusted) {
     emit('update', dateState)
     return
   }
   fetch(`api/days/${date.year}/${date.month}`, {
-  method: 'POST',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-Token': token(),
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(dateState),
-  credentials: 'same-origin'
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': token(),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(dateState),
+    credentials: 'same-origin'
   })
-  .then(() => {
-    emit('update', dateState)
-  })
-  .catch((error) => {
-    console.warn(error)
-  })
+    .then(() => {
+      emit('update', dateState)
+    })
+    .catch((error) => {
+      console.warn(error)
+    })
 }
 </script>
 <style>
-  .calendar__day-button{
-    width: 48px;
-    height: 48px;
-    padding: 1px;
-  }
-  .schedule-icon{
-    width: 42px;
-    height: 42px;
-  }
-  .auto-adjusted{
-    background-color: lightskyblue;
-  }
+.calendar__day-button {
+  width: 48px;
+  height: 48px;
+  padding: 1px;
+}
+.schedule-icon {
+  width: 42px;
+  height: 42px;
+}
+.auto-adjusted {
+  background-color: lightskyblue;
+}
 </style>

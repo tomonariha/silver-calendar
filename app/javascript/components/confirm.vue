@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-const props = defineProps({ 
+const props = defineProps({
   message: String
 })
 const emit = defineEmits(['execution', 'cancel'])
