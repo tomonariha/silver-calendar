@@ -16,7 +16,7 @@ module MetaTagsHelper
         type: 'website',
         site_name: 'SilverCalendar',
         description: :description,
-        # image: image_url('ogp.png'),
+        image: image_url('ogp.png'),
         url: 'https://silver-calendar.com',
         locale: 'ja_JP'
       },
