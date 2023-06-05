@@ -22,7 +22,7 @@ module MetaTagsHelper
       },
       twitter: {
         card: 'summary_large_image',
-        site: '@tomonari',
+        site: '@tomonar78242114',
         description: :description,
         domain: 'https://silver-calendar.com'
       }
