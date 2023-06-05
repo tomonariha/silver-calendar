@@ -2,6 +2,9 @@
 ## サービスURL
 https://silver-calendar.com
 
+![silvercalendar-min](https://github.com/tomonariha/silver-calendar/assets/96340764/55bd235c-f0c1-42eb-914a-a2d893fbe728)
+
+
 ## 概要
 シルバーカレンダーというサービスは、
 嘱託職員などの年間日数で労働契約している方が
