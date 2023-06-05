@@ -1,37 +1,32 @@
 <template>
-  <h2 class="fs-4 my-2">連携機能</h2>
-  <div id=overlay v-show="confirmedCalendar">
-    <div id=confirm>
-      <Confirm v-bind:message="'削除します。よろしいですか？'"
-               v-on:execution="fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])"
-               v-on:cancel="cancelConfirm">
-      </Confirm>
-    </div>
-  </div>
-  <div id=overlay v-show="isFetching">
-    <p id="fetching">反映しています。しばらくお待ちください</p>
-  </div>
-  <div class="google-calendar my-2">
-    <h3 class="fs-5 my-2">Googleカレンダー</h3>
-    <div class="my-2" v-if="notAuthenticatedGoogle">
-      <p class='fs-6 my-2 text-info'>Googleカレンダーと連携するにはGoogle認証が必要です</p>
-      <div v-on:click="redirectOAuth" class="google-button">
-        <img :src="googleButton" alt="google-login" />
+  <div>
+    <h2 class="fs-4 my-2">連携機能</h2>
+    <div id="overlay" v-show="confirmedCalendar">
+      <div id="confirm">
+        <Confirm
+          v-bind:message="'削除します。よろしいですか？'"
+          v-on:execution="
+            fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
+          "
+          v-on:cancel="cancelConfirm">
+        </Confirm>
       </div>
     </div>
-    <div class="my-2" v-else>
-      <p class='fs-6 my-2 text-primary'>認証済</p>
+    <div id="overlay" v-show="isFetching">
+      <p id="fetching">反映しています。しばらくお待ちください</p>
     </div>
     <div class="google-calendar my-2">
       <h3 class="fs-5 my-2">Googleカレンダー</h3>
       <div class="my-2" v-if="notAuthenticatedGoogle">
-        <p>Googleカレンダーと連携するにはGoogle認証が必要です</p>
+        <p class="fs-6 my-2 text-info">
+          Googleカレンダーと連携するにはGoogle認証が必要です
+        </p>
         <div v-on:click="redirectOAuth" class="google-button">
           <img :src="googleButton" alt="google-login" />
         </div>
       </div>
       <div class="my-2" v-else>
-        <p>認証済</p>
+        <p class="fs-6 my-2 text-primary">認証済</p>
       </div>
       <div class="exist-calendars-area my-2">
         <div v-if="haveNoCalendars">カレンダーがまだありません</div>
