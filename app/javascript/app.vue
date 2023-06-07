@@ -156,30 +156,33 @@
                   }">
                   <span v-if="date.schedule === 'full-time'">
                     <img
+                      class="yeary-calendar__schedule-icon"
                       :src="fullTime"
-                      alt="fullTime"
-                      width="16"
-                      height="16" />
+                      alt="fullTime" />
                   </span>
                   <span v-else-if="date.schedule === 'morning'">
-                    <img :src="morning" alt="morning" width="16" height="16" />
+                    <img
+                      class="yeary-calendar__schedule-icon"
+                      :src="morning" 
+                      alt="morning" />
                   </span>
                   <span v-else-if="date.schedule === 'afternoon'">
                     <img
+                      class="yeary-calendar__schedule-icon"
                       :src="afterNoon"
-                      alt="afternoon"
-                      width="16"
-                      height="16" />
+                      alt="afternoon" />
                   </span>
                   <span v-else-if="date.schedule === 'off'">
-                    <img :src="off" alt="off" width="16" height="16" />
+                    <img
+                      class="yeary-calendar__schedule-icon"
+                      :src="off"
+                      alt="off" />
                   </span>
                   <span v-else-if="date.schedule === 'paidleave'">
                     <img
+                      class="yeary-calendar__schedule-icon"
                       :src="paidleave"
-                      alt="paidleave"
-                      width="16"
-                      height="16" />
+                      alt="paidleave" />
                   </span>
                 </div>
               </td>
@@ -928,6 +931,10 @@ function updateAlignment(calendar) {
   height: 20px;
   display: table-cell;
   vertical-align: middle;
+}
+.yeary-calendar__schedule-icon {
+  width: 16px;
+  height: 16px;
 }
 .disabled {
   pointer-events: none;
