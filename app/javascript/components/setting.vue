@@ -143,7 +143,7 @@
             <br />
           </div>
           <button
-            class="btn btn-success my-2"
+            class="btn btn-primary my-2"
             v-if="settingId"
             v-on:click="updateSetting(settingId)">
             変更
