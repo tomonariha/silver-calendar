@@ -1,5 +1,5 @@
 <% set_meta_tags(title:'ユーザー情報の編集', description:'ユーザー編集画面です。') %>
-<div class="container col-9">
+<div class="container">
   <h2 class="fs-4 my-2"><%= t('.title', resource: resource.model_name.human) %></h2>
 
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
