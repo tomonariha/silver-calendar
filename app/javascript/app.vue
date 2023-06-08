@@ -1,6 +1,14 @@
 <template>
   <div>
     <div class="my-2">
+      <Setting
+        v-bind:year="calendarYear"
+        v-bind:settings="settings"
+        v-on:update="updateSetting"
+        v-on:create="createSetting"
+        v-on:delete="deleteSetting"
+        v-on:reflect="adjustAndReflect">
+      </Setting>
       <select
         id="selected_calendar_year"
         v-model.number="calendarYear"
@@ -189,25 +197,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-    <button
-      class="btn btn-primary my-2 me-2"
-      v-show="unAutoAdjusted"
-      v-on:click="openModal">
-      条件の入力
-    </button>
-    <div id="overlay" v-show="showContent">
-      <div id="content">
-        <Setting
-          v-bind:year="calendarYear"
-          v-bind:settings="settings"
-          v-on:close="closeModal"
-          v-on:update="updateSetting"
-          v-on:create="createSetting"
-          v-on:delete="deleteSetting"
-          v-on:reflect="adjustAndReflect">
-        </Setting>
       </div>
     </div>
     <span v-if="numberOfWorkingDays !== workingDaysRequired">
@@ -641,7 +630,6 @@ function saveAdjustedCalendar() {
 }
 function adjustAndReflect(setting) {
   async function doAdjustAndReflect() {
-    await closeModal()
     await autoAdjust(setting)
     await reflectAdjustedCalendar()
   }
@@ -679,13 +667,6 @@ function sortSettings() {
   settings.value.sort((a, b) =>
     a.period_start_at > b.period_start_at ? 1 : -1
   )
-}
-const showContent = ref(false)
-function openModal() {
-  showContent.value = true
-}
-function closeModal() {
-  showContent.value = false
 }
 function formatUpdatedDay(updatedDay) {
   let day = new Date(updatedDay)

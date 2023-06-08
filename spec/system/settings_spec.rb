@@ -15,7 +15,6 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user create new setting', js: true do
-    click_button '条件の入力'
     click_button '新しい条件を作る'
     within('#form') do
       select '2', from: 'start_month_select'
@@ -40,7 +39,6 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user update setting', js: true do
-    click_button '条件の入力'
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
     click_button '編集'
     within('#form') do
@@ -55,7 +53,6 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user apply setting to calendar', js: true do
-    click_button '条件の入力'
     click_button '適用'
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
@@ -65,7 +62,6 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user delete setting', js: true do
-    click_button '条件の入力'
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
     find('.delete-button').click
     click_button 'はい'

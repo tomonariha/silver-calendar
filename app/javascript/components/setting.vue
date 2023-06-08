@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="fs-4 my-2">条件一覧</h2>
+    <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
     <div id="overlay" v-show="confirmedSetting">
       <div id="confirm">
         <Confirm
@@ -166,7 +166,6 @@
         </button>
       </div>
     </div>
-    <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
   </div>
 </template>
 
@@ -180,7 +179,7 @@ const props = defineProps({
   year: Number,
   settings: Array
 })
-const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
+const emit = defineEmits(['update', 'create', 'delete', 'reflect'])
 const settingId = ref('')
 const showFormContent = ref(false)
 // CRUD
@@ -582,8 +581,8 @@ watch(
   width: 220px;
 }
 .settings-area {
-  width: 600px;
   height: 220px;
+  background-color: gainsboro;
 }
 .page-number {
   text-decoration: underline;
