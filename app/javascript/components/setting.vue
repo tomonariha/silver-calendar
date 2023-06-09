@@ -46,9 +46,11 @@
           </span>
         </span>
       </div>
-      <button class="btn btn-primary my-2" v-on:click="newSetting()">
-        新しい条件を作る
-      </button>
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
+          新しい条件を作る
+        </button>
+      </div>
     </div>
     <div id="overlay" v-show="showFormContent">
       <div id="form">
@@ -583,6 +585,9 @@ watch(
 .settings-area {
   height: 220px;
   background-color: gainsboro;
+}
+.new-settings-button {
+  width: 250px;
 }
 .page-number {
   text-decoration: underline;

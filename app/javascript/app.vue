@@ -84,6 +84,7 @@
       <button class="btn btn-secondary my-2" v-on:click="toYearyCalendar">
         年間カレンダー
       </button>
+      <Schedule></Schedule>
       <table class="monthly-calendar">
         <thead class="monthly-calendar__header">
           <tr>
@@ -126,6 +127,7 @@
           yearyTotalPaidLeaves()
         }}
       </div>
+      <Schedule></Schedule>
       <div
         class="yeary-calendar-month rounded p-1 me-2 my-1"
         v-for="month in 12"
@@ -224,13 +226,25 @@
       v-on:click="cancelAutoAdjust">
       キャンセル
     </button>
-    <button
-      type="button"
-      class="btn btn-primary my-2"
-      v-show="unAutoAdjusted"
-      v-on:click="openAlignmentModal">
-      連携
-    </button>
+    <div class="delete-calendar-area" v-show="unAutoAdjusted">
+      <span
+        class="delete-calendar m-2 d-flex justify-content-end"
+        v-on:click="confirmDeleteCalendar"
+        >削除する
+      </span>
+    </div>
+    <div class="my-2 alignment-area">
+      <p class="fs-6">Googleカレンダーに反映する</p>
+      <div class="d-flex justify-content-center">
+        <button
+          type="button"
+          class="btn btn-primary my-2 alignment-button"
+          v-show="unAutoAdjusted"
+          v-on:click="openAlignmentModal">
+          連携
+        </button>
+      </div>
+    </div>
     <div id="overlay" v-show="showAlignmentContent">
       <div id="content">
         <Alignment
@@ -242,12 +256,6 @@
         </Alignment>
       </div>
     </div>
-    <span
-      class="delete-calendar m-2"
-      v-show="unAutoAdjusted"
-      v-on:click="confirmDeleteCalendar"
-      >削除する
-    </span>
   </div>
 </template>
 
@@ -258,6 +266,7 @@ import Setting from './components/setting.vue'
 import Day from './components/day.vue'
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
+import Schedule from './components/schedule.vue'
 import fullTime from '../assets/images/fulltime.svg?url'
 import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
@@ -930,9 +939,17 @@ function updateAlignment(calendar) {
 .not-just {
   box-shadow: 0px 0px 0px 4px #ff6600;
 }
+.delete-calendar-area {
+  width: 100%;
+  max-width: 500px;
+}
 .delete-calendar {
   text-decoration: underline;
   cursor: pointer;
+}
+.alignment-area {
+  width: 100%;
+  max-width: 500px;
 }
 .monthly-calendar {
   border: 2px solid black;
