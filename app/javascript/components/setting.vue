@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="rounded my-2 p-2 settings">
     <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
     <div id="overlay" v-show="confirmedSetting">
       <div id="confirm">
@@ -8,49 +8,47 @@
           v-on:execution="deleteSetting(confirmedSetting.id)"
           v-on:cancel="cancelConfirm">
         </Confirm>
-      </div>
-    </div>
-    <div class="setting">
-      <div class="settings-area">
-        <span class="have-no-settings" v-show="!(props.settings.length > 0)"
-          >まだ条件がありません</span
-        >
-        <div v-for="setting in slicedSettings" :key="setting.id">
-          <span
-            class="setting-periods m-2 fs-6 rounded"
-            v-bind:class="{ selected: settingId === setting.id }">
-            {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
-          </span>
-          <button
-            v-on:click="editSetting(setting)"
-            class="btn btn-sm btn-dark ms-1">
-            編集
-          </button>
-          <button
-            v-on:click="reflectSetting(setting)"
-            class="btn btn-sm btn-primary ms-1">
-            適用
-          </button>
-          <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
-            >削除</span
-          >
         </div>
       </div>
-      <div class="pagenation my-2">
-        <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-          <span
-            class="page-number m-1 fs-5"
-            v-bind:class="{ 'current-page': currentPage === pageNumber }"
-            v-on:click="updatePageNumber(pageNumber, index)">
-            {{ pageNumber }}
-          </span>
+    <div class="settings-area">
+      <span class="have-no-settings" v-show="!(props.settings.length > 0)"
+        >まだ条件がありません
+      </span>
+      <div v-for="setting in slicedSettings" :key="setting.id">
+        <span
+          class="setting-periods m-2 fs-6 rounded"
+          v-bind:class="{ selected: settingId === setting.id }">
+          {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
         </span>
-      </div>
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
-          新しい条件を作る
+        <button
+          v-on:click="editSetting(setting)"
+          class="btn btn-sm btn-dark ms-1">
+          編集
         </button>
+        <button
+          v-on:click="reflectSetting(setting)"
+          class="btn btn-sm btn-primary ms-1">
+          適用
+        </button>
+        <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+          >削除</span
+        >
       </div>
+    </div>
+    <div class="pagenation my-2">
+      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+        <span
+          class="page-number m-1 fs-5"
+          v-bind:class="{ 'current-page': currentPage === pageNumber }"
+          v-on:click="updatePageNumber(pageNumber, index)">
+          {{ pageNumber }}
+        </span>
+      </span>
+    </div>
+    <div class="d-flex justify-content-center">
+      <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
+        新しい条件を作る
+      </button>
     </div>
     <div id="overlay" v-show="showFormContent">
       <div id="form">
@@ -107,7 +105,7 @@
             <button class="me-1" v-on:click="decreaseWeekday">＜ {{ previousWeekday }}曜日</button>
             <button class="me-1" v-on:click="increaseWeekday">＞ {{ nextWeekday }}曜日</button>
           </div>
-          <div class="m-2">
+          <div class="m-2 weekday-nav__body">
             <input
               type="radio"
               id="none"
@@ -572,6 +570,9 @@ watch(
 </script>
 
 <style>
+.settings {
+  border: 1px solid black;
+}
 #overlay {
   z-index: 1;
   position: fixed;
