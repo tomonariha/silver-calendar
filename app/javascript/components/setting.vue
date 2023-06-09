@@ -104,8 +104,8 @@
             <span class="my-2 me-2"
               >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
             >
-            <button class="me-1" v-on:click="previousWeekday">＜</button>
-            <button class="me-1" v-on:click="nextWeekday">＞</button>
+            <button class="me-1" v-on:click="decreaseWeekday">＜ {{ previousWeekday }}曜日</button>
+            <button class="me-1" v-on:click="increaseWeekday">＞ {{ nextWeekday }}曜日</button>
           </div>
           <div class="m-2">
             <input
@@ -113,35 +113,39 @@
               id="none"
               value="None"
               v-model="schedules[weekdayNumber]" />
-            <label for="none">予定なし</label>
+            <label for="none" class="schedule-label">予定なし</label>
             <br />
             <input
               type="radio"
               id="full-time"
               value="full-time"
               v-model="schedules[weekdayNumber]" />
-            <label for="full-time">全日出勤</label>
+            <label for="full-time" class="schedule-label">全日出勤</label>
+            <img :src="fullTime" alt="fullTime" class="schedule-icon" />
             <br />
             <input
               type="radio"
               id="morning"
               value="morning"
               v-model="schedules[weekdayNumber]" />
-            <label for="morning">午前出勤</label>
+            <label for="morning" class="schedule-label">午前出勤</label>
+            <img :src="morning" alt="morning" class="schedule-icon" />
             <br />
             <input
               type="radio"
               id="afternoon"
               value="afternoon"
               v-model="schedules[weekdayNumber]" />
-            <label for="afternoon">午後出勤</label>
+            <label for="afternoon" class="schedule-label">午後出勤</label>
+            <img :src="afterNoon" alt="afterNoon" class="schedule-icon" />
             <br />
             <input
               type="radio"
               id="off"
               value="off"
               v-model="schedules[weekdayNumber]" />
-            <label for="off">休み</label>
+            <label for="off" class="schedule-label">休み</label>
+            <img :src="off" alt="off" class="schedule-icon" />
             <br />
           </div>
           <button
@@ -163,8 +167,8 @@
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
         </div>
-        <button class="btn btn-dark my-2" v-on:click="showFormContent = false">
-          閉じる
+        <button class="rounded my-2 cancel-button" v-on:click="showFormContent = false">
+          キャンセル
         </button>
       </div>
     </div>
@@ -175,6 +179,12 @@
 import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
 import { useToast } from 'vue-toastification'
+import fullTime from '../../assets/images/fulltime.svg?url'
+import morning from '../../assets/images/morning.svg?url'
+import afterNoon from '../../assets/images/afternoon.svg?url'
+import off from '../../assets/images/off.svg?url'
+import paidleave from '../../assets/images/paidleave.svg?url'
+import none from '../../assets/images/none.svg?url'
 
 const toast = useToast()
 const props = defineProps({
@@ -405,14 +415,28 @@ const weekdayJp = {
   5: '金',
   6: '土'
 }
-function previousWeekday() {
+const previousWeekday = computed(() => {
+  if (weekdayNumber.value === 0) {
+    return weekdayJp[6]
+  } else {
+    return weekdayJp[weekdayNumber.value - 1]
+  }
+})
+const nextWeekday = computed(() => {
+  if (weekdayNumber.value === 6) {
+    return weekdayJp[0]
+  } else {
+    return weekdayJp[weekdayNumber.value + 1]
+  }
+})
+function decreaseWeekday() {
   if (weekdayNumber.value === 0) {
     weekdayNumber.value = 6
   } else {
     weekdayNumber.value--
   }
 }
-function nextWeekday() {
+function increaseWeekday() {
   if (weekdayNumber.value === 6) {
     weekdayNumber.value = 0
   } else {
@@ -589,6 +613,10 @@ watch(
 .new-settings-button {
   width: 250px;
 }
+.cancel-button {
+  background-color: #fff;
+  border: 1px solid gray;
+}
 .page-number {
   text-decoration: underline;
   cursor: pointer;
@@ -602,5 +630,8 @@ watch(
 }
 #specified_total_days {
   width: 60px;
+}
+.schedule-label {
+  width: 68px;
 }
 </style>
