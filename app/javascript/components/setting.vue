@@ -121,7 +121,7 @@
               value="full-time"
               v-model="schedules[weekdayNumber]" />
             <label for="full-time" class="schedule-label">全日出勤</label>
-            <img :src="fullTime" alt="fullTime" class="schedule-icon" />
+            <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
             <br />
             <input
               type="radio"
@@ -129,7 +129,7 @@
               value="morning"
               v-model="schedules[weekdayNumber]" />
             <label for="morning" class="schedule-label">午前出勤</label>
-            <img :src="morning" alt="morning" class="schedule-icon" />
+            <img :src="morning" alt="morning" class="schedule-icon-small" />
             <br />
             <input
               type="radio"
@@ -137,7 +137,7 @@
               value="afternoon"
               v-model="schedules[weekdayNumber]" />
             <label for="afternoon" class="schedule-label">午後出勤</label>
-            <img :src="afterNoon" alt="afterNoon" class="schedule-icon" />
+            <img :src="afterNoon" alt="afterNoon" class="schedule-icon-small" />
             <br />
             <input
               type="radio"
@@ -145,7 +145,7 @@
               value="off"
               v-model="schedules[weekdayNumber]" />
             <label for="off" class="schedule-label">休み</label>
-            <img :src="off" alt="off" class="schedule-icon" />
+            <img :src="off" alt="off" class="schedule-icon-small" />
             <br />
           </div>
           <button
@@ -183,8 +183,6 @@ import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
 import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
-import paidleave from '../../assets/images/paidleave.svg?url'
-import none from '../../assets/images/none.svg?url'
 
 const toast = useToast()
 const props = defineProps({
