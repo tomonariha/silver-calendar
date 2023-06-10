@@ -2,6 +2,7 @@
   <div>
     <div class="my-2">
       <Setting
+        v-show="unAutoAdjusted"
         v-bind:year="calendarYear"
         v-bind:settings="settings"
         v-on:update="updateSetting"
@@ -233,13 +234,12 @@
         >削除する
       </span>
     </div>
-    <div class="my-2 alignment-area">
+    <div class="my-2 alignment-area" v-show="unAutoAdjusted">
       <p class="fs-6">Googleカレンダーに反映する</p>
       <div class="d-flex justify-content-center">
         <button
           type="button"
           class="btn btn-primary my-2 alignment-button"
-          v-show="unAutoAdjusted"
           v-on:click="openAlignmentModal">
           連携
         </button>
