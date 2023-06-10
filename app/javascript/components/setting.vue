@@ -572,6 +572,8 @@ watch(
 <style>
 .settings {
   border: 1px solid black;
+  width: 100%;
+  min-width: 400px;
 }
 #overlay {
   z-index: 1;
