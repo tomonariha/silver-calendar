@@ -354,7 +354,7 @@ function resetSettingParams() {
   settingId.value = ''
   totalWorkingDays.value = 0
   weekdayNumber.value = 0
-  notSpecifiedTotalDays.value = false
+  notSpecifiedTotalDays.value = true
 }
 function newSetting() {
   resetSettingParams()
@@ -374,7 +374,7 @@ function lastDate(selectedMonth) {
 }
 // フォーム：勤務日数指定
 const totalWorkingDays = ref(0)
-const notSpecifiedTotalDays = ref(false)
+const notSpecifiedTotalDays = ref(true)
 const specifiedTotalDays = computed(() => {
   return !notSpecifiedTotalDays.value
 })
