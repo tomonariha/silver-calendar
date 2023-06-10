@@ -589,13 +589,13 @@ watch(
 }
 #form {
   z-index: 2;
-  width: 60%;
+  max-width: 400px;
   padding: 1em;
   background: #fff;
 }
 #confirm {
   z-index: 3;
-  width: 60%;
+  max-width: 400px;
   padding: 2em;
   background: #fff;
 }

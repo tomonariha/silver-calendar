@@ -363,19 +363,19 @@ function timesValidation() {
 }
 #time {
   z-index: 2;
-  width: 60%;
+  max-width: 500px;
   padding: 1em;
   background: #fff;
 }
 #confirm {
   z-index: 3;
-  width: 60%;
+  max-width: 400px;
   padding: 2em;
   background: #fff;
 }
 #fetching {
   z-index: 4;
-  width: 60%;
+  max-width: 400px;
   padding: 1em;
   background: #fff;
 }

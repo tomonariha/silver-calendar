@@ -880,13 +880,13 @@ function updateAlignment(calendar) {
 }
 #content {
   z-index: 2;
-  width: 70%;
+  max-width: 500px;
   padding: 1em;
   background: #fff;
 }
 #confirm {
   z-index: 3;
-  width: 60%;
+  max-width: 400px;
   padding: 2em;
   background: #fff;
 }
