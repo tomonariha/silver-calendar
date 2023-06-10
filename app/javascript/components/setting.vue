@@ -607,7 +607,7 @@ watch(
   --bs-btn-hover-bg: gray;
   --bs-btn-hover-border-color: #101112;
   --bs-btn-focus-shadow-rgb: 49, 132, 253;
-  --bs-btn-active-color: gray;
+  --bs-btn-active-color: #fff;
   --bs-btn-active-bg: rgb(107, 107, 107);
   --bs-btn-active-border-color: rgb(50, 50, 50);
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
