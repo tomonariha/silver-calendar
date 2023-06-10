@@ -22,7 +22,7 @@
         </span>
         <button
           v-on:click="editSetting(setting)"
-          class="btn btn-sm btn-dark ms-1">
+          class="btn btn-sm edit-button ms-1">
           編集
         </button>
         <button
@@ -598,6 +598,22 @@ watch(
   max-width: 400px;
   padding: 2em;
   background: #fff;
+}
+.btn.btn-sm.edit-button {
+  --bs-btn-color: gray;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: gray;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: gray;
+  --bs-btn-hover-border-color: #101112;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: gray;
+  --bs-btn-active-bg: rgb(107, 107, 107);
+  --bs-btn-active-border-color: rgb(50, 50, 50);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgb(188, 188, 188);
+  --bs-btn-disabled-border-color: #b0b2b5;
 }
 .delete-button {
   text-decoration: underline;
