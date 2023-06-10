@@ -15,7 +15,7 @@
     <% end %>
   
     <div class="field my-2">
-      <%= f.label :password %> <i>(<%= t('.leave_blank_if_you_don_t_want_to_change_it') %>)</i><br />
+      <%= f.label :password %> <em>(<%= t('.leave_blank_if_you_don_t_want_to_change_it') %>)</em><br />
       <%= f.password_field :password, autocomplete: "new-password" %>
       <% if @minimum_password_length %>
         <br />
@@ -29,7 +29,7 @@
     </div>
   
     <div class="field my-2">
-      <%= f.label :current_password %> <i>(<%= t('.we_need_your_current_password_to_confirm_your_changes') %>)</i><br />
+      <%= f.label :current_password %> <em>(<%= t('.we_need_your_current_password_to_confirm_your_changes') %>)</em><br />
       <%= f.password_field :current_password, autocomplete: "current-password" %>
     </div>
   
