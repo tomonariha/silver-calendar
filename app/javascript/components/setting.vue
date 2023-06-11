@@ -1,175 +1,179 @@
 <template>
   <div class="rounded my-2 p-2 settings">
-    <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
-    <div id="overlay" v-show="confirmedSetting">
-      <div id="confirm">
-        <Confirm
-          v-bind:message="'削除します。よろしいですか？'"
-          v-on:execution="deleteSetting(confirmedSetting.id)"
-          v-on:cancel="cancelConfirm">
-        </Confirm>
+    <section>
+      <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
+      <div id="overlay" v-show="confirmedSetting">
+        <div id="confirm">
+          <Confirm
+            v-bind:message="'削除します。よろしいですか？'"
+            v-on:execution="deleteSetting(confirmedSetting.id)"
+            v-on:cancel="cancelConfirm">
+          </Confirm>
+          </div>
         </div>
-      </div>
-    <div class="settings-area">
-      <span class="have-no-settings" v-show="!(props.settings.length > 0)"
-        >まだ条件がありません
-      </span>
-      <div v-for="setting in slicedSettings" :key="setting.id">
-        <span
-          class="setting-periods m-2 fs-6 rounded"
-          v-bind:class="{ selected: settingId === setting.id }">
-          {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+      <div class="settings-area">
+        <span class="have-no-settings" v-show="!(props.settings.length > 0)"
+          >まだ条件がありません
         </span>
-        <button
-          v-on:click="editSetting(setting)"
-          class="btn btn-sm edit-button ms-1">
-          編集
-        </button>
-        <button
-          v-on:click="reflectSetting(setting)"
-          class="btn btn-sm btn-primary ms-1">
-          適用
-        </button>
-        <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
-          >削除</span
-        >
-      </div>
-    </div>
-    <div class="pagenation my-2">
-      <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-        <span
-          class="page-number m-1 fs-5"
-          v-bind:class="{ 'current-page': currentPage === pageNumber }"
-          v-on:click="updatePageNumber(pageNumber, index)">
-          {{ pageNumber }}
-        </span>
-      </span>
-    </div>
-    <div class="d-flex justify-content-center">
-      <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
-        新しい条件を作る
-      </button>
-    </div>
-    <div id="overlay" v-show="showFormContent">
-      <div id="form">
-        <div class="form-area">
-          <h4 class="my-2" v-if="settingId">条件の編集</h4>
-          <h4 class="my-2" v-else>条件の作成</h4>
-          <span class="fs-6 m-2">開始日：</span>
-          <select id="start_month_select" v-model="selectedStartMonth">
-            <option v-for="month in 12" :key="month">
-              {{ month }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">月</span>
-          <select id="start_day_select" v-model="selectedStartDay">
-            <option v-for="date in lastDate(selectedStartMonth)" :key="date">
-              {{ date }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">日</span>
-          <br />
-          <span class="fs-6 m-2">終了日：</span>
-          <select id="end_month_select" v-model="selectedEndMonth">
-            <option v-for="month in 12" :key="month">
-              {{ month }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">月</span>
-          <select id="end_day_select" v-model="selectedEndDay">
-            <option v-for="date in lastDate(selectedEndMonth)" :key="date">
-              {{ date }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">日</span>
-          <div class="my-2">
-            <span class="me-2">この期間の勤務日数:</span>
-            <label for="check_specified_total_days">指定しない</label>
-            <input
-              type="checkbox"
-              id="check_specified_total_days"
-              v-model="notSpecifiedTotalDays" />
-            <br />
-            <input
-              id="specified_total_days"
-              class="m-2"
-              type="number"
-              v-show="specifiedTotalDays"
-              v-model="totalWorkingDays" />
-            <span class="my-2" v-show="specifiedTotalDays">日</span>
-          </div>
-          <div class="weekday-nav my-2">
-            <span class="my-2 me-2"
-              >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
-            >
-            <button class="me-1" v-on:click="decreaseWeekday">＜ {{ previousWeekday }}曜日</button>
-            <button class="me-1" v-on:click="increaseWeekday">＞ {{ nextWeekday }}曜日</button>
-          </div>
-          <div class="m-2 weekday-nav__body">
-            <input
-              type="radio"
-              id="none"
-              value="None"
-              v-model="schedules[weekdayNumber]" />
-            <label for="none" class="schedule-label">予定なし</label>
-            <br />
-            <input
-              type="radio"
-              id="full-time"
-              value="full-time"
-              v-model="schedules[weekdayNumber]" />
-            <label for="full-time" class="schedule-label">全日出勤</label>
-            <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="morning"
-              value="morning"
-              v-model="schedules[weekdayNumber]" />
-            <label for="morning" class="schedule-label">午前出勤</label>
-            <img :src="morning" alt="morning" class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="afternoon"
-              value="afternoon"
-              v-model="schedules[weekdayNumber]" />
-            <label for="afternoon" class="schedule-label">午後出勤</label>
-            <img :src="afterNoon" alt="afterNoon" class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="off"
-              value="off"
-              v-model="schedules[weekdayNumber]" />
-            <label for="off" class="schedule-label">休み</label>
-            <img :src="off" alt="off" class="schedule-icon-small" />
-            <br />
-          </div>
+        <div v-for="setting in slicedSettings" :key="setting.id">
+          <span
+            class="setting-periods m-2 fs-6 rounded"
+            v-bind:class="{ selected: settingId === setting.id }">
+            {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+          </span>
           <button
-            class="btn btn-primary my-2"
-            v-if="settingId"
-            v-on:click="updateSetting(settingId)">
-            変更
+            v-on:click="editSetting(setting)"
+            class="btn btn-sm inconspicuous-button ms-1">
+            編集
           </button>
           <button
-            class="btn btn-primary my-2"
-            v-else
-            v-on:click="createSetting()">
-            新規作成
+            v-on:click="reflectSetting(setting)"
+            class="btn btn-sm btn-primary ms-1">
+            適用
           </button>
+          <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+            >削除</span
+          >
         </div>
-        <div class="error-area" v-if="errors.length > 0">
-          <b>以下のエラーの修正をお願いします:</b>
-          <ul>
-            <li v-for="error in errors" :key="error.id">{{ error }}</li>
-          </ul>
-        </div>
-        <button class="rounded my-2 cancel-button" v-on:click="showFormContent = false">
-          キャンセル
+      </div>
+      <div class="pagenation my-2">
+        <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
+          <span
+            class="page-number m-1 fs-5"
+            v-bind:class="{ 'current-page': currentPage === pageNumber }"
+            v-on:click="updatePageNumber(pageNumber, index)">
+            {{ pageNumber }}
+          </span>
+        </span>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
+          新しい条件を作る
         </button>
       </div>
-    </div>
+      <div id="overlay" v-show="showFormContent">
+        <div id="form">
+          <div class="form-area">
+            <section>
+              <h3 class="my-2" v-if="settingId">条件の編集</h3>
+              <h3 class="my-2" v-else>条件の作成</h3>
+              <span class="fs-6 m-2">開始日：</span>
+              <select id="start_month_select" v-model="selectedStartMonth">
+                <option v-for="month in 12" :key="month">
+                  {{ month }}
+                </option>
+              </select>
+              <span class="fs-6 m-1">月</span>
+              <select id="start_day_select" v-model="selectedStartDay">
+                <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+                  {{ date }}
+                </option>
+              </select>
+              <span class="fs-6 m-1">日</span>
+              <br />
+              <span class="fs-6 m-2">終了日：</span>
+              <select id="end_month_select" v-model="selectedEndMonth">
+                <option v-for="month in 12" :key="month">
+                  {{ month }}
+                </option>
+              </select>
+              <span class="fs-6 m-1">月</span>
+              <select id="end_day_select" v-model="selectedEndDay">
+                <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+                  {{ date }}
+                </option>
+              </select>
+              <span class="fs-6 m-1">日</span>
+              <div class="my-2">
+                <span class="me-2">この期間の勤務日数:</span>
+                <label for="check_specified_total_days">指定しない</label>
+                <input
+                  type="checkbox"
+                  id="check_specified_total_days"
+                  v-model="notSpecifiedTotalDays" />
+                <br />
+                <input
+                  id="specified_total_days"
+                  class="m-2"
+                  type="number"
+                  v-show="specifiedTotalDays"
+                  v-model="totalWorkingDays" />
+                <span class="my-2" v-show="specifiedTotalDays">日</span>
+              </div>
+              <div class="weekday-nav my-2">
+                <span class="my-2 me-2"
+                  >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
+                >
+                <button class="me-1" v-on:click="decreaseWeekday">＜ {{ previousWeekday }}曜日</button>
+                <button class="me-1" v-on:click="increaseWeekday">＞ {{ nextWeekday }}曜日</button>
+              </div>
+              <div class="m-2 weekday-nav__body">
+                <input
+                  type="radio"
+                  id="none"
+                  value="None"
+                  v-model="schedules[weekdayNumber]" />
+                <label for="none" class="schedule-label">予定なし</label>
+                <br />
+                <input
+                  type="radio"
+                  id="full-time"
+                  value="full-time"
+                  v-model="schedules[weekdayNumber]" />
+                <label for="full-time" class="schedule-label">全日出勤</label>
+                <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
+                <br />
+                <input
+                  type="radio"
+                  id="morning"
+                  value="morning"
+                  v-model="schedules[weekdayNumber]" />
+                <label for="morning" class="schedule-label">午前出勤</label>
+                <img :src="morning" alt="morning" class="schedule-icon-small" />
+                <br />
+                <input
+                  type="radio"
+                  id="afternoon"
+                  value="afternoon"
+                  v-model="schedules[weekdayNumber]" />
+                <label for="afternoon" class="schedule-label">午後出勤</label>
+                <img :src="afterNoon" alt="afterNoon" class="schedule-icon-small" />
+                <br />
+                <input
+                  type="radio"
+                  id="off"
+                  value="off"
+                  v-model="schedules[weekdayNumber]" />
+                <label for="off" class="schedule-label">休み</label>
+                <img :src="off" alt="off" class="schedule-icon-small" />
+                <br />
+              </div>
+              <button
+                class="btn btn-primary my-2"
+                v-if="settingId"
+                v-on:click="updateSetting(settingId)">
+                変更
+              </button>
+              <button
+                class="btn btn-primary my-2"
+                v-else
+                v-on:click="createSetting()">
+                新規作成
+              </button>
+            </section>
+          </div>
+          <div class="error-area" v-if="errors.length > 0">
+            <b>以下のエラーの修正をお願いします:</b>
+            <ul>
+              <li v-for="error in errors" :key="error.id">{{ error }}</li>
+            </ul>
+          </div>
+          <button class="btn btn-sm inconspicuous-button my-2" v-on:click="showFormContent = false">
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -599,7 +603,7 @@ watch(
   padding: 2em;
   background: #fff;
 }
-.btn.btn-sm.edit-button {
+.btn.btn-sm.inconspicuous-button {
   --bs-btn-color: gray;
   --bs-btn-bg: #fff;
   --bs-btn-border-color: gray;
@@ -629,10 +633,6 @@ watch(
 }
 .new-settings-button {
   width: 250px;
-}
-.cancel-button {
-  background-color: #fff;
-  border: 1px solid gray;
 }
 .page-number {
   text-decoration: underline;

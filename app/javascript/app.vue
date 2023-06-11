@@ -249,7 +249,7 @@
       <div id="content">
         <Alignment
           v-bind:calendars="calendarsIndex"
-          v-on:close="closeAlignmentModal"
+          v-on:cancel="closeAlignmentModal"
           v-on:create="createAlignment"
           v-on:delete="deleteAlignment"
           v-on:update="updateAlignment">
