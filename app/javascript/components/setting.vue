@@ -57,6 +57,7 @@
             <section>
               <h3 class="my-2" v-if="settingId">条件の編集</h3>
               <h3 class="my-2" v-else>条件の作成</h3>
+              <p>条件を適用する期間を設定してください</p>
               <span class="fs-6 m-2">開始日：</span>
               <select id="start_month_select" v-model="selectedStartMonth">
                 <option v-for="month in 12" :key="month">
@@ -101,6 +102,7 @@
                 <span class="my-2" v-show="specifiedTotalDays">日</span>
               </div>
               <div class="weekday-nav my-2">
+                <p>曜日毎の勤務予定を設定してください</p>
                 <span class="my-2 me-2"
                   >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
                 >
