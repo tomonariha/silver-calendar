@@ -7,21 +7,26 @@ section
     p.my-2 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
     p.my-2 シルバーカレンダーで、あなたの生活と仕事をバランス良く調整しましょう
     br
-    =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary m-2 mb-2'
-    =link_to 'ログイン', calendar_path, class: 'btn btn-primary m-2 mb-2 login-button'
+    .image-wrapper
+      =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary m-2 mb-2'
+      =link_to 'ログイン', calendar_path, class: 'btn btn-primary m-2 mb-2 login-button'
     section
-      h2.fs-4.my-4.text-center 使い方
-      p.my-2 ログイン後、画面下にある青いボタンを「条件の入力」「新しく条件を作る」の順に押し、
-      = image_tag('demo5.png', alt: '条件入力画面へ', width: '40%', class: 'img-thumbnail')
-      p.my-2 条件を入力し、青いボタンの「新規作成」を押します。
-      = image_tag('demo1.png', alt: '条件を入力', width: '40%', class: 'img-thumbnail')
-      p.my-2「適用」を押すと
-      = image_tag('demo2.png', alt: '条件を適用', width: '40%', class: 'img-thumbnail')
-      <br>
-      p.my-2 自動で予定が入力されます。
-      = image_tag('demo3.png', alt: '自動調整', width: '40%', class: 'img-thumbnail')
-      p.my-2 「連携」からGoogleカレンダーに反映することができます。
-      = image_tag('demo4.png', alt: 'Googleカレンダーへ反映', width: '40%', class: 'img-thumbnail')
+      h2.fs-4.my-4.text-center こんなことありませんか？
+      p.my-2.text-center 自分で勤務スケジュールを決めないといけないけれど、１つ１つ入力していると大変
+      .image-wrapper
+        = image_tag('image1.png', alt: '困っている人', class: 'img-thumbnail image')
+
+      p.my-2.text-center シルバーカレンダーなら条件を入力して自動でスケジュール入力
+      .image-wrapper
+
+      p.my-2.text-center 手動で調整もできて柔軟に対応可能
+      .image-wrapper
+        = image_tag('image2.png', alt: '解決した人', class: 'img-thumbnail image')
+
+      p.my-2.text-center Googleカレンダーにも反映できます
+      .image-wrapper
+        = image_tag('image4.png', alt: 'Googleカレンダー', class: 'img-thumbnail image')
+
       section
         h3.fs-4.my-4.text-center Googleカレンダーとの連携について
         p.my-2 カレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
@@ -31,4 +36,4 @@ section
           li 新しいカレンダーの作成
           li 本サービスで作成したカレンダーへの予定の追加
           li 本サービスで作成したカレンダーの削除
-        =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
+        =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary m-2 mb-2'
