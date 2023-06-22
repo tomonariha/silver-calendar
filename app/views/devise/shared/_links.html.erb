@@ -1,13 +1,25 @@
-<%- if controller_name != 'sessions' %>
-  <div class="my-2">
-    <%= link_to t(".sign_in"), new_session_path(resource_name) %><br />
+<%- if devise_mapping.omniauthable? %>
+  <div class='content-center'>
+    <p><span>------------</span> または <span>------------</span></p>
+    <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post, data: {turbo: false} do %>
+      <%= image_tag "btn_google_signin_dark_normal_web.png", alt:"google-login", class:"google-button rounded my-2" %>
+    <% end %>
+    <p>ご利用のGoogleアカウントでログインできます</p>
   </div>
 <% end %>
 
+<%- if controller_name != 'sessions' %>
+  <p class="my-2 content-center">
+    Eメールでのログインは
+    <span><%= link_to 'こちら', new_session_path(resource_name) %></span>
+  </p>
+<% end %>
+
 <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <div class="my-2">
-    <%= link_to t(".sign_up"), new_registration_path(resource_name) %><br />
-  </div>
+  <p class="my-2 content-center">
+    アカウントをお持ちでない場合は
+    <span><%= link_to 'こちら', new_registration_path(resource_name) %></span>
+  </p>
 <% end %>
 
 <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
@@ -20,10 +32,4 @@
   <div class="my-2">
     <%= link_to t('.didn_t_receive_unlock_instructions'), new_unlock_path(resource_name) %><br />
   </div>
-<% end %>
-
-<%- if devise_mapping.omniauthable? %>
-  <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post, data: {turbo: false} do %>
-    <%= image_tag "btn_google_signin_dark_normal_web.png", alt:"google-login", class:"google-button rounded my-2" %>
-  <% end %>
 <% end %>

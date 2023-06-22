@@ -1,6 +1,12 @@
 .container {
   max-width: 768px;
 }
+.content-center {
+  text-align: center;
+}
+.float-right {
+  float: right;
+}
 .header {
   background-color: cornflowerblue;
 }
@@ -9,6 +15,9 @@
 }
 .alignment-button {
   width: 250px;
+}
+.update-button {
+  width: 180px;
 }
 em {
   font-style: normal;

@@ -1,25 +1,20 @@
 <% set_meta_tags(title:'ログイン', description:'ログイン画面です。') %>
 <section>
-  <div class="container">
+  <div class="container devise_field">
     <h2 class="fs-4 my-2"><%= t('.sign_in') %></h2>
   
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-      <div class="field my-2">
-        <%= f.label :email %><br />
-        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div class="field my-4">
+        <%= f.label :email, class: 'user_form_label' %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: 'silver-calendar@example.com', class: 'user_form_field' %>
       </div>
     
       <div class="field my-2">
-        <%= f.label :password %><br />
-        <%= f.password_field :password, autocomplete: "current-password" %>
+        <%= f.label :password, class: 'user_form_label' %>
+        <%= link_to t(".forgot_your_password"), new_password_path(resource_name), class: 'float-right' %><br />
+        <%= f.password_field :password, autocomplete: "current-password", class: 'user_form_field' %>
       </div>
-  
-      <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-        <div class="my-2">
-          <%= link_to t(".forgot_your_password"), new_password_path(resource_name) %><br />
-        </div>
-      <% end %>
-  
+
       <% if devise_mapping.rememberable? %>
         <div class="field my-2">
           <%= f.check_box :remember_me %>
@@ -27,12 +22,12 @@
         </div>
       <% end %>
     
-      <div class="actions">
-        <%= f.submit t('.sign_in'), class:"btn btn-primary my-2" %>
+      <div class="actions content-center my-4">
+        <%= f.submit t('.sign_in'), class:"btn btn-primary login-button" %>
       </div>
     <% end %>
 
-    <div class="my-2">
+    <div class="my-4">
       <%= render "devise/shared/links" %>
     </div>
   </div>

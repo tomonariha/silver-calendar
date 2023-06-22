@@ -1,7 +1,5 @@
 .container
-  ul.nav
-    li.nav-item.my-3
-      = link_to 'プライバシーポリシー', privacy_policy_path
-    li.nav-item.m-3
-      = link_to '利用規約', tos_path
-  p ©︎ 2023 tomonari
+  .content-center
+    = link_to 'プライバシーポリシー', privacy_policy_path, class: "m-2"
+    = link_to '利用規約', tos_path, class: "m-2"
+    p ©︎ 2023 tomonari
