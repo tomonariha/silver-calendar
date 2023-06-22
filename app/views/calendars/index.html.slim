@@ -3,6 +3,3 @@
   section.main
     h1.fs-3 カレンダーの作成
     #app(data-user-id="#{current_user.id}")
-    .d-flex.justify-content-end
-      = link_to t('devise.passwords.edit.change_your_password'), edit_user_registration_path, class: 'my-2 me-2'
-      = button_to 'ログアウト', destroy_user_session_path, method: :delete, class: 'text-link rounded my-2'
