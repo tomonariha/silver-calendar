@@ -1,7 +1,7 @@
 <template>
   <div>
     <section>
-      <h2 class="fs-4 my-2">連携機能</h2>
+      <h3 class="fs-4 my-2">連携機能</h3>
       <div id="overlay" v-show="confirmedCalendar" v-on:click.self="cancelConfirm">
         <div id="confirm">
           <Confirm
@@ -18,7 +18,7 @@
       </div>
       <div class="google-calendar my-2">
         <section>
-          <h3 class="fs-5 my-2">Googleカレンダー</h3>
+          <h4 class="fs-5 my-2">Googleカレンダー</h4>
           <div class="my-2" v-if="notAuthenticatedGoogle">
             <p class="fs-6 my-2 text-info">
               Googleカレンダーと連携するにはGoogle認証が必要です
@@ -94,7 +94,7 @@
             <div id="time">
               <div class="time-form">
                 <section>
-                  <h3 class="fs-5 my-2">時刻の設定</h3>
+                  <h4 class="fs-5 my-2">時刻の設定</h4>
                   <Time v-bind:dayOfSchedule="'morning'"> </Time>
                   <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
                   <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
