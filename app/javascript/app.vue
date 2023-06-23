@@ -57,7 +57,7 @@
         </p>
       </div>
     </div>
-    <div id="overlay" v-show="showJustNotConfirm">
+    <div id="overlay" v-show="showJustNotConfirm" v-on:click.self="cancelJustNotConfirm">
       <div id="confirm">
         <Confirm
           v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
@@ -66,7 +66,7 @@
         </Confirm>
       </div>
     </div>
-    <div id="overlay" v-show="showDeleteConfirm">
+    <div id="overlay" v-show="showDeleteConfirm" v-on:click.self="cancelDeleteConfirm">
       <div id="confirm">
         <Confirm
           v-bind:message="'削除します。よろしいですか？'"
@@ -245,7 +245,7 @@
         </button>
       </div>
     </div>
-    <div id="overlay" v-show="showAlignmentContent">
+    <div id="overlay" v-show="showAlignmentContent" v-on:click.self="closeAlignmentModal">
       <div id="content">
         <Alignment
           v-bind:calendars="calendarsIndex"

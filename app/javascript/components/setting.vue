@@ -2,7 +2,7 @@
   <div class="rounded my-2 p-2 settings">
     <section>
       <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
-      <div id="overlay" v-show="confirmedSetting">
+      <div id="overlay" v-show="confirmedSetting" v-on:click.self="cancelConfirm">
         <div id="confirm">
           <Confirm
             v-bind:message="'削除します。よろしいですか？'"
@@ -51,7 +51,7 @@
           新しい条件を作る
         </button>
       </div>
-      <div id="overlay" v-show="showFormContent">
+      <div id="overlay" v-show="showSettingModal" v-on:click.self="closeSettingModal">
         <div id="form">
           <div class="form-area">
             <section>
@@ -170,7 +170,7 @@
               <li v-for="error in errors" :key="error.id">{{ error }}</li>
             </ul>
           </div>
-          <button class="btn btn-sm inconspicuous-button my-2" v-on:click="showFormContent = false">
+          <button class="btn btn-sm inconspicuous-button my-2" v-on:click="closeSettingModal">
             キャンセル
           </button>
         </div>
@@ -195,7 +195,10 @@ const props = defineProps({
 })
 const emit = defineEmits(['update', 'create', 'delete', 'reflect'])
 const settingId = ref('')
-const showFormContent = ref(false)
+const showSettingModal = ref(false)
+function closeSettingModal() {
+  showSettingModal.value = false
+}
 // CRUD
 function token() {
   const meta = document.querySelector('meta[name="csrf-token"]')
@@ -251,7 +254,7 @@ function createSetting() {
     .catch((error) => {
       console.warn(error)
     })
-  showFormContent.value = false
+  closeSettingModal()
 }
 function updateSetting(settingId) {
   const startDay = new Date(
@@ -300,7 +303,7 @@ function updateSetting(settingId) {
     .catch((error) => {
       console.warn(error)
     })
-  showFormContent.value = false
+  closeSettingModal()
 }
 function editSetting(setting) {
   const startDay = new Date(setting.period_start_at)
@@ -324,7 +327,7 @@ function editSetting(setting) {
   } else {
     notSpecifiedTotalDays.value = true
   }
-  showFormContent.value = true
+  showSettingModal.value = true
 }
 function deleteSetting(id) {
   cancelConfirm()
@@ -364,7 +367,7 @@ function resetSettingParams() {
 }
 function newSetting() {
   resetSettingParams()
-  showFormContent.value = true
+  showSettingModal.value = true
 }
 function reflectSetting(setting) {
   emit('reflect', setting)

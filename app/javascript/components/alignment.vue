@@ -2,7 +2,7 @@
   <div>
     <section>
       <h2 class="fs-4 my-2">連携機能</h2>
-      <div id="overlay" v-show="confirmedCalendar">
+      <div id="overlay" v-show="confirmedCalendar" v-on:click.self="cancelConfirm">
         <div id="confirm">
           <Confirm
             v-bind:message="'削除します。よろしいですか？'"
