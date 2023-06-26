@@ -11,39 +11,41 @@
     </Setting>
     <section>
       <h2 class="fs-5 mt-4">日毎に予定を入力する</h2>
-      <button
-        class="calendar-nav__previous me-1"
-        v-show="monthly"
-        @click="previousMonth">
-        ＜
-      </button>
-      <select
-        id="selected_calendar_year"
-        v-model.number="calendarYear"
-        @change="cancelAutoAdjust">
-        <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
-      </select>
-      <span class="mx-1">年</span>
-      <select
-        id="selected_calendar_month"
-        v-show="monthly"
-        v-model.number="calendarMonth">
-        <option v-for="month in 12" :key="month">{{ month }}</option>
-      </select>
-      <span class="mx-1" v-show="monthly">月</span>
-      <button
-        class="calendar-nav__next me-1"
-        v-show="monthly"
-        @click="nextMonth">
-        ＞
-      </button>
-      <button class="btn btn-secondary my-1 mx-4" v-on:click="toYearyCalendar" v-if="monthly">
-        年間カレンダー
-      </button>
-      <span class="my-1 mx-4" v-else>
-        月のカレンダーをクリックすると月間カレンダーになります
-      </span>
-      <div class="my-2" v-show="autoAdjusted">
+     <div class="content-center">
+        <button
+          class="calendar-nav__previous me-1"
+          v-show="monthly"
+          @click="previousMonth">
+          ＜
+        </button>
+        <select
+          id="selected_calendar_year"
+          v-model.number="calendarYear"
+          @change="cancelAutoAdjust">
+          <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
+        </select>
+        <span class="mx-1">年</span>
+        <select
+          id="selected_calendar_month"
+          v-show="monthly"
+          v-model.number="calendarMonth">
+          <option v-for="month in 12" :key="month">{{ month }}</option>
+        </select>
+        <span class="mx-1" v-show="monthly">月</span>
+        <button
+          class="calendar-nav__next me-1"
+          v-show="monthly"
+          @click="nextMonth">
+          ＞
+        </button>
+        <button class="btn btn-secondary my-1 mx-4" v-on:click="toYearyCalendar" v-if="monthly">
+          年間カレンダー
+        </button>
+        <span class="my-1 mx-4 text-info" v-else>
+          月のカレンダーをクリックすると月間カレンダーになります
+        </span>
+      </div>
+      <div class="my-2 content-center" v-show="autoAdjusted">
         <div
           class="auto-adjust-info rounded"
           v-if="workingDaysRequired"
@@ -80,8 +82,35 @@
             </Confirm>
           </div>
         </div>
+        <div class="my-2">
+          <span v-if="numberOfWorkingDays !== workingDaysRequired">
+            <button
+              type="button"
+              class="btn btn-success my-2 me-2"
+              v-show="autoAdjusted"
+              v-on:click="confirmJustNot">
+              確定
+            </button>
+          </span>
+          <span v-else>
+            <button
+              type="button"
+              class="btn btn-success my-2 me-2"
+              v-show="autoAdjusted"
+              v-on:click="determineAutoAdjust">
+              確定
+            </button>
+          </span>
+          <button
+            type="button"
+            class="btn btn-secondary my-2 me-2"
+            v-show="autoAdjusted"
+            v-on:click="cancelAutoAdjust">
+            キャンセル
+          </button>
+        </div>
       </div>
-      <div class="my-2" v-if="monthly">
+      <div class="my-2 content-center" v-if="monthly">
         <div class="calendar-nav__year my-2">
           {{ calendarYear }}年{{ calendarMonth }}月 合計:{{
             totalWorkingDays[calendarMonth]
@@ -89,41 +118,43 @@
           有給：{{ totalPaidLeaves[calendarMonth] }}
         </div>
         <Schedule></Schedule>
-        <table class="monthly-calendar">
-          <thead class="monthly-calendar__header">
-            <tr>
-              <th class="monthly-calendar__header-day">日</th>
-              <th class="monthly-calendar__header-day">月</th>
-              <th class="monthly-calendar__header-day">火</th>
-              <th class="monthly-calendar__header-day">水</th>
-              <th class="monthly-calendar__header-day">木</th>
-              <th class="monthly-calendar__header-day">金</th>
-              <th class="monthly-calendar__header-day">土</th>
-            </tr>
-          </thead>
-          <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
-            <tr class="monthly-calendar__week">
-              <td
-                class="monthly-calendar__day"
-                v-for="date in week.value"
-                :key="date.date"
-                :id="'day' + date.date">
-                <div class="monthly-calendar__day-label">{{ date.date }}</div>
-                <Day
-                  v-bind:date="date"
-                  v-bind:autoAdjusted="autoAdjusted"
-                  v-bind:class="{
-                    disabled:
-                      autoAdjusted && outsideWithinPeriod(date, reflectedSetting)
-                  }"
-                  v-if="date.date"
-                  v-on:update="updateDay"
-                  v-on:delete="deleteDay">
-                </Day>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="monthly-calendar">
+          <table class="monthly-calendar__table">
+            <thead class="monthly-calendar__header">
+              <tr>
+                <th class="monthly-calendar__header-day">日</th>
+                <th class="monthly-calendar__header-day">月</th>
+                <th class="monthly-calendar__header-day">火</th>
+                <th class="monthly-calendar__header-day">水</th>
+                <th class="monthly-calendar__header-day">木</th>
+                <th class="monthly-calendar__header-day">金</th>
+                <th class="monthly-calendar__header-day">土</th>
+              </tr>
+            </thead>
+            <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
+              <tr class="monthly-calendar__week">
+                <td
+                  class="monthly-calendar__day"
+                  v-for="date in week.value"
+                  :key="date.date"
+                  :id="'day' + date.date">
+                  <div class="monthly-calendar__day-label">{{ date.date }}</div>
+                  <Day
+                    v-bind:date="date"
+                    v-bind:autoAdjusted="autoAdjusted"
+                    v-bind:class="{
+                      disabled:
+                        autoAdjusted && outsideWithinPeriod(date, reflectedSetting)
+                    }"
+                    v-if="date.date"
+                    v-on:update="updateDay"
+                    v-on:delete="deleteDay">
+                  </Day>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="content-center" v-else>
         <div class="calendar-nav__year my-2">
@@ -133,14 +164,14 @@
         </div>
         <Schedule></Schedule>
         <div
-          class="yeary-calendar-month rounded p-1 me-2 my-1"
+          class="yeary-calendar rounded p-1 me-2 my-1"
           v-for="month in 12"
           :key="month"
           v-on:click="toMonthlyCalendar(month)">
           {{ month }}月 合計:{{ totalWorkingDays[month] }} 有給：{{
             totalPaidLeaves[month]
           }}
-          <table class="yeary-calendar">
+          <table class="yeary-calendar__table">
             <thead class="yeary-calendar__header">
               <tr>
                 <th class="yeary-calendar__header-day">日</th>
@@ -205,31 +236,6 @@
           </table>
         </div>
       </div>
-      <span v-if="numberOfWorkingDays !== workingDaysRequired">
-        <button
-          type="button"
-          class="btn btn-success my-2 me-2"
-          v-show="autoAdjusted"
-          v-on:click="confirmJustNot">
-          確定
-        </button>
-      </span>
-      <span v-else>
-        <button
-          type="button"
-          class="btn btn-success my-2 me-2"
-          v-show="autoAdjusted"
-          v-on:click="determineAutoAdjust">
-          確定
-        </button>
-      </span>
-      <button
-        type="button"
-        class="btn btn-secondary my-2 me-2"
-        v-show="autoAdjusted"
-        v-on:click="cancelAutoAdjust">
-        キャンセル
-      </button>
       <div class="my-2" v-show="unAutoAdjusted">
         <span
           class="delete-calendar m-2 d-flex justify-content-end"
@@ -240,7 +246,7 @@
     </section>
     <section>
       <div class="my-4 rounded alignment-area" v-show="unAutoAdjusted">
-        <h2 class="fs-6 my-2">Googleカレンダーに反映するのはこちらから</h2>
+        <h2 class="fs-6 m-2">Googleカレンダーに反映するのはこちらから</h2>
         <div class="d-flex justify-content-center">
           <button
           type="button"
@@ -896,7 +902,7 @@ function updateAlignment(calendar) {
   padding: 2em;
   background: #fff;
 }
-.yeary-calendar {
+.yeary-calendar__table {
   border: 2px solid black;
   text-align: center;
 }
@@ -916,11 +922,11 @@ function updateAlignment(calendar) {
   border: 1px solid black;
   padding: 1px;
 }
-.yeary-calendar-month {
+.yeary-calendar {
   display: inline-block;
   height: 350px;
 }
-.yeary-calendar-month:hover {
+.yeary-calendar:hover {
   box-shadow: 0px 0px 0px 4px #0099ff;
 }
 .yeary-calendar__day-body {
@@ -958,7 +964,7 @@ function updateAlignment(calendar) {
   background: #e2f3ff;
   border: 1px solid #0099ff;
 }
-.monthly-calendar {
+.monthly-calendar__table {
   border: 2px solid black;
   text-align: center;
   width: 100%;
@@ -990,5 +996,8 @@ th:first-child {
 th:nth-child(7) {
   background: #e2f3ff;
   color: #78a2e6;
+}
+.monthly-calendar {
+  display: inline-block;
 }
 </style>

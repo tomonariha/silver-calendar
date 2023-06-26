@@ -54,7 +54,7 @@
       <div id="overlay" v-show="showSettingModal" v-on:click.self="closeSettingModal">
         <div id="form">
           <div class="form-area">
-            <section class="my-4">
+            <section class="mb-4">
               <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
               <h3 class="fs-5 my-2" v-else>新しい条件の登録</h3>
               <section>
