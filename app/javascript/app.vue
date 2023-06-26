@@ -10,7 +10,7 @@
       v-on:reflect="adjustAndReflect">
     </Setting>
     <section>
-      <h2 class="fs-6 mt-4">日毎に予定を入力する</h2>
+      <h2 class="fs-5 mt-4">日毎に予定を入力する</h2>
       <button
         class="calendar-nav__previous me-1"
         v-show="monthly"

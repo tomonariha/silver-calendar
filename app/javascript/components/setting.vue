@@ -1,7 +1,7 @@
 <template>
   <div class="rounded my-2 p-2 settings">
     <section>
-      <h2 class="fs-6 my-2">条件から勤務予定を設定する</h2>
+      <h2 class="fs-5 my-2">条件から勤務予定を設定する</h2>
       <div id="overlay" v-show="confirmedSetting" v-on:click.self="cancelConfirm">
         <div id="confirm">
           <Confirm
@@ -54,42 +54,46 @@
       <div id="overlay" v-show="showSettingModal" v-on:click.self="closeSettingModal">
         <div id="form">
           <div class="form-area">
-            <section>
-              <h3 class="my-2" v-if="settingId">条件の編集</h3>
-              <h3 class="my-2" v-else>条件の作成</h3>
-              <p>条件を適用する期間を設定してください</p>
-              <span class="fs-6 m-2">開始日：</span>
-              <select id="start_month_select" v-model="selectedStartMonth">
-                <option v-for="month in 12" :key="month">
-                  {{ month }}
-                </option>
-              </select>
-              <span class="fs-6 m-1">月</span>
-              <select id="start_day_select" v-model="selectedStartDay">
-                <option v-for="date in lastDate(selectedStartMonth)" :key="date">
-                  {{ date }}
-                </option>
-              </select>
-              <span class="fs-6 m-1">日</span>
-              <br />
-              <span class="fs-6 m-2">終了日：</span>
-              <select id="end_month_select" v-model="selectedEndMonth">
-                <option v-for="month in 12" :key="month">
-                  {{ month }}
-                </option>
-              </select>
-              <span class="fs-6 m-1">月</span>
-              <select id="end_day_select" v-model="selectedEndDay">
-                <option v-for="date in lastDate(selectedEndMonth)" :key="date">
-                  {{ date }}
-                </option>
-              </select>
-              <span class="fs-6 m-1">日</span>
-              <div class="my-2">
-                <span class="me-2">この期間の勤務日数:</span>
-                <label for="check_specified_total_days">指定しない</label>
+            <section class="my-4">
+              <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
+              <h3 class="fs-5 my-2" v-else>新しい条件の登録</h3>
+              <section>
+                <h4 class="fs-6 my-2 headline">条件を適用する期間</h4>
+                <label for="startAt" class="fs-6 m-2">開始日：</label>
+                <select id="start_month_select" name="startAt" v-model="selectedStartMonth">
+                  <option v-for="month in 12" :key="month">
+                    {{ month }}
+                  </option>
+                </select>
+                <span class="fs-6 m-1">月</span>
+                <select id="start_day_select" v-model="selectedStartDay">
+                  <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+                    {{ date }}
+                  </option>
+                </select>
+                <span class="fs-6 m-1">日</span>
+                <br />
+                <label for="endAt" class="fs-6 m-2">終了日：</label>
+                <select id="end_month_select" name="endAt" v-model="selectedEndMonth">
+                  <option v-for="month in 12" :key="month">
+                    {{ month }}
+                  </option>
+                </select>
+                <span class="fs-6 m-1">月</span>
+                <select id="end_day_select" v-model="selectedEndDay">
+                  <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+                    {{ date }}
+                  </option>
+                </select>
+                <span class="fs-6 m-1">日</span>
+              </section>
+              <section class="my-4">
+                <h4 class="fs-6 my-2 headline">この期間の勤務日数</h4>
+                <p class="m-2 text-info" v-show="notSpecifiedTotalDays">指定する場合はチェックを外してください</p>
+                <label for="check_specified_total_days" class="m-2">指定しない</label>
                 <input
                   type="checkbox"
+                  class="m-2"
                   id="check_specified_total_days"
                   v-model="notSpecifiedTotalDays" />
                 <br />
@@ -99,72 +103,73 @@
                   type="number"
                   v-show="specifiedTotalDays"
                   v-model="totalWorkingDays" />
-                <span class="my-2" v-show="specifiedTotalDays">日</span>
-              </div>
-              <div class="weekday-nav my-2">
-                <p>曜日毎の勤務予定を設定してください</p>
-                <span class="my-2 me-2"
+                <span class="m-2" v-show="specifiedTotalDays">日</span>
+              </section>
+              <section class="weekday-nav my-4">
+                <h4 class="fs-6 my-2 headline">曜日毎の勤務予定</h4>
+                <span class="m-2"
                   >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
                 >
                 <button class="me-1" v-on:click="decreaseWeekday">＜ {{ previousWeekday }}曜日</button>
                 <button class="me-1" v-on:click="increaseWeekday">＞ {{ nextWeekday }}曜日</button>
-              </div>
-              <div class="m-2 weekday-nav__body">
-                <input
-                  type="radio"
-                  id="none"
-                  value="None"
-                  v-model="schedules[weekdayNumber]" />
-                <label for="none" class="schedule-label">予定なし</label>
-                <br />
-                <input
-                  type="radio"
-                  id="full-time"
-                  value="full-time"
-                  v-model="schedules[weekdayNumber]" />
-                <label for="full-time" class="schedule-label">全日出勤</label>
-                <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
-                <br />
-                <input
-                  type="radio"
-                  id="morning"
-                  value="morning"
-                  v-model="schedules[weekdayNumber]" />
-                <label for="morning" class="schedule-label">午前出勤</label>
-                <img :src="morning" alt="morning" class="schedule-icon-small" />
-                <br />
-                <input
-                  type="radio"
-                  id="afternoon"
-                  value="afternoon"
-                  v-model="schedules[weekdayNumber]" />
-                <label for="afternoon" class="schedule-label">午後出勤</label>
-                <img :src="afterNoon" alt="afterNoon" class="schedule-icon-small" />
-                <br />
-                <input
-                  type="radio"
-                  id="off"
-                  value="off"
-                  v-model="schedules[weekdayNumber]" />
-                <label for="off" class="schedule-label">休み</label>
-                <img :src="off" alt="off" class="schedule-icon-small" />
-                <br />
-              </div>
-              <button
-                class="btn btn-primary my-2"
-                v-if="settingId"
-                v-on:click="updateSetting(settingId)">
-                変更
-              </button>
-              <button
-                class="btn btn-primary my-2"
-                v-else
-                v-on:click="createSetting()">
-                新規作成
-              </button>
+                <div class="m-2 weekday-nav__body">
+                  <p class="my-2 text-info">期間内のこの曜日全てに下の予定が入ります</p>
+                  <input
+                    type="radio"
+                    id="none"
+                    value="None"
+                    v-model="schedules[weekdayNumber]" />
+                  <label for="none" class="schedule-label">予定なし</label>
+                  <br />
+                  <input
+                    type="radio"
+                    id="full-time"
+                    value="full-time"
+                    v-model="schedules[weekdayNumber]" />
+                  <label for="full-time" class="schedule-label">全日出勤</label>
+                  <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
+                  <br />
+                  <input
+                    type="radio"
+                    id="morning"
+                    value="morning"
+                    v-model="schedules[weekdayNumber]" />
+                  <label for="morning" class="schedule-label">午前出勤</label>
+                  <img :src="morning" alt="morning" class="schedule-icon-small" />
+                  <br />
+                  <input
+                    type="radio"
+                    id="afternoon"
+                    value="afternoon"
+                    v-model="schedules[weekdayNumber]" />
+                  <label for="afternoon" class="schedule-label">午後出勤</label>
+                  <img :src="afterNoon" alt="afterNoon" class="schedule-icon-small" />
+                  <br />
+                  <input
+                    type="radio"
+                    id="off"
+                    value="off"
+                    v-model="schedules[weekdayNumber]" />
+                  <label for="off" class="schedule-label">休み</label>
+                  <img :src="off" alt="off" class="schedule-icon-small" />
+                  <br />
+                </div>
+                <button
+                  class="btn btn-primary my-2"
+                  v-if="settingId"
+                  v-on:click="updateSetting(settingId)">
+                  変更
+                </button>
+                <button
+                  class="btn btn-primary mt-4"
+                  v-else
+                  v-on:click="createSetting()">
+                  登録
+                </button>
+              </section>
             </section>
           </div>
-          <div class="error-area" v-if="errors.length > 0">
+          <div class="error-area rounded" v-if="errors.length > 0">
             <b>以下のエラーの修正をお願いします:</b>
             <ul>
               <li v-for="error in errors" :key="error.id">{{ error }}</li>
@@ -655,5 +660,13 @@ watch(
 }
 .schedule-label {
   width: 68px;
+}
+.error-area {
+  background: #ffbeda;
+  border: 1px solid #ff5192;
+}
+.headline {
+  background-color: lightcyan;
+  border: 1px solid lightblue;
 }
 </style>
