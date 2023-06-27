@@ -117,7 +117,7 @@
           }}
           有給：{{ totalPaidLeaves[calendarMonth] }}
         </div>
-        <Schedule></Schedule>
+        <ScheduleDescription></ScheduleDescription>
         <div class="monthly-calendar">
           <table class="monthly-calendar__table">
             <thead class="monthly-calendar__header">
@@ -162,7 +162,7 @@
             yearyTotalPaidLeaves()
           }}
         </div>
-        <Schedule></Schedule>
+        <ScheduleDescription></ScheduleDescription>
         <div
           class="yeary-calendar rounded p-1 me-2 my-1"
           v-for="month in 12"
@@ -278,7 +278,7 @@ import Setting from './components/setting.vue'
 import Day from './components/day.vue'
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
-import Schedule from './components/schedule.vue'
+import ScheduleDescription from './components/scheduleDescription.vue'
 import fullTime from '../assets/images/fulltime.svg?url'
 import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
