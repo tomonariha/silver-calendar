@@ -13,9 +13,7 @@
     <section>
       <h2 class="fs-5 mt-4">日毎に予定を入力する</h2>
       <div class="my-2 content-center" v-show="autoAdjusted">
-        <div 
-          class="auto-adjust-info rounded"
-          v-if="autoAdjustAll">
+        <div class="auto-adjust-info rounded" v-if="autoAdjustAll">
           <p>条件を一括適用しました</p>
         </div>
         <div
@@ -36,7 +34,10 @@
             (現在の日数){{ numberOfWorkingDays }}
           </p>
         </div>
-        <div id="overlay" v-show="showJustNotConfirm" v-on:click.self="cancelJustNotConfirm">
+        <div
+          id="overlay"
+          v-show="showJustNotConfirm"
+          v-on:click.self="cancelJustNotConfirm">
           <div id="confirm">
             <Confirm
               v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
@@ -73,7 +74,10 @@
           </button>
         </div>
       </div>
-      <div id="overlay" v-show="showDeleteConfirm" v-on:click.self="cancelDeleteConfirm">
+      <div
+        id="overlay"
+        v-show="showDeleteConfirm"
+        v-on:click.self="cancelDeleteConfirm">
         <div id="confirm">
           <Confirm
             v-bind:message="'削除します。よろしいですか？'"
@@ -109,7 +113,10 @@
           @click="nextMonth">
           ＞
         </button>
-        <button class="btn btn-secondary my-1 mx-4" v-on:click="toYearyCalendar" v-if="monthly">
+        <button
+          class="btn btn-secondary my-1 mx-4"
+          v-on:click="toYearyCalendar"
+          v-if="monthly">
           年間カレンダー
         </button>
         <span class="my-1 mx-4 text-info" v-else>
@@ -202,9 +209,7 @@
                     v-show="date.date"
                     class="yeary-calendar__day-body"
                     v-bind:class="{
-                      'auto-adjusted':
-                        autoAdjusted &&
-                        existInPeriod(date)
+                      'auto-adjusted': autoAdjusted && existInPeriod(date)
                     }">
                     <span v-if="date.schedule === 'full-time'">
                       <img
@@ -215,7 +220,7 @@
                     <span v-else-if="date.schedule === 'morning'">
                       <img
                         class="yeary-calendar__schedule-icon"
-                        :src="morning" 
+                        :src="morning"
                         alt="morning" />
                     </span>
                     <span v-else-if="date.schedule === 'afternoon'">
@@ -257,14 +262,17 @@
         <h2 class="fs-6 m-2">Googleカレンダーに反映するのはこちらから</h2>
         <div class="d-flex justify-content-center">
           <button
-          type="button"
-          class="btn btn-primary my-2 alignment-button"
-          v-on:click="openAlignmentModal">
-          連携
+            type="button"
+            class="btn btn-primary my-2 alignment-button"
+            v-on:click="openAlignmentModal">
+            連携
           </button>
         </div>
       </div>
-      <div id="overlay" v-show="showAlignmentContent" v-on:click.self="closeAlignmentModal">
+      <div
+        id="overlay"
+        v-show="showAlignmentContent"
+        v-on:click.self="closeAlignmentModal">
         <div id="content">
           <Alignment
             v-bind:calendars="calendarsIndex"
@@ -493,8 +501,7 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formatedDate =
-    date.year + '-' + date.month + '-' + date.date
+  const formatedDate = date.year + '-' + date.month + '-' + date.date
   return targetPeriod.includes(formatedDate)
 }
 function autoAdjust(setting) {
@@ -973,7 +980,7 @@ function updateAlignment(calendar) {
 }
 .auto-adjust-info {
   background: rgb(207, 250, 207);
-  border: 1px solid greenyellow
+  border: 1px solid greenyellow;
 }
 .not-just {
   background: #ffbeda;

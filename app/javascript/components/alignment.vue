@@ -2,7 +2,10 @@
   <div>
     <section>
       <h3 class="fs-4 my-2">連携機能</h3>
-      <div id="overlay" v-show="confirmedCalendar" v-on:click.self="cancelConfirm">
+      <div
+        id="overlay"
+        v-show="confirmedCalendar"
+        v-on:click.self="cancelConfirm">
         <div id="confirm">
           <Confirm
             v-bind:message="'削除します。よろしいですか？'"
@@ -19,7 +22,9 @@
       <div class="time-form">
         <section>
           <h4 class="headline fs-5 my-2">時刻の設定</h4>
-          <p class="text-info my-2">Googleカレンダーに反映する際の時刻を設定します</p>
+          <p class="text-info my-2">
+            Googleカレンダーに反映する際の時刻を設定します
+          </p>
           <Time v-bind:dayOfSchedule="'morning'"> </Time>
           <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
           <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
@@ -28,7 +33,9 @@
               時刻を保存
             </button>
           </div>
-          <p class="text-info my-2">保存後、Googleカレンダーへの追加か更新をするまではGoogleカレンダーに時刻の変更は反映されません。</p>
+          <p class="text-info my-2">
+            保存後、Googleカレンダーへの追加か更新をするまではGoogleカレンダーに時刻の変更は反映されません。
+          </p>
         </section>
       </div>
       <div v-show="errors.length > 0">
@@ -58,7 +65,9 @@
                 class="my-2"
                 v-for="(calendar, index) in slicedCalendars"
                 :key="index">
-                <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
+                <span class="calendar_year__body me-3"
+                  >{{ calendar.year }}年</span
+                >
                 <button
                   class="btn btn-dark ms-1"
                   v-bind:disabled="
@@ -110,7 +119,11 @@
           </div>
         </section>
       </div>
-      <button class="btn btn-sm inconspicuous-button my-2" v-on:click="emit('cancel')">キャンセル</button>
+      <button
+        class="btn btn-sm inconspicuous-button my-2"
+        v-on:click="emit('cancel')">
+        キャンセル
+      </button>
     </section>
   </div>
 </template>
