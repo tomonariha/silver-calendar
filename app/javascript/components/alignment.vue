@@ -127,7 +127,6 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['cancel', 'delete', 'create', 'update'])
-const showTimeForm = ref(false)
 // 時刻設定用
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
