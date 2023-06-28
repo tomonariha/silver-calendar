@@ -33,7 +33,7 @@ RSpec.describe 'Settings', type: :system do
       choose '全日出勤'
       click_button '＞'
       choose '全日出勤'
-      click_button '新規作成'
+      click_button '登録'
     end
     expect(page).to have_content('2023-02-01 〜 2023-02-28')
   end

@@ -45,15 +45,6 @@
             </Confirm>
           </div>
         </div>
-        <div id="overlay" v-show="showDeleteConfirm" v-on:click.self="cancelDeleteConfirm">
-          <div id="confirm">
-            <Confirm
-              v-bind:message="'削除します。よろしいですか？'"
-              v-on:execution="deleteCalendar"
-              v-on:cancel="cancelDeleteConfirm">
-            </Confirm>
-          </div>
-        </div>
         <div class="my-2">
           <span v-if="numberOfWorkingDays !== workingDaysRequired">
             <button
@@ -80,6 +71,15 @@
             v-on:click="cancelAutoAdjust">
             キャンセル
           </button>
+        </div>
+      </div>
+      <div id="overlay" v-show="showDeleteConfirm" v-on:click.self="cancelDeleteConfirm">
+        <div id="confirm">
+          <Confirm
+            v-bind:message="'削除します。よろしいですか？'"
+            v-on:execution="deleteCalendar"
+            v-on:cancel="cancelDeleteConfirm">
+          </Confirm>
         </div>
       </div>
       <div class="content-center">
@@ -244,7 +244,7 @@
           </table>
         </div>
       </div>
-      <div class="my-2" v-show="unAutoAdjusted">
+      <div class="delete-calendar-a my-2" v-show="unAutoAdjusted">
         <span
           class="delete-calendar m-2 d-flex justify-content-end"
           v-on:click="confirmDeleteCalendar"
@@ -495,7 +495,6 @@ function existInPeriod(date) {
   }
   const formatedDate =
     date.year + '-' + date.month + '-' + date.date
-    console.log(targetPeriod.includes(formatedDate))
   return targetPeriod.includes(formatedDate)
 }
 function autoAdjust(setting) {

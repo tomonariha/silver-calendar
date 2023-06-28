@@ -54,7 +54,7 @@ RSpec.describe 'Calendars', type: :system do
     select '2022', from: 'selected_calendar_year'
     select '12', from: 'selected_calendar_month'
     click_button '＞'
-    expect(find('.calendar-nav__year--month')).to have_content('2023年1月')
+    expect(find('.calendar-nav__year')).to have_content('2023年1月')
   end
 
   scenario 'user delete calendar', js: true do
@@ -63,15 +63,12 @@ RSpec.describe 'Calendars', type: :system do
     within '#day1' do
       expect(find('.calendar__day-button')).to have_selector("img[alt='off']")
     end
-    click_button '条件の入力'
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
-    click_button '閉じる'
     find('.delete-calendar').click
     click_button 'はい'
     within '#day1' do
       expect(find('.calendar__day-button')).to_not have_selector("img[alt='off']")
     end
-    click_button '条件の入力'
     expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
   end
 end

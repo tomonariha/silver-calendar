@@ -9,7 +9,6 @@ RSpec.describe 'AutoAdjust', type: :system do
   before do
     sign_in user
     visit calendar_path
-    click_button '条件の入力'
     click_button '新しい条件を作る'
   end
 
@@ -31,9 +30,11 @@ RSpec.describe 'AutoAdjust', type: :system do
       choose '全日出勤'
       click_button '＞'
       choose '全日出勤'
-      click_button '新規作成'
+      click_button '登録'
     end
-    click_button '適用'
+    within('.setting-button-area') do
+      click_button '適用'
+    end
     expect(page).to have_content('(現在の日数)150 / 150(必要日数)')
   end
 
@@ -55,7 +56,7 @@ RSpec.describe 'AutoAdjust', type: :system do
       choose '全日出勤'
       click_button '＞'
       choose '全日出勤'
-      click_button '新規作成'
+      click_button '登録'
     end
 
     click_button '適用'
