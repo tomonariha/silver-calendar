@@ -7,48 +7,20 @@
       v-on:update="updateSetting"
       v-on:create="createSetting"
       v-on:delete="deleteSetting"
-      v-on:reflect="adjustAndReflect">
+      v-on:reflect="adjustAndReflect"
+      v-on:reflectAll="adjustAndReflectAll">
     </Setting>
     <section>
       <h2 class="fs-5 mt-4">日毎に予定を入力する</h2>
-     <div class="content-center">
-        <button
-          class="calendar-nav__previous me-1"
-          v-show="monthly"
-          @click="previousMonth">
-          ＜
-        </button>
-        <select
-          id="selected_calendar_year"
-          v-model.number="calendarYear"
-          @change="cancelAutoAdjust">
-          <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
-        </select>
-        <span class="mx-1">年</span>
-        <select
-          id="selected_calendar_month"
-          v-show="monthly"
-          v-model.number="calendarMonth">
-          <option v-for="month in 12" :key="month">{{ month }}</option>
-        </select>
-        <span class="mx-1" v-show="monthly">月</span>
-        <button
-          class="calendar-nav__next me-1"
-          v-show="monthly"
-          @click="nextMonth">
-          ＞
-        </button>
-        <button class="btn btn-secondary my-1 mx-4" v-on:click="toYearyCalendar" v-if="monthly">
-          年間カレンダー
-        </button>
-        <span class="my-1 mx-4 text-info" v-else>
-          月のカレンダーをクリックすると月間カレンダーになります
-        </span>
-      </div>
       <div class="my-2 content-center" v-show="autoAdjusted">
+        <div 
+          class="auto-adjust-info rounded"
+          v-if="autoAdjustAll">
+          <p>条件を一括適用しました</p>
+        </div>
         <div
           class="auto-adjust-info rounded"
-          v-if="workingDaysRequired"
+          v-else-if="workingDaysRequired"
           v-bind:class="{
             'not-just': numberOfWorkingDays !== workingDaysRequired
           }">
@@ -110,6 +82,40 @@
           </button>
         </div>
       </div>
+      <div class="content-center">
+        <button
+          class="calendar-nav__previous me-1"
+          v-show="monthly"
+          @click="previousMonth">
+          ＜
+        </button>
+        <select
+          id="selected_calendar_year"
+          v-model.number="calendarYear"
+          @change="cancelAutoAdjust">
+          <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
+        </select>
+        <span class="mx-1">年</span>
+        <select
+          id="selected_calendar_month"
+          v-show="monthly"
+          v-model.number="calendarMonth">
+          <option v-for="month in 12" :key="month">{{ month }}</option>
+        </select>
+        <span class="mx-1" v-show="monthly">月</span>
+        <button
+          class="calendar-nav__next me-1"
+          v-show="monthly"
+          @click="nextMonth">
+          ＞
+        </button>
+        <button class="btn btn-secondary my-1 mx-4" v-on:click="toYearyCalendar" v-if="monthly">
+          年間カレンダー
+        </button>
+        <span class="my-1 mx-4 text-info" v-else>
+          月のカレンダーをクリックすると月間カレンダーになります
+        </span>
+      </div>
       <div class="my-2 content-center" v-if="monthly">
         <div class="calendar-nav__year my-2">
           {{ calendarYear }}年{{ calendarMonth }}月 合計:{{
@@ -142,9 +148,10 @@
                   <Day
                     v-bind:date="date"
                     v-bind:autoAdjusted="autoAdjusted"
+                    v-bind:exist="existInPeriod(date)"
                     v-bind:class="{
                       disabled:
-                        autoAdjusted && outsideWithinPeriod(date, reflectedSetting)
+                        !autoAdjustAll && autoAdjusted && !existInPeriod(date)
                     }"
                     v-if="date.date"
                     v-on:update="updateDay"
@@ -197,7 +204,7 @@
                     v-bind:class="{
                       'auto-adjusted':
                         autoAdjusted &&
-                        !outsideWithinPeriod(date, reflectedSetting)
+                        existInPeriod(date)
                     }">
                     <span v-if="date.schedule === 'full-time'">
                       <img
@@ -229,6 +236,7 @@
                         :src="paidleave"
                         alt="paidleave" />
                     </span>
+                    <div v-else class="yeary-calendar__no-schedule"></div>
                   </div>
                 </td>
               </tr>
@@ -476,22 +484,19 @@ const autoAdjusted = ref(false)
 const unAutoAdjusted = computed(() => {
   return !autoAdjusted.value
 })
+const autoAdjustAll = ref(false)
+let targetPeriod = new Array()
 const workingDaysRequired = ref(null)
 const numberOfWorkingDays = ref(0)
 const reflectedSetting = ref(null)
-function outsideWithinPeriod(date, setting) {
+function existInPeriod(date) {
   if (!date.date) {
     return false
   }
   const formatedDate =
-    date.year + '-' + formatMonth(date.month) + '-' + formatDay(date.date)
-  if (formatedDate < setting.period_start_at) {
-    return true
-  }
-  if (formatedDate > setting.period_end_at) {
-    return true
-  }
-  return false
+    date.year + '-' + date.month + '-' + date.date
+    console.log(targetPeriod.includes(formatedDate))
+  return targetPeriod.includes(formatedDate)
 }
 function autoAdjust(setting) {
   const startDate = new Date(setting.period_start_at)
@@ -516,6 +521,7 @@ function autoAdjust(setting) {
       day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
     availableDays.push(formatedDate)
   }
+  targetPeriod.push(...availableDays)
   // CalendarDays配列に入っている期間内の日付オブジェクトを抽出し、
   // その日付の勤務予定の日数をカウントし、利用可能日の配列から取り除く
   extractCalendarDaysWithinPeriod(startDate, endDate).forEach((day) => {
@@ -625,6 +631,8 @@ function determineAutoAdjust() {
   saveAdjustedCalendar()
   toast('適用しました')
   autoAdjusted.value = false
+  autoAdjustAll.value = false
+  targetPeriod = []
 }
 function cancelAutoAdjust() {
   adjustedCalendar.value = []
@@ -633,6 +641,8 @@ function cancelAutoAdjust() {
   })
   reflectedSetting.value = null
   autoAdjusted.value = false
+  autoAdjustAll.value = false
+  targetPeriod = []
 }
 function saveAdjustedCalendar() {
   fetch(`api/calendars/${calendarYear.value}`, {
@@ -655,6 +665,20 @@ function adjustAndReflect(setting) {
     await reflectAdjustedCalendar()
   }
   doAdjustAndReflect()
+}
+function adjustAndReflectAll() {
+  async function doAdjustAndReflectAll() {
+    await autoAdjustFromAllSettings()
+    await reflectAdjustedCalendar()
+  }
+  doAdjustAndReflectAll()
+}
+function autoAdjustFromAllSettings() {
+  for (let setting of settings.value) {
+    autoAdjust(setting)
+  }
+  autoAdjustAll.value = true
+  monthly.value = false
 }
 //条件設定関連
 const settings = ref([])
@@ -937,6 +961,10 @@ function updateAlignment(calendar) {
 .yeary-calendar__schedule-icon {
   width: 16px;
   height: 16px;
+}
+.yeary-calendar__no-schedule {
+  width: 16px;
+  height: 24px;
 }
 .disabled {
   pointer-events: none;

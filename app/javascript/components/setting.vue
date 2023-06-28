@@ -21,7 +21,7 @@
             v-bind:class="{ selected: settingId === setting.id }">
             {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
           </span>
-          <div class="schedules-view">
+          <div class="schedules-view m-2">
             <span>日:</span>
             <ScheduleIcon
               v-bind:schedule="setting.schedule_of_sunday"
@@ -58,19 +58,21 @@
             >
             </ScheduleIcon>
           </div>
-          <button
-            v-on:click="editSetting(setting)"
-            class="btn btn-sm inconspicuous-button ms-1">
-            編集
-          </button>
-          <button
-            v-on:click="reflectSetting(setting)"
-            class="btn btn-sm btn-primary ms-1">
-            適用
-          </button>
-          <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
-            >削除</span
-          >
+          <div class="setting-button-area m-2">
+            <button
+              v-on:click="editSetting(setting)"
+              class="btn btn-sm inconspicuous-button ms-1">
+              編集
+            </button>
+            <button
+              v-on:click="reflectSetting(setting)"
+              class="btn btn-sm btn-primary ms-1">
+              適用
+            </button>
+            <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+              >削除</span
+            >
+          </div>
         </div>
       </div>
       <div class="pagenation my-2">
@@ -84,8 +86,11 @@
         </span>
       </div>
       <div class="d-flex justify-content-center">
-        <button class="btn btn-primary my-2 new-settings-button" v-on:click="newSetting()">
+        <button class="btn btn-primary m-2 new-settings-button" v-on:click="newSetting()">
           新しい条件を作る
+        </button>
+        <button class="btn btn-primary m-2" v-on:click="reflectAllSettings()">
+          条件を一括適用
         </button>
       </div>
       <div id="overlay" v-show="showSettingModal" v-on:click.self="closeSettingModal">
@@ -238,7 +243,7 @@ const props = defineProps({
   year: Number,
   settings: Array
 })
-const emit = defineEmits(['update', 'create', 'delete', 'reflect'])
+const emit = defineEmits(['update', 'create', 'delete', 'reflect', 'reflectAll'])
 const settingId = ref('')
 const showSettingModal = ref(false)
 function closeSettingModal() {
@@ -416,6 +421,9 @@ function newSetting() {
 }
 function reflectSetting(setting) {
   emit('reflect', setting)
+}
+function reflectAllSettings() {
+  emit('reflectAll')
 }
 // フォーム：期間設定
 const selectedStartMonth = ref(1)
@@ -678,11 +686,11 @@ watch(
   width: 220px;
 }
 .settings-area {
-  height: 220px;
+  min-height: 220px;
   background-color: gainsboro;
 }
 .new-settings-button {
-  width: 250px;
+  width: 200px;
 }
 .page-number {
   text-decoration: underline;
@@ -706,6 +714,9 @@ watch(
   border: 1px solid #ff5192;
 }
 .schedules-view {
+  display: inline-block;
+}
+.setting-button-area {
   display: inline-block;
 }
 </style>
