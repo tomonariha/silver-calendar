@@ -157,6 +157,7 @@
                     value="None"
                     v-model="schedules[weekdayNumber]" />
                   <label for="none" class="schedule-label">予定なし</label>
+                  <img :src="none" alt="none" class="schedule-icon-small" />
                   <br />
                   <input
                     type="radio"
@@ -230,6 +231,7 @@ import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
 import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
+import none from '../../assets/images/none.svg?url'
 
 const toast = useToast()
 const props = defineProps({
