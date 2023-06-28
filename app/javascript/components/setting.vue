@@ -21,6 +21,43 @@
             v-bind:class="{ selected: settingId === setting.id }">
             {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
           </span>
+          <div class="schedules-view">
+            <span>日:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_sunday"
+            >
+            </ScheduleIcon>
+            <span>月:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_monday"
+            >
+            </ScheduleIcon>
+            <span>火:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_tuesday"
+            >
+            </ScheduleIcon>
+            <span>水:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_wednesday"
+            >
+            </ScheduleIcon>
+            <span>木:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_thursday"
+            >
+            </ScheduleIcon>
+            <span>金:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_friday"
+            >
+            </ScheduleIcon>
+            <span>土:</span>
+            <ScheduleIcon
+              v-bind:schedule="setting.schedule_of_saturday"
+            >
+            </ScheduleIcon>
+          </div>
           <button
             v-on:click="editSetting(setting)"
             class="btn btn-sm inconspicuous-button ms-1">
@@ -187,6 +224,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
+import ScheduleIcon from './scheduleIcon.vue'
 import { useToast } from 'vue-toastification'
 import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
@@ -668,5 +706,8 @@ watch(
 .headline {
   background-color: lightcyan;
   border: 1px solid lightblue;
+}
+.schedules-view {
+  display: inline-block;
 }
 </style>
