@@ -705,10 +705,6 @@ watch(
   background: #ffbeda;
   border: 1px solid #ff5192;
 }
-.headline {
-  background-color: lightcyan;
-  border: 1px solid lightblue;
-}
 .schedules-view {
   display: inline-block;
 }

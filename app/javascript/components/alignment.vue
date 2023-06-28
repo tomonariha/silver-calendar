@@ -16,9 +16,30 @@
       <div id="overlay" v-show="isFetching">
         <p id="fetching">反映しています。しばらくお待ちください</p>
       </div>
+      <div class="time-form">
+        <section>
+          <h4 class="headline fs-5 my-2">時刻の設定</h4>
+          <p class="text-info my-2">Googleカレンダーに反映する際の時刻を設定します</p>
+          <Time v-bind:dayOfSchedule="'morning'"> </Time>
+          <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
+          <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
+          <div class="content-center">
+            <button class="btn btn-primary my-2" v-on:click="fetchTimes">
+              時刻を保存
+            </button>
+          </div>
+          <p class="text-info my-2">保存後、Googleカレンダーへの追加か更新をするまではGoogleカレンダーに時刻の変更は反映されません。</p>
+        </section>
+      </div>
+      <div v-show="errors.length > 0">
+        <b>以下のエラーの修正をお願いします:</b>
+        <ul>
+          <li v-for="error in errors" :key="error.id">{{ error }}</li>
+        </ul>
+      </div>
       <div class="google-calendar my-2">
         <section>
-          <h4 class="fs-5 my-2">Googleカレンダー</h4>
+          <h4 class="fs-5 my-4">予定をGoogleカレンダーへ反映する</h4>
           <div class="my-2" v-if="notAuthenticatedGoogle">
             <p class="fs-6 my-2 text-info">
               Googleカレンダーと連携するにはGoogle認証が必要です
@@ -86,33 +107,6 @@
                 {{ pageNumber }}
               </span>
             </span>
-          </div>
-          <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
-            時刻の設定
-          </button>
-          <div id="overlay" v-show="showTimeForm">
-            <div id="time">
-              <div class="time-form">
-                <section>
-                  <h4 class="fs-5 my-2">時刻の設定</h4>
-                  <Time v-bind:dayOfSchedule="'morning'"> </Time>
-                  <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
-                  <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
-                  <button class="btn btn-primary my-2" v-on:click="fetchTimes">
-                    保存
-                  </button>
-                </section>
-              </div>
-              <div v-show="errors.length > 0">
-                <b>以下のエラーの修正をお願いします:</b>
-                <ul>
-                  <li v-for="error in errors" :key="error.id">{{ error }}</li>
-                </ul>
-              </div>
-              <button class="btn btn-sm inconspicuous-button my-2" v-on:click="showTimeForm = false">
-                キャンセル
-              </button>
-            </div>
           </div>
         </section>
       </div>

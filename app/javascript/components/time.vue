@@ -1,5 +1,5 @@
 <template>
-  <div class="my-1">
+  <div class="m-2">
     <span>{{ schedules[props.dayOfSchedule] }}</span>
     <select v-model.number="workingTimes[`${props.dayOfSchedule}StartHour`]">
       <option
