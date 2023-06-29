@@ -54,7 +54,9 @@
           </div>
           <div class="my-2" v-else>
             <p class="fs-6 my-2 text-primary">Google認証完了</p>
-            <p class="fs-6 m-2 text-info">「追加」ボタンでGoogleカレンダーへ反映できます</p>
+            <p class="fs-6 m-2 text-info">
+              「追加」ボタンでGoogleカレンダーへ反映できます
+            </p>
           </div>
           <div class="exist-calendars-area my-2 rounded">
             <div v-if="haveNoCalendars">カレンダーがまだありません</div>
