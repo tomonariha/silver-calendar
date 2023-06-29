@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module MetaTagsHelper
+  # rubocop:disable Metrics/MethodLength
   def default_meta_tags
     {
       site: 'SilverCalendar',
@@ -28,4 +29,5 @@ module MetaTagsHelper
       }
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end

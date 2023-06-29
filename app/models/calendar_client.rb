@@ -17,6 +17,7 @@ class CalendarClient
     )
   end
 
+  # rubocop:disable Metrics/MethodLength
   def insert_events(calendar_days, google_calendar_id, working_times)
     return if calendar_days.empty?
 
@@ -27,6 +28,7 @@ class CalendarClient
     full_time_start_at = format_time(working_times['fullTimeStartHour'], working_times['fullTimeStartMinit'])
     full_time_end_at = format_time(working_times['fullTimeEndHour'], working_times['fullTimeEndMinit'])
     events = []
+    # rubocop:disable Metrics/BlockLength
     calendar_days.map do |day|
       date = day.date.strftime('%Y-%m-%d')
       case day.schedule
@@ -56,6 +58,7 @@ class CalendarClient
       )
       events << event
     end
+    # rubocop:enable Metrics/BlockLength
 
     authorize
 
@@ -65,6 +68,7 @@ class CalendarClient
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def delete_calendar(calendar)
     authorize

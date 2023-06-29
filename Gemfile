@@ -79,14 +79,13 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+  gem 'devise'
+  gem 'devise-i18n'
+  gem 'dockerfile-rails'
+  gem 'dotenv-rails'
+  gem 'html2slim'
   gem 'letter_opener_web'
   gem 'rubocop-fjord', require: false
   gem 'rubocop-rails', require: false
   gem 'slim_lint', require: false
-  gem 'dockerfile-rails'
-  gem 'devise'
-  gem 'devise-i18n'
-  gem 'dotenv-rails'
-  gem 'html2slim'
 end
-
