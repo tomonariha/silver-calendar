@@ -22,7 +22,7 @@
       <div class="time-form">
         <section>
           <h4 class="headline fs-5 my-2">時刻の設定</h4>
-          <p class="text-info my-2">
+          <p class="text-info m-2">
             Googleカレンダーに反映する際の時刻を設定します
           </p>
           <Time v-bind:dayOfSchedule="'morning'"> </Time>
@@ -33,9 +33,6 @@
               時刻を保存
             </button>
           </div>
-          <p class="text-info my-2">
-            保存後、Googleカレンダーへの追加か更新をするまではGoogleカレンダーに時刻の変更は反映されません。
-          </p>
         </section>
       </div>
       <div v-show="errors.length > 0">
@@ -46,9 +43,9 @@
       </div>
       <div class="google-calendar my-2">
         <section>
-          <h4 class="fs-5 my-4">予定をGoogleカレンダーへ反映する</h4>
+          <h4 class="headline fs-5 my-2">予定をGoogleカレンダーへ反映する</h4>
           <div class="my-2" v-if="notAuthenticatedGoogle">
-            <p class="fs-6 my-2 text-info">
+            <p class="fs-6 m-2 text-info">
               Googleカレンダーと連携するにはGoogle認証が必要です
             </p>
             <div v-on:click="redirectOAuth" class="google-button">
@@ -56,20 +53,21 @@
             </div>
           </div>
           <div class="my-2" v-else>
-            <p class="fs-6 my-2 text-primary">認証済</p>
+            <p class="fs-6 my-2 text-primary">Google認証完了</p>
+            <p class="fs-6 m-2 text-info">「追加」ボタンでGoogleカレンダーへ反映できます</p>
           </div>
-          <div class="exist-calendars-area my-2">
+          <div class="exist-calendars-area my-2 rounded">
             <div v-if="haveNoCalendars">カレンダーがまだありません</div>
             <div v-else>
               <div
-                class="my-2"
+                class="my-2 alignment-button-area"
                 v-for="(calendar, index) in slicedCalendars"
                 :key="index">
-                <span class="calendar_year__body me-3"
+                <span class="calendar_year__body m-2"
                   >{{ calendar.year }}年</span
                 >
                 <button
-                  class="btn btn-dark ms-1"
+                  class="btn btn-primary ms-1"
                   v-bind:disabled="
                     calendar.google_calendar_id ||
                     isFetching ||
@@ -81,7 +79,7 @@
                   追加
                 </button>
                 <button
-                  class="btn btn-dark ms-1"
+                  class="btn btn-primary ms-1"
                   v-bind:disabled="
                     notExistsGoogleId(calendar.google_calendar_id) ||
                     isFetching ||
@@ -93,7 +91,7 @@
                   更新
                 </button>
                 <button
-                  class="btn btn-dark ms-1"
+                  class="btn btn-sm ms-1 inconspicuous-button"
                   v-bind:disabled="
                     notExistsGoogleId(calendar.google_calendar_id) ||
                     isFetching ||
@@ -392,8 +390,9 @@ function timesValidation() {
   background: #fff;
 }
 .exist-calendars-area {
-  width: 600px;
-  height: 220px;
+  border: solid 1px black;
+  background: gainsboro;
+  min-height: 220px;
 }
 .page-number {
   text-decoration: underline;
@@ -405,5 +404,9 @@ function timesValidation() {
 .google-button {
   width: 192px;
   cursor: pointer;
+}
+.alignment-button-area {
+  display: inline-block;
+  text-align: end;
 }
 </style>
