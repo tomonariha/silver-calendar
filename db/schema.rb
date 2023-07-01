@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_01_064125) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_01_104032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,14 +21,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_01_064125) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "year"], name: "index_calendars_on_user_id_and_year", unique: true
-    t.index ["user_id"], name: "index_calendars_on_user_id"
   end
 
   create_table "days", force: :cascade do |t|
     t.bigint "calendar_id", null: false
     t.date "date", null: false
     t.string "schedule"
-    t.boolean "locked"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["calendar_id"], name: "index_days_on_calendar_id"
@@ -41,7 +39,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_01_064125) do
     t.integer "total_working_days"
     t.integer "minimum_working_day_of_a_week"
     t.integer "minimum_days_off_of_a_week"
-    t.boolean "evenly_spaced"
     t.string "schedule_of_sunday"
     t.string "schedule_of_monday"
     t.string "schedule_of_tuesday"
