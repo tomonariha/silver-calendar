@@ -159,7 +159,7 @@ function fetchTimes() {
   if (timesValidation()) {
     return
   }
-  fetch('api/times', {
+  fetch('api/v1/times', {
     method: 'PUT',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -209,7 +209,7 @@ function fetchGoogleCalendar(calendar, method) {
   }
   isFetching.value = true
   cancelConfirm()
-  fetch(`api/calendars/${calendar.year}/alignment`, {
+  fetch(`api/v1/calendars/${calendar.year}/alignment`, {
     method: method,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -239,7 +239,7 @@ function fetchGoogleCalendar(calendar, method) {
     })
 }
 function fetchUser() {
-  fetch('api/users', {
+  fetch('api/v1/users', {
     method: 'GET',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

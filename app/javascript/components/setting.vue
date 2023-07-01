@@ -217,7 +217,7 @@ function createSetting() {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  fetch(`api/calendars/${props.year}/settings`, {
+  fetch(`api/v1/calendars/${props.year}/settings`, {
     method: 'POST',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -269,7 +269,7 @@ function updateSetting(settingId) {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  fetch(`api/calendars/${props.year}/settings/${settingId}`, {
+  fetch(`api/v1/calendars/${props.year}/settings/${settingId}`, {
     method: 'PUT',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -315,7 +315,7 @@ function editSetting(setting) {
 }
 function deleteSetting(id) {
   cancelConfirm()
-  fetch(`api/calendars/${props.year}/settings/${id}`, {
+  fetch(`api/v1/calendars/${props.year}/settings/${id}`, {
     method: 'DELETE',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

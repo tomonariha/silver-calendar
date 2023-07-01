@@ -325,7 +325,7 @@ const calendarDays = ref([])
 function fetchCalendar() {
   return new Promise(function (resolve) {
     calendarDays.value = []
-    fetch(`/api/calendars/${calendarYear.value}.json`, {
+    fetch(`/api/v1/calendars/${calendarYear.value}.json`, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -622,7 +622,7 @@ function cancelAutoAdjust() {
   autoAdjusted.value = false
 }
 function saveAdjustedCalendar() {
-  fetch(`api/calendars/${calendarYear.value}`, {
+  fetch(`api/v1/calendars/${calendarYear.value}`, {
     method: 'PUT',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -648,7 +648,7 @@ function adjustAndReflect(setting) {
 const settings = ref([])
 function fetchSettings() {
   settings.value = []
-  fetch(`api/calendars/${calendarYear.value}/settings.json`, {
+  fetch(`api/v1/calendars/${calendarYear.value}/settings.json`, {
     method: 'GET',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -777,7 +777,7 @@ function cancelDeleteConfirm() {
   showDeleteConfirm.value = false
 }
 function deleteCalendar() {
-  fetch(`api/calendars/${calendarYear.value}`, {
+  fetch(`api/v1/calendars/${calendarYear.value}`, {
     method: 'DELETE',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -823,7 +823,7 @@ function closeAlignmentModal() {
 const calendarsIndex = ref([])
 function fetchCalendarsIndex() {
   calendarsIndex.value = []
-  fetch('api/calendars', {
+  fetch('api/v1/calendars', {
     method: 'GET',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

@@ -50,6 +50,7 @@ gem 'bootsnap', require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+gem 'devise'
 gem 'meta-tags'
 gem 'slim-rails'
 gem 'vite_rails'
@@ -79,7 +80,6 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
-  gem 'devise'
   gem 'devise-i18n'
   gem 'dockerfile-rails'
   gem 'dotenv-rails'
