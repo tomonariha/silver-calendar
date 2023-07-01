@@ -7,8 +7,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :calendars, only: %i(index destroy show update), param: :year do
-        resources :settings, only: %i(index destroy create update)
-        resource :alignment, only: %i(create destroy update)
+        resources :settings, only: %i(index destroy create update), module: :calendars
+        resource :alignment, only: %i(create destroy update), module: :calendars
       end
       post 'days/:year/:month', to: 'days#update'
       delete 'days/:year/:month/:date', to: 'days#destroy'
