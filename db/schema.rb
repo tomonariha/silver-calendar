@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_15_150710) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_01_064125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "calendars", force: :cascade do |t|
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.integer "year", null: false
     t.string "google_calendar_id"
     t.datetime "created_at", null: false
@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_15_150710) do
   end
 
   create_table "days", force: :cascade do |t|
-    t.bigint "calendar_id"
+    t.bigint "calendar_id", null: false
     t.date "date", null: false
     t.string "schedule"
     t.boolean "locked"
@@ -35,7 +35,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_15_150710) do
   end
 
   create_table "settings", force: :cascade do |t|
-    t.bigint "calendar_id"
+    t.bigint "calendar_id", null: false
     t.date "period_start_at"
     t.date "period_end_at"
     t.integer "total_working_days"
