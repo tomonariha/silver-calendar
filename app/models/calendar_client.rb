@@ -2,8 +2,8 @@
 
 class CalendarClient
   def initialize(user)
-    google_client_id = ENV['GOOGLE_CLIENT_ID']
-    google_client_secret = ENV['GOOGLE_CLIENT_SECRET']
+    google_client_id = ENV.fetch('GOOGLE_CLIENT_ID')
+    google_client_secret = ENV.fetch('GOOGLE_CLIENT_SECRET')
     @service = Google::Apis::CalendarV3::CalendarService.new
     @user = user
     @client = Signet::OAuth2::Client.new(
