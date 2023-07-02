@@ -4,9 +4,6 @@ class Calendar < ApplicationRecord
   belongs_to :user
   has_many :days, dependent: :destroy
   has_many :settings, dependent: :destroy
-  with_options presence: true do
-    validates :user_id
-  end
   validates :year, presence: true, uniqueness: { scope: :user_id }
   validate :year_should_be_between_2000and2100
 

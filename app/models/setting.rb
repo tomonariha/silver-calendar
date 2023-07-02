@@ -3,7 +3,6 @@
 class Setting < ApplicationRecord
   belongs_to :calendar
   with_options presence: true do
-    validates :calendar_id
     validates :period_start_at
     validates :period_end_at
   end

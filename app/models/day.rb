@@ -2,10 +2,7 @@
 
 class Day < ApplicationRecord
   belongs_to :calendar
-  with_options presence: true do
-    validates :calendar_id
-    validates :date
-  end
+  validates :date, presence: true
   validate :schedule_should_be_valid_string
 
   private
