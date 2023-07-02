@@ -16,7 +16,7 @@ module MetaTagsHelper
         title: 'SilverCalendar',
         type: 'website',
         site_name: 'SilverCalendar',
-        description: :description,
+        description: '勤務日程自動調整アプリ',
         image: image_url('ogp.png'),
         url: 'https://silver-calendar.com',
         locale: 'ja_JP'
@@ -24,7 +24,7 @@ module MetaTagsHelper
       twitter: {
         card: 'summary_large_image',
         site: '@tomonar78242114',
-        description: :description,
+        description: '勤務日程自動調整アプリ',
         domain: 'https://silver-calendar.com'
       }
     }
