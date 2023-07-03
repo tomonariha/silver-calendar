@@ -12,14 +12,14 @@ module API
       end
     
       def update
-        day = @calendar.days.find_or_create_by(date: @target_day)
+        day = @calendar.days.find_or_create_by!(date: @target_day)
         day.update!(schedule: params[:schedule])
       end
     
       private
     
       def set_calendar
-        @calendar = current_calendars.find_or_create_by(year: params[:year])
+        @calendar = current_calendars.find_or_create_by!(year: params[:year])
       end
     
       def set_target_day

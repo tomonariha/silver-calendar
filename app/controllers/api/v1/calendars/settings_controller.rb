@@ -12,7 +12,7 @@ module API
         def show; end
       
         def create
-          @calendar = current_calendars.find_or_create_by(year: params[:calendar_year])
+          @calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
           @setting = Setting.new(setting_params.merge(calendar_id: @calendar.id))
           @setting.save!
         end
