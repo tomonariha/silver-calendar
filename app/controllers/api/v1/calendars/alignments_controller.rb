@@ -34,7 +34,7 @@ module API
         private
 
         def set_calendar
-          current_user.calendars.find_by(year: params[:calendar_year])
+          current_calendars.find_by(year: params[:calendar_year])
         end
       
         def set_calendar_client

@@ -19,7 +19,7 @@ module API
       private
     
       def set_calendar
-        @calendar = User.find(current_user.id).calendars.find_or_create_by(year: params[:year])
+        @calendar = current_calendars.find_or_create_by(year: params[:year])
       end
     
       def set_target_day

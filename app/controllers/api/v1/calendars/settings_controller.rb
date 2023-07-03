@@ -5,14 +5,14 @@ module API
     module Calendars
       class SettingsController < ApplicationController
         def index
-          @calendar = User.find(current_user.id).calendars.find_by(year: params[:calendar_year])
+          @calendar = current_calendars.find_by(year: params[:calendar_year])
           @settings = @calendar&.settings
         end
       
         def show; end
       
         def create
-          @calendar = User.find(current_user.id).calendars.find_or_create_by(year: params[:calendar_year])
+          @calendar = current_calendars.find_or_create_by(year: params[:calendar_year])
           @setting = Setting.new(setting_params.merge(calendar_id: @calendar.id))
           @setting.save!
         end
