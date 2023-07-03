@@ -24,7 +24,7 @@ module API
     
       def destroy
         calendar = current_calendars.find_by(year: params[:year])
-        calendar.destroy!
+        calendar.destroy! unless calendar.nil?
       end
     end
   end
