@@ -5,31 +5,32 @@ module API
     module Calendars
       class SettingsController < ApplicationController
         def index
-          @calendar = current_calendars.find_by(year: params[:calendar_year])
-          @settings = @calendar&.settings
+          calendar = current_calendars.find_by(year: params[:calendar_year])
+          @settings = calendar&.settings
         end
       
         def show; end
       
         def create
-          @calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
-          @setting = Setting.new(setting_params.merge(calendar_id: @calendar.id))
+          calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
+          @setting = calendar.settings.new(setting_params)
           @setting.save!
         end
       
         def update
-          Setting.find(params[:id]).update!(setting_params)
+          calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
+          calendar.settings.find(params[:id]).update!(setting_params)
         end
       
         def destroy
-          Setting.find(params[:id]).delete
+          calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
+          calendar.settings.find(params[:id]).destroy!
         end
       
         private
       
         def setting_params
           params.require(:setting).permit(
-            :calendar_id,
             :schedule_of_sunday,
             :schedule_of_monday,
             :schedule_of_tuesday,
