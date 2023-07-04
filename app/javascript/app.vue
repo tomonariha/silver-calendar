@@ -317,10 +317,6 @@ function nextMonth() {
   }
   nextTick(() => (loaded.value = true))
 }
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
 const loaded = ref(null)
 const calendarDays = ref([])
 async function fetchCalendar() {
