@@ -271,6 +271,7 @@ import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
 import paidleave from '../assets/images/paidleave.svg?url'
+import { FetchRequest } from '@rails/request.js'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -322,31 +323,17 @@ function token() {
 }
 const loaded = ref(null)
 const calendarDays = ref([])
-function fetchCalendar() {
-  return new Promise(function (resolve) {
-    calendarDays.value = []
-    fetch(`/api/v1/calendars/${calendarYear.value}.json`, {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': token()
-      },
-      credentials: 'same-origin'
+async function fetchCalendar() {
+  calendarDays.value = []
+  const request = new FetchRequest('get', `/api/v1/calendars/${calendarYear.value}.json`)
+  const response = await request.perform()
+  if(response.ok) {
+    const body = await response.json
+    body.forEach((r) => {
+      calendarDays.value.push(r)
     })
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        json.forEach((r) => {
-          calendarDays.value.push(r)
-        })
-        loaded.value = true
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    resolve()
-  })
+    loaded.value = true
+  }
 }
 function calendarWeeks(month) {
   const weeksAry = []
@@ -621,20 +608,14 @@ function cancelAutoAdjust() {
   reflectedSetting.value = null
   autoAdjusted.value = false
 }
-function saveAdjustedCalendar() {
-  fetch(`api/v1/calendars/${calendarYear.value}`, {
-    method: 'PUT',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ calendar: adjustedCalendar.value }),
-    credentials: 'same-origin'
-  }).catch((error) => {
-    console.warn(error)
+async function saveAdjustedCalendar() {
+  const request = new FetchRequest('put', `api/v1/calendars/${calendarYear.value}`, {
+    body: JSON.stringify({ calendar: adjustedCalendar.value })
   })
-  adjustedCalendar.value = []
+  const response = await request.perform()
+  if (response.ok) {
+    adjustedCalendar.value = []
+  }
 }
 function adjustAndReflect(setting) {
   async function doAdjustAndReflect() {
@@ -646,31 +627,18 @@ function adjustAndReflect(setting) {
 }
 //条件設定関連
 const settings = ref([])
-function fetchSettings() {
+async function fetchSettings() {
   settings.value = []
-  fetch(`api/v1/calendars/${calendarYear.value}/settings.json`, {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
+  const request = new FetchRequest('get', `api/v1/calendars/${calendarYear.value}/settings.json`)
+  const response = await request.perform()
+  if(response.ok) {
+    const body = await response.json
+    await body.forEach((r) => {
+      settings.value.push(r)
     })
-    .then((json) => {
-      json.forEach((r) => {
-        settings.value.push(r)
-      })
-      loaded.value = true
-    })
-    .then(() => {
-      sortSettings()
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+    loaded.value = true
+    sortSettings()
+  }
 }
 function sortSettings() {
   settings.value.sort((a, b) =>
@@ -776,25 +744,16 @@ function confirmDeleteCalendar() {
 function cancelDeleteConfirm() {
   showDeleteConfirm.value = false
 }
-function deleteCalendar() {
-  fetch(`api/v1/calendars/${calendarYear.value}`, {
-    method: 'DELETE',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      toast('削除しました')
-      calendarDays.value = []
-      settings.value = []
-      deleteFromCalendarsIndex()
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-  cancelDeleteConfirm()
+async function deleteCalendar() {
+  const request = new FetchRequest('delete', `api/v1/calendars/${calendarYear.value}`)
+  const response = await request.perform()
+  if(response.ok) {
+    toast('削除しました')
+    calendarDays.value = []
+    settings.value = []
+    deleteFromCalendarsIndex()
+    cancelDeleteConfirm()
+  }
 }
 function deleteFromCalendarsIndex() {
   for (let calendar of calendarsIndex.value) {
@@ -821,30 +780,17 @@ function closeAlignmentModal() {
   showAlignmentContent.value = false
 }
 const calendarsIndex = ref([])
-function fetchCalendarsIndex() {
+async function fetchCalendarsIndex() {
   calendarsIndex.value = []
-  fetch('api/v1/calendars', {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
+  const request = new FetchRequest('get', 'api/v1/calendars.json')
+  const response = await request.perform()
+  if(response.ok) {
+    const body = await response.json
+    body.forEach((r) => {
+      calendarsIndex.value.push(r)
     })
-    .then((json) => {
-      json.forEach((r) => {
-        calendarsIndex.value.push(r)
-      })
-    })
-    .then(() => {
-      calendarsIndex.value.sort((a, b) => a.year - b.year)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+    calendarsIndex.value.sort((a, b) => a.year - b.year)
+  }
 }
 function createAlignment(calendar) {
   for (let calendarIndex of calendarsIndex.value) {

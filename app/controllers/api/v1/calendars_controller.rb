@@ -13,7 +13,7 @@ module API
         params['calendar'].each do |day|
           date = Date.parse(day['date'])
           schedule = day['schedule']
-          day = calendar.days.find_or_create_by!(date:)
+          day = calendar.days.find_or_create_by(date:)
           day.update!(schedule:)
         end
       end
