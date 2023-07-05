@@ -1,8 +1,9 @@
 - set_meta_tags(title: 'トップ', description: 'ホーム画面です。')
 section
   .container
-    h1.fs-4.my-4.text-center Silver Calendar
-    p.my-2 シルバーカレンダーは、あなたの勤務条件に合わせて自動的にシフトを調整するアプリです。
+    h1.fs-3.my-4.text-center
+      | シルバーカレンダーとは？
+    p.my-2 あなたの勤務条件に合わせて自動的にシフトを調整するアプリです。
     p.my-2 簡単な設定で、あなたの勤務スケジュールを最適化し、貴重な時間を節約できます。
 
     br
@@ -10,30 +11,38 @@ section
       =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary m-2 mb-2'
       =link_to '登録済みの方はこちら', calendar_path, class: 'btn btn-primary m-2 mb-2 login-button'
     section
-      h2.fs-4.my-4.text-center こんなことありませんか？
-      p.my-2.text-center 自分で勤務スケジュールを決めないといけないけれど、１つ１つ入力していると大変
+      h2.fs-3.my-4.text-center こんなことありませんか？
+      p.fs-5.my-2.text-center 自分で勤務スケジュールを決めないといけないけれど、１つ１つ入れていると大変
       .content-center
         = image_tag('image1.png', alt: '困っている人', class: 'img-thumbnail image')
 
-      p.mt-4.text-center シルバーカレンダーなら条件を入力して自動でスケジュール入力
-      .content-center
-        = image_tag('image3.png', alt: '条件の作成', class: 'img-thumbnail image')
-      .content-center
-        = image_tag('demo.gif', alt: '条件を適用', class: 'img-thumbnail image')
+      p.my-4.fs-4.text-center シルバーカレンダーなら自動でスケジュール入力できます
+      .row.my-4
+        .content-center.col-6
+          = image_tag('image3.png', alt: '条件の作成', class: 'img-thumbnail')
+        p.fs-5.col-6.d-flex.align-items-center
+          | 予定を入れたい期間と日数、曜日ごとの予定を入れます。
+      .row.my-4
+        p.fs-5.col-6.d-flex.align-items-center
+          | 「適用」を押すと予定が入ります。
+        .content-center.col-6
+          = image_tag('demo.gif', alt: '条件を適用', class: 'img-thumbnail')
+      .row.my-4
+        .content-center.col-6
+          = image_tag('image5.png', alt: '手動で調整', class: 'img-thumbnail')
+        p.fs-5.col-6.d-flex.align-items-center
+          | 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
+      .row.my-4
+        p.fs-5.col-6.d-flex.align-items-center
+          | 作ったカレンダーはGoogleカレンダーに反映できます
+        .content-center.col-6
+          = image_tag('image4.png', alt: 'Googleカレンダー', class: 'img-thumbnail')
 
-      p.mt-4.text-center 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
-      .content-center
-        = image_tag('image5.png', alt: '手動で調整', class: 'img-thumbnail image')
-
-      p.mt-4.text-center 作ったカレンダーをGoogleカレンダーに反映できます
-      .content-center
-        = image_tag('image4.png', alt: 'Googleカレンダー', class: 'img-thumbnail image')
-
-      p.mt-4.text-center シルバーカレンダーで、あなたの生活と仕事をバランス良く調整しましょう
+      p.fs-4.my-4.text-center シルバーカレンダーで、あなたの生活と仕事をバランス良く調整しましょう
       .content-center
         = image_tag('image2.png', alt: 'Googleカレンダー', class: 'img-thumbnail image')
 
-      .mt-4.content-center
+      .my-4.content-center
         =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary btn-lg m-2 mb-2'
 
       section
