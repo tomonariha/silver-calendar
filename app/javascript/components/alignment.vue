@@ -21,8 +21,8 @@
       </div>
       <div class="time-form">
         <section>
-          <h4 class="headline fs-5 my-2">時刻の設定</h4>
-          <p class="text-info m-2">
+          <h4 class="headline fs-6 my-2">時刻の設定</h4>
+          <p class="text-primary m-2">
             Googleカレンダーに反映する際の時刻を設定します
           </p>
           <Time v-bind:dayOfSchedule="'morning'"> </Time>
@@ -43,9 +43,9 @@
       </div>
       <div class="google-calendar my-2">
         <section>
-          <h4 class="headline fs-5 my-2">予定をGoogleカレンダーへ反映する</h4>
+          <h4 class="headline fs-6 my-2">予定をGoogleカレンダーへ反映する</h4>
           <div class="my-2" v-if="notAuthenticatedGoogle">
-            <p class="fs-6 m-2 text-info">
+            <p class="fs-6 m-2 text-primary">
               Googleカレンダーと連携するにはGoogle認証が必要です
             </p>
             <div v-on:click="redirectOAuth" class="google-button">
@@ -54,7 +54,7 @@
           </div>
           <div class="my-2" v-else>
             <p class="fs-6 my-2 text-primary">Google認証完了</p>
-            <p class="fs-6 m-2 text-info">
+            <p class="fs-6 m-2 text-primary">
               「追加」ボタンでGoogleカレンダーへ反映できます
             </p>
           </div>

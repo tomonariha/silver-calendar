@@ -119,7 +119,7 @@
           v-if="monthly">
           年間カレンダー
         </button>
-        <span class="my-1 mx-4 text-info" v-else>
+        <span class="my-1 mx-4 text-primary" v-else>
           月のカレンダーをクリックすると月間カレンダーになります
         </span>
       </div>

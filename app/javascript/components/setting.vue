@@ -135,7 +135,7 @@
               </section>
               <section class="my-2">
                 <h4 class="fs-6 my-1 headline">この期間の勤務日数</h4>
-                <p class="mx-2 my-1 text-info" v-show="notSpecifiedTotalDays">
+                <p class="mx-2 my-1 text-primary" v-show="notSpecifiedTotalDays">
                   指定する場合はチェックを外してください
                 </p>
                 <label for="check_specified_total_days" class="mx-2 my-1"
@@ -167,7 +167,7 @@
                   ＞ {{ nextWeekday }}曜日
                 </button>
                 <div class="mx-2 my-1 weekday-nav__body">
-                  <p class="mx-2 my-1 text-info">
+                  <p class="mx-2 my-1 text-primary">
                     期間内のこの曜日全てに下の予定が入ります
                   </p>
                   <input
