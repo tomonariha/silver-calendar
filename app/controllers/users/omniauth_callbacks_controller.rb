@@ -13,13 +13,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user.store_credentials_in_cache(auth)
 
     if user.persisted?
-      sign_in_and_redirect user
+      sign_in_and_redirect user, event: :authentication
     else
       redirect_to new_user_registration_url
     end
   end
 
-  def registrater_provider_uid(user, auth)
+  def register_provider_uid(user, auth)
     user.uid = auth.uid
     user.provider = auth.provider
     user.save!
