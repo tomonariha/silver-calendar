@@ -121,6 +121,7 @@ import Confirm from './confirm.vue'
 import Time from './time.vue'
 import { useToast } from 'vue-toastification'
 import googleButton from '../../assets/images/btn_google_signin_dark_normal_web.png?url'
+import { FetchRequest } from '@rails/request.js'
 
 const toast = useToast()
 const props = defineProps({
@@ -155,26 +156,16 @@ const workingTimes = ref({
   fullTimeEndHour,
   fullTimeEndMinit
 })
-function fetchTimes() {
+async function fetchTimes() {
   if (timesValidation()) {
     return
   }
-  fetch('api/v1/times', {
-    method: 'PUT',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(workingTimes.value),
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      toast(`保存しました`)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  const request = new FetchRequest('put', 'api/v1/times',
+    {body: JSON.stringify(workingTimes.value)})
+  const response = await request.perform()
+  if(response.ok) {
+    toast(`保存しました`)
+  }
 }
 provide('workingTimes', workingTimes)
 // Google
@@ -188,88 +179,59 @@ function redirectOAuth() {
 function notExistsGoogleId(google_calendar_id) {
   return !google_calendar_id
 }
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
 const requestMethods = {
-  create: 'POST',
-  delete: 'DELETE',
-  update: 'PUT'
+  create: 'post',
+  delete: 'delete',
+  update: 'put'
 }
 const toActionString = {
-  POST: '作成',
-  DELETE: '削除',
-  PUT: '更新'
+  post: '作成',
+  delete: '削除',
+  put: '更新'
 }
 const isFetching = ref(false)
-function fetchGoogleCalendar(calendar, method) {
-  if (method != 'DELETE' && timesValidation()) {
+async function fetchGoogleCalendar(calendar, method) {
+  if (method != 'delete' && timesValidation()) {
     return
   }
   isFetching.value = true
   cancelConfirm()
-  fetch(`api/v1/calendars/${calendar.year}/alignment`, {
-    method: method,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(workingTimes.value),
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      if (method === 'DELETE') {
-        calendar['google_calendar_id'] = null
-      } else {
-        calendar['google_calendar_id'] = json.google_calendar_id
-      }
-      toast(`${toActionString[method]}しました`)
-      emit(method, calendar)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-    .finally(() => {
-      isFetching.value = false
-    })
+  const request = new FetchRequest(`${method}`, `api/v1/calendars/${calendar.year}/alignment`,
+    {body: JSON.stringify(workingTimes.value)})
+  const response = await request.perform()
+  if(response.ok) {
+    const body = await response.json
+    if (method === 'delete') {
+      calendar['google_calendar_id'] = null
+    } else {
+      calendar['google_calendar_id'] = body.google_calendar_id
+    }
+    toast(`${toActionString[method]}しました`)
+    emit(method, calendar)
+  }
+  isFetching.value = false
 }
-function fetchUser() {
-  fetch('api/v1/users', {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
+async function fetchUser() {
+  const request = new FetchRequest('get', 'api/v1/users')
+  const response = await request.perform()
+  if(response.ok) {
+    const body = await response.json
+    authenticatedGoogle.value = body.authenticate
+    Object.assign(workingTimes.value, {
+      morningStartHour: body.morningStartHour,
+      morningStartMinit: body.morningStartMinit,
+      morningEndHour: body.morningEndHour,
+      morningEndMinit: body.morningEndMinit,
+      afterNoonStartHour: body.afterNoonStartHour,
+      afterNoonStartMinit: body.afterNoonStartMinit,
+      afterNoonEndHour: body.afterNoonEndHour,
+      afterNoonEndMinit: body.afterNoonEndMinit,
+      fullTimeStartHour: body.fullTimeStartHour,
+      fullTimeStartMinit: body.fullTimeStartMinit,
+      fullTimeEndHour: body.fullTimeEndHour,
+      fullTimeEndMinit: body.fullTimeEndMinit
     })
-    .then((json) => {
-      authenticatedGoogle.value = json.authenticate
-      Object.assign(workingTimes.value, {
-        morningStartHour: json.morningStartHour,
-        morningStartMinit: json.morningStartMinit,
-        morningEndHour: json.morningEndHour,
-        morningEndMinit: json.morningEndMinit,
-        afterNoonStartHour: json.afterNoonStartHour,
-        afterNoonStartMinit: json.afterNoonStartMinit,
-        afterNoonEndHour: json.afterNoonEndHour,
-        afterNoonEndMinit: json.afterNoonEndMinit,
-        fullTimeStartHour: json.fullTimeStartHour,
-        fullTimeStartMinit: json.fullTimeStartMinit,
-        fullTimeEndHour: json.fullTimeEndHour,
-        fullTimeEndMinit: json.fullTimeEndMinit
-      })
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  }
 }
 onMounted(() => {
   fetchUser()
