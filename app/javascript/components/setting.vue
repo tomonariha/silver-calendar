@@ -174,6 +174,7 @@
 import { ref, computed, watch } from 'vue'
 import Confirm from './confirm.vue'
 import { useToast } from 'vue-toastification'
+import { FetchRequest } from '@rails/request.js'
 
 const toast = useToast()
 const props = defineProps({
@@ -184,11 +185,7 @@ const emit = defineEmits(['close', 'update', 'create', 'delete', 'reflect'])
 const settingId = ref('')
 const showFormContent = ref(false)
 // CRUD
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
-function createSetting() {
+async function createSetting() {
   const startDay = new Date(
     props.year,
     selectedStartMonth.value - 1,
@@ -217,30 +214,18 @@ function createSetting() {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  fetch(`api/v1/calendars/${props.year}/settings`, {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(setting),
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      toast('作成しました')
-      setting['id'] = json.id
-      emit('create', setting)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-  showFormContent.value = false
+  const request = new FetchRequest('post', `api/v1/calendars/${props.year}/settings.json`,
+    {body: JSON.stringify(setting)})
+  const response = await request.perform()
+  if(response.ok) {
+    toast('作成しました')
+    const body = await response.json
+    setting['id'] = body.id
+    emit('create', setting)
+    showFormContent.value = false
+  }
 }
-function updateSetting(settingId) {
+async function updateSetting(settingId) {
   const startDay = new Date(
     props.year,
     selectedStartMonth.value - 1,
@@ -269,25 +254,15 @@ function updateSetting(settingId) {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  fetch(`api/v1/calendars/${props.year}/settings/${settingId}`, {
-    method: 'PUT',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(setting),
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      toast('更新しました')
-      setting['id'] = settingId
-      emit('update', setting)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-  showFormContent.value = false
+  const request = new FetchRequest('put', `api/v1/calendars/${props.year}/settings/${settingId}`,
+    {body: JSON.stringify(setting)})
+  const response = await request.perform()
+  if(response.ok) {
+    toast('更新しました')
+    setting['id'] = settingId
+    emit('update', setting)
+    showFormContent.value = false
+  }
 }
 function editSetting(setting) {
   const startDay = new Date(setting.period_start_at)
@@ -313,24 +288,15 @@ function editSetting(setting) {
   }
   showFormContent.value = true
 }
-function deleteSetting(id) {
+async function deleteSetting(id) {
   cancelConfirm()
-  fetch(`api/v1/calendars/${props.year}/settings/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      toast('削除しました')
-      resetSettingParams()
-      emit('delete', id)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  const request = new FetchRequest('delete', `api/v1/calendars/${props.year}/settings/${id}`)
+  const response = await request.perform()
+  if(response.ok) {
+    toast('削除しました')
+    resetSettingParams()
+    emit('delete', id)
+  }
 }
 function resetSettingParams() {
   schedules.value[0] = 'off'
