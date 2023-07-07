@@ -19,7 +19,7 @@ module API
       end
     
       def index
-        @calendars = current_calendars
+        @calendars = current_calendars.order('year ASC')
       end
     
       def destroy

@@ -785,7 +785,6 @@ async function fetchCalendarsIndex() {
     body.forEach((r) => {
       calendarsIndex.value.push(r)
     })
-    calendarsIndex.value.sort((a, b) => a.year - b.year)
   }
 }
 function createAlignment(calendar) {
