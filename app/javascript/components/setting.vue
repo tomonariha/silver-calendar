@@ -171,7 +171,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import Confirm from './confirm.vue'
 import { useToast } from 'vue-toastification'
 import { FetchRequest } from '@rails/request.js'
@@ -281,6 +281,7 @@ function editSetting(setting) {
   selectedEndDay.value = endDay.getDate()
   settingId.value = setting.id
   weekdayNumber.value = 0
+  errors.value = []
   if (setting.total_working_days) {
     notSpecifiedTotalDays.value = false
   } else {
@@ -313,6 +314,7 @@ function resetSettingParams() {
   settingId.value = ''
   totalWorkingDays.value = 0
   weekdayNumber.value = 0
+  errors.value = []
   notSpecifiedTotalDays.value = false
 }
 function newSetting() {
@@ -506,12 +508,6 @@ function totalDaysValidation(startDay, endDay) {
     return true
   }
 }
-watch(
-  () => props.year,
-  () => {
-    errors.value = []
-  }
-)
 </script>
 
 <style>
