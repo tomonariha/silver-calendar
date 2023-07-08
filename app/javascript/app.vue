@@ -244,9 +244,7 @@
         <Alignment
           v-bind:calendars="calendarIndexes"
           v-on:close="closeAlignmentModal"
-          v-on:create="createAlignment"
-          v-on:delete="deleteAlignment"
-          v-on:update="updateAlignment">
+          v-on:reflect="reflectGoogleCalendarId">
         </Alignment>
       </div>
     </div>
@@ -667,24 +665,16 @@ function createSetting(createdSetting) {
   sortSettings()
 }
 function deleteSetting(settingId) {
-  for (let setting of settings.value) {
-    if (setting.id === settingId) {
-      settings.value.splice(settings.value.indexOf(setting), 1)
-      break
-    }
-  }
+  const found = settings.value.find(setting => setting.id === settingId)
+  settings.value.splice(settings.value.indexOf(found), 1)
 }
 function updateSetting(updatedSetting) {
   updatedSetting.period_start_at = formatUpdatedDay(
     updatedSetting.period_start_at
   )
   updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
-  for (let setting of settings.value) {
-    if (setting.id === updatedSetting.id) {
-      settings.value.splice(settings.value.indexOf(setting), 1, updatedSetting)
-      break
-    }
-  }
+  const found = settings.value.find(setting => setting.id === updatedSetting.id)
+  settings.value.splice(settings.value.indexOf(found), 1, updatedSetting)
   sortSettings()
 }
 //勤務入力関連
@@ -752,12 +742,8 @@ async function deleteCalendar() {
   }
 }
 function deleteFromCalendarIndexes() {
-  for (let calendar of calendarIndexes.value) {
-    if (calendarYear.value === calendar.year) {
-      calendarIndexes.value.splice(calendarIndexes.value.indexOf(calendar), 1)
-      break
-    }
-  }
+  const found = calendarIndexes.value.find(calendarIndex =>  calendarIndex.year === calendarYear.value)
+  calendarIndexes.value.splice(calendarIndexes.value.indexOf(found), 1)
 }
 const showJustNotConfirm = ref(false)
 function confirmJustNot() {
@@ -785,29 +771,9 @@ async function fetchCalendarIndexes() {
     calendarIndexes.value = body
   }
 }
-function createAlignment(calendar) {
-  for (let calendarIndex of calendarIndexes.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = calendar.google_calendar_id
-      break
-    }
-  }
-}
-function deleteAlignment(calendar) {
-  for (let calendarIndex of calendarIndexes.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = null
-      break
-    }
-  }
-}
-function updateAlignment(calendar) {
-  for (let calendarIndex of calendarIndexes.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = calendar.google_calendar_id
-      break
-    }
-  }
+function reflectGoogleCalendarId(calendar) {
+  const found = calendarIndexes.value.find(calendarIndex =>  calendarIndex.year === calendar.year)
+  found.google_calendar_id = calendar.google_calendar_id
 }
 </script>
 

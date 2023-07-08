@@ -127,7 +127,7 @@ const toast = useToast()
 const props = defineProps({
   calendars: Array
 })
-const emit = defineEmits(['close', 'delete', 'create', 'update'])
+const emit = defineEmits(['close', 'reflect'])
 const showTimeForm = ref(false)
 // 時刻設定用
 const morningStartHour = ref(8)
@@ -207,7 +207,7 @@ async function fetchGoogleCalendar(calendar, method) {
       calendar['google_calendar_id'] = body.google_calendar_id
     }
     toast(`${toActionString[method]}しました`)
-    emit(method, calendar)
+    emit('reflect', calendar)
   }
   isFetching.value = false
 }
