@@ -782,9 +782,7 @@ async function fetchCalendarsIndex() {
   const response = await request.perform()
   if(response.ok) {
     const body = await response.json
-    body.forEach((r) => {
-      calendarsIndex.value.push(r)
-    })
+    calendarsIndex.value = body
   }
 }
 function createAlignment(calendar) {
