@@ -242,7 +242,7 @@
     <div id="overlay" v-show="showAlignmentContent">
       <div id="content">
         <Alignment
-          v-bind:calendars="calendarsIndex"
+          v-bind:calendars="calendarIndexes"
           v-on:close="closeAlignmentModal"
           v-on:create="createAlignment"
           v-on:delete="deleteAlignment"
@@ -284,7 +284,7 @@ onMounted(() => {
   fetchCalendar().then(function () {
     fetchSettings()
   })
-  fetchCalendarsIndex()
+  fetchCalendarIndexes()
 })
 //カレンダー表示関連
 const calendarYear = ref(getCurrentYear())
@@ -747,14 +747,14 @@ async function deleteCalendar() {
     toast('削除しました')
     calendarDays.value = []
     settings.value = []
-    deleteFromCalendarsIndex()
+    deleteFromCalendarIndexes()
     cancelDeleteConfirm()
   }
 }
-function deleteFromCalendarsIndex() {
-  for (let calendar of calendarsIndex.value) {
+function deleteFromCalendarIndexes() {
+  for (let calendar of calendarIndexes.value) {
     if (calendarYear.value === calendar.year) {
-      calendarsIndex.value.splice(calendarsIndex.value.indexOf(calendar), 1)
+      calendarIndexes.value.splice(calendarIndexes.value.indexOf(calendar), 1)
       break
     }
   }
@@ -769,24 +769,24 @@ function cancelJustNotConfirm() {
 //外部アプリ連携関連
 const showAlignmentContent = ref(false)
 function openAlignmentModal() {
-  fetchCalendarsIndex()
+  fetchCalendarIndexes()
   showAlignmentContent.value = true
 }
 function closeAlignmentModal() {
   showAlignmentContent.value = false
 }
-const calendarsIndex = ref([])
-async function fetchCalendarsIndex() {
-  calendarsIndex.value = []
+const calendarIndexes = ref([])
+async function fetchCalendarIndexes() {
+  calendarIndexes.value = []
   const request = new FetchRequest('get', 'api/v1/calendars.json')
   const response = await request.perform()
   if(response.ok) {
     const body = await response.json
-    calendarsIndex.value = body
+    calendarIndexes.value = body
   }
 }
 function createAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
+  for (let calendarIndex of calendarIndexes.value) {
     if (calendarIndex.year === calendar.year) {
       calendarIndex.google_calendar_id = calendar.google_calendar_id
       break
@@ -794,7 +794,7 @@ function createAlignment(calendar) {
   }
 }
 function deleteAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
+  for (let calendarIndex of calendarIndexes.value) {
     if (calendarIndex.year === calendar.year) {
       calendarIndex.google_calendar_id = null
       break
@@ -802,7 +802,7 @@ function deleteAlignment(calendar) {
   }
 }
 function updateAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
+  for (let calendarIndex of calendarIndexes.value) {
     if (calendarIndex.year === calendar.year) {
       calendarIndex.google_calendar_id = calendar.google_calendar_id
       break
