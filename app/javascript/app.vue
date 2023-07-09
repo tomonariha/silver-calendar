@@ -717,12 +717,11 @@ function deleteDay(day) {
   }
 }
 function deleteFromCalendarArray(calendarDays, formatedDay) {
-  for (let calendarDay of calendarDays) {
-    if (calendarDay.date === formatedDay) {
-      calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-      return countWorkingDays(calendarDay.schedule)
-    }
-  }
+  const found = calendarDays.find(calendarDay => calendarDay.date === formatedDay)
+  if (found) {
+    calendarDays.splice(calendarDays.indexOf(found), 1)
+    return countWorkingDays(found.schedule)
+  }  
 }
 // 確認ダイアログ
 const showDeleteConfirm = ref(false)
