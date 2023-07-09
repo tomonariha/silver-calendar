@@ -694,7 +694,7 @@ function updateDay(day) {
   }
 }
 function updateToCalendarArray(calendarDays, newDay) {
-  for (let calendarDay of calendarDays) {
+  calendarDays.forEach((calendarDay) => {
     if (calendarDay.date === newDay.date) {
       countWorkingDays(calendarDay.schedule) - countWorkingDays(newDay.schedule)
       calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
@@ -703,7 +703,7 @@ function updateToCalendarArray(calendarDays, newDay) {
         countWorkingDays(calendarDay.schedule)
       )
     }
-  }
+  })
   calendarDays.push(newDay)
   return countWorkingDays(newDay.schedule)
 }
