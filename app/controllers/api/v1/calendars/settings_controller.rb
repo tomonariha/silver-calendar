@@ -7,6 +7,7 @@ module API
         def index
           calendar = current_calendars.find_by(year: params[:calendar_year])
           @settings = calendar&.settings
+          render json: @settings.to_json
         end
       
         def show; end
@@ -15,6 +16,7 @@ module API
           calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
           @setting = calendar.settings.new(setting_params)
           @setting.save!
+          render json: { id: @setting.id }
         end
       
         def update
