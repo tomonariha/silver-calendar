@@ -9,13 +9,18 @@ module API
       end
     
       def update
-        calendar = current_calendars.find_or_create_by!(year: params[:year])
-        params['calendar'].each do |day|
-          date = Date.parse(day['date'])
-          schedule = day['schedule']
-          day = calendar.days.find_or_create_by(date:)
-          day.update!(schedule:)
+        ActiveRecord::Base.transaction do
+          calendar = current_calendars.find_or_create_by!(year: params[:year])
+          params['calendar'].each do |day|
+            date = Date.parse(day['date'])
+            schedule = day['schedule']
+            day = calendar.days.find_or_create_by(date:)
+            day.update!(schedule:)
+          end
+          render json: { message:'適用しました' }
         end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error_message:'問題が起きたためデータの保存に失敗しました' }
       end
     
       def index

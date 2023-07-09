@@ -591,7 +591,6 @@ function extractCalendarDaysWithinPeriod(startDate, endDate) {
 function determineAutoAdjust() {
   cancelJustNotConfirm()
   saveAdjustedCalendar()
-  toast('適用しました')
   autoAdjusted.value = false
 }
 function cancelAutoAdjust() {
@@ -608,7 +607,13 @@ async function saveAdjustedCalendar() {
   })
   const response = await request.perform()
   if (response.ok) {
+    const body = await response.json
     adjustedCalendar.value = []
+    if (body.error_message) {
+      toast.error(body.error_message)
+      return
+    }
+    toast(body.message)
   }
 }
 function adjustAndReflect(setting) {
