@@ -169,7 +169,6 @@
             </tbody>
           </table>
         </div>
->>>>>>> feature/respond_to_design_review
       </div>
       <div class="content-center" v-else>
         <div class="calendar-nav__year my-2">

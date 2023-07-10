@@ -81,7 +81,6 @@
         </button>
         <button class="btn btn-primary m-2" v-on:click="reflectAllSettings()">
           条件を一括適用
->>>>>>> feature/respond_to_design_review
         </button>
       </div>
       <div

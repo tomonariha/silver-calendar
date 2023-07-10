@@ -19,9 +19,6 @@
       <div id="overlay" v-show="isFetching">
         <p id="fetching">反映しています。しばらくお待ちください</p>
       </div>
-      <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
-        時刻の設定
-      </button>
       <div class="time-form">
         <section>
           <h4 class="headline fs-6 my-2">時刻の設定</h4>
@@ -142,7 +139,6 @@ const props = defineProps({
   calendars: Array
 })
 const emit = defineEmits(['close', 'reflect'])
-const showTimeForm = ref(false)
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
 const morningEndHour = ref(12)
