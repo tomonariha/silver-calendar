@@ -27,3 +27,4 @@ node_modules
 *.local
 .env
 .vscode
+.yarn

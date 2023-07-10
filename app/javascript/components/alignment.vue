@@ -1,114 +1,130 @@
 <template>
   <div>
-    <h2 class="fs-4 my-2">連携機能</h2>
-    <div id="overlay" v-show="confirmedCalendar">
-      <div id="confirm">
-        <Confirm
-          v-bind:message="'削除します。よろしいですか？'"
-          v-on:execution="
-            fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
-          "
-          v-on:cancel="cancelConfirm">
-        </Confirm>
-      </div>
-    </div>
-    <div id="overlay" v-show="isFetching">
-      <p id="fetching">反映しています。しばらくお待ちください</p>
-    </div>
-    <div class="google-calendar my-2">
-      <h3 class="fs-5 my-2">Googleカレンダー</h3>
-      <div class="my-2" v-if="notAuthenticatedGoogle">
-        <p class="fs-6 my-2 text-info">
-          Googleカレンダーと連携するにはGoogle認証が必要です
-        </p>
-        <div v-on:click="redirectOAuth" class="google-button">
-          <img :src="googleButton" alt="google-login" />
+    <section>
+      <h3 class="fs-4 my-2">連携機能</h3>
+      <div
+        id="overlay"
+        v-show="confirmedCalendar"
+        v-on:click.self="cancelConfirm">
+        <div id="confirm">
+          <Confirm
+            v-bind:message="'削除します。よろしいですか？'"
+            v-on:execution="
+              fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
+            "
+            v-on:cancel="cancelConfirm">
+          </Confirm>
         </div>
       </div>
-      <div class="my-2" v-else>
-        <p class="fs-6 my-2 text-primary">認証済</p>
+      <div id="overlay" v-show="isFetching">
+        <p id="fetching">反映しています。しばらくお待ちください</p>
       </div>
-      <div class="exist-calendars-area my-2">
-        <div v-if="!(props.calendars.length > 0)">カレンダーがまだありません</div>
-        <div v-else>
-          <div
-            class="my-2"
-            v-for="(calendar, index) in slicedCalendars"
-            :key="index">
-            <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                calendar.google_calendar_id ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="
-                fetchGoogleCalendar(calendar, requestMethods['create'])
-              ">
-              追加
-            </button>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                notExistsGoogleId(calendar.google_calendar_id) ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="
-                fetchGoogleCalendar(calendar, requestMethods['update'])
-              ">
-              更新
-            </button>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                notExistsGoogleId(calendar.google_calendar_id) ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="confirmDialog(calendar)">
-              削除
-            </button>
-          </div>
-        </div>
-      </div>
-      <Pagenation
-        v-bind:array="props.calendars"
-        v-bind:pageLimit="pageLimit"
-        v-bind:currentPage="currentPage"
-        v-bind:displayRange="displayRange"
-        v-on:updateCurrentPage="updateCurrentPage"
-        v-on:increasePage="increasePage"
-        v-on:decreasePage="decreasePage">
-      </Pagenation>
       <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
         時刻の設定
       </button>
-    </div>
-    <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
-    <div id="overlay" v-show="showTimeForm">
-      <div id="time">
-        <div class="time-form">
-          <h3 class="fs-5 my-2">時刻の設定</h3>
+      <div class="time-form">
+        <section>
+          <h4 class="headline fs-6 my-2">時刻の設定</h4>
+          <p class="text-primary m-2">
+            Googleカレンダーに反映する際の時刻を設定します
+          </p>
           <Time v-bind:dayOfSchedule="'morning'"> </Time>
           <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
           <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
-          <button class="btn btn-primary my-2" v-on:click="fetchTimes">
-            保存
-          </button>
-        </div>
-        <div v-show="errors.length > 0">
-          <b>以下のエラーの修正をお願いします:</b>
-          <ul>
-            <li v-for="error in errors" :key="error.id">{{ error }}</li>
-          </ul>
-        </div>
-        <button class="btn btn-dark my-2" v-on:click="showTimeForm = false">
-          閉じる
-        </button>
+          <div class="content-center">
+            <button class="btn btn-primary my-2" v-on:click="fetchTimes">
+              時刻を保存
+            </button>
+          </div>
+        </section>
       </div>
+      <div v-show="errors.length > 0">
+        <b>以下のエラーの修正をお願いします:</b>
+        <ul>
+          <li v-for="error in errors" :key="error.id">{{ error }}</li>
+        </ul>
+      </div>
+      <div class="google-calendar my-2">
+        <section>
+          <h4 class="headline fs-6 my-2">予定をGoogleカレンダーへ反映する</h4>
+          <div class="my-2" v-if="notAuthenticatedGoogle">
+            <p class="fs-6 m-2 text-primary">
+              Googleカレンダーと連携するにはGoogle認証が必要です
+            </p>
+            <div v-on:click="redirectOAuth" class="google-button">
+              <img :src="googleButton" alt="google-login" />
+            </div>
+          </div>
+          <div class="my-2" v-else>
+            <p class="fs-6 my-2 text-primary">Google認証完了</p>
+            <p class="fs-6 m-2 text-primary">
+              「追加」ボタンでGoogleカレンダーへ反映できます
+            </p>
+          </div>
+          <div class="exist-calendars-area my-2 rounded">
+            <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+            <div v-else>
+              <div
+                class="my-2 alignment-button-area"
+                v-for="(calendar, index) in slicedCalendars"
+                :key="index">
+                <span class="calendar_year__body m-2"
+                  >{{ calendar.year }}年</span
+                >
+                <button
+                  class="btn btn-primary ms-1"
+                  v-bind:disabled="
+                    calendar.google_calendar_id ||
+                    isFetching ||
+                    notAuthenticatedGoogle
+                  "
+                  v-on:click="
+                    fetchGoogleCalendar(calendar, requestMethods['create'])
+                  ">
+                  追加
+                </button>
+                <button
+                  class="btn btn-primary ms-1"
+                  v-bind:disabled="
+                    notExistsGoogleId(calendar.google_calendar_id) ||
+                    isFetching ||
+                    notAuthenticatedGoogle
+                  "
+                  v-on:click="
+                    fetchGoogleCalendar(calendar, requestMethods['update'])
+                  ">
+                  更新
+                </button>
+                <button
+                  class="btn btn-sm ms-1 inconspicuous-button"
+                  v-bind:disabled="
+                    notExistsGoogleId(calendar.google_calendar_id) ||
+                    isFetching ||
+                    notAuthenticatedGoogle
+                  "
+                  v-on:click="confirmDialog(calendar)">
+                  削除
+                </button>
+              </div>
+            </div>
+          </div>
+          <Pagenation
+            v-bind:array="props.calendars"
+            v-bind:pageLimit="pageLimit"
+            v-bind:currentPage="currentPage"
+            v-bind:displayRange="displayRange"
+            v-on:updateCurrentPage="updateCurrentPage"
+            v-on:increasePage="increasePage"
+            v-on:decreasePage="decreasePage">
+          </Pagenation>
+      </section>
     </div>
+      <button
+        class="btn btn-sm inconspicuous-button my-2"
+        v-on:click="emit('cancel')">
+        キャンセル
+      </button>
+    </section>
   </div>
 </template>
 
@@ -127,7 +143,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'reflect'])
 const showTimeForm = ref(false)
-// 時刻設定用
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
 const morningEndHour = ref(12)
@@ -297,25 +312,26 @@ function timesValidation() {
 }
 #time {
   z-index: 2;
-  width: 60%;
+  max-width: 500px;
   padding: 1em;
   background: #fff;
 }
 #confirm {
   z-index: 3;
-  width: 60%;
+  max-width: 400px;
   padding: 2em;
   background: #fff;
 }
 #fetching {
   z-index: 4;
-  width: 60%;
+  max-width: 400px;
   padding: 1em;
   background: #fff;
 }
 .exist-calendars-area {
-  width: 600px;
-  height: 220px;
+  border: solid 1px black;
+  background: gainsboro;
+  min-height: 220px;
 }
 .page-number {
   text-decoration: underline;
@@ -327,5 +343,9 @@ function timesValidation() {
 .google-button {
   width: 192px;
   cursor: pointer;
+}
+.alignment-button-area {
+  display: inline-block;
+  text-align: end;
 }
 </style>

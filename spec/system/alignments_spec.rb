@@ -31,6 +31,6 @@ RSpec.describe 'Calendars', type: :system do
     click_button '連携'
     find('.google-button').click
     click_button '連携'
-    expect(page).to have_content('認証済')
+    expect(page).to have_content('Google認証完了')
   end
 end

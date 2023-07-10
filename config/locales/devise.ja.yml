@@ -114,6 +114,7 @@ ja:
       already_signed_out: 既にログアウト済みです。
       new:
         sign_in: ログイン
+        forgot_your_password: パスワードを忘れましたか？
       signed_in: ログインしました。
       signed_out: ログアウトしました。
     shared:
@@ -121,7 +122,6 @@ ja:
         back: 戻る
         didn_t_receive_confirmation_instructions: アカウント確認のメールを受け取っていませんか？
         didn_t_receive_unlock_instructions: アカウントのロック解除方法のメールを受け取っていませんか？
-        forgot_your_password: パスワードを忘れましたか？
         sign_in: ログイン
         sign_in_with_provider: "%{provider}でログイン"
         sign_up: アカウント登録

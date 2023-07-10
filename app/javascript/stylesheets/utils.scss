@@ -1,0 +1,45 @@
+.container {
+  max-width: 768px;
+}
+.content-center {
+  text-align: center;
+}
+.content-right {
+  text-align: right;
+}
+.float-right {
+  float: right;
+}
+.header {
+  background-color: cornflowerblue;
+}
+.login-button {
+  width: 200px;
+}
+.footer-items {
+  display: inline-flex;
+}
+.alignment-button {
+  width: 250px;
+}
+.update-button {
+  width: 180px;
+}
+em {
+  font-style: normal;
+}
+.text-link {
+  background: none;
+  border: none;
+  color: #0e6dfe;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+  text-decoration: underline;
+}
+.headline {
+  background: #e2f3ff;
+  border: 1px solid #0099ff;
+  padding: 2px;
+}

@@ -3,7 +3,7 @@
     <button
       class="calendar__day-button"
       v-bind:class="{
-        'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')
+        'auto-adjusted': autoAdjusted && props.exist
       }">
       <span v-if="props.date.schedule === 'full-time'">
         <img :src="fullTime" alt="fullTime" class="schedule-icon" />
@@ -57,7 +57,8 @@ import { FetchRequest } from '@rails/request.js'
 
 const props = defineProps({
   date: Object,
-  autoAdjusted: Boolean
+  autoAdjusted: Boolean,
+  exist: Boolean
 })
 const emit = defineEmits(['update', 'delete'])
 const dayOfSchedule = ref('')

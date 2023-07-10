@@ -1,35 +1,56 @@
 - set_meta_tags(title: 'トップ', description: 'ホーム画面です。')
-.container.col-9
-  h1.fs-6.my-2
-  | シルバーカレンダーは、あなたの勤務条件に合わせて自動的にシフトを調整するアプリです。
-  br
-  | 簡単な設定で、あなたの勤務スケジュールを最適化し、貴重な時間を節約できます。
-  br
-  | 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
-  br
-  | シルバーカレンダーで、あなたの生活と仕事をバランス良く調整しましょう
-  br
-  =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
-  h2.my-2 使い方
-  p.my-2 ログイン後、画面下にある青いボタンを「条件の入力」「新しく条件を作る」の順に押し、
-  = image_tag('demo5.png', alt: '条件入力画面へ', width: '40%', class: 'img-thumbnail')
-  p.my-2 条件を入力し、青いボタンの「新規作成」を押します。
-  = image_tag('demo1.png', alt: '条件を入力', width: '40%', class: 'img-thumbnail')
-  p.my-2「適用」を押すと
-  = image_tag('demo2.png', alt: '条件を適用', width: '40%', class: 'img-thumbnail')
-  <br>
-  p.my-2 自動で予定が入力されます。
-  = image_tag('demo3.png', alt: '自動調整', width: '40%', class: 'img-thumbnail')
-  p.my-2 「連携」からGoogleカレンダーに反映することができます。
-  = image_tag('demo4.png', alt: 'Googleカレンダーへ反映', width: '40%', class: 'img-thumbnail')
-  h3.my-2 Googleカレンダーとの連携について
-  | カレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
-  br
-  | 認証にはGoogleログインを利用するか、アプリ内の「連携」機能から行うことができます。
-  br
-  | 本サービスでは、ユーザーアカウントに紐づくGoogleカレンダーに対し以下の操作を行います。
-  ul
-    li 新しいカレンダーの作成
-    li 本サービスで作成したカレンダーへの予定の追加
-    li 本サービスで作成したカレンダーの削除
-  =link_to '利用する', calendar_path, class: 'btn btn-primary btn-lg my-2'
+section
+  .container
+    h1.fs-3.my-4.text-center
+      | シルバーカレンダーとは？
+    p.my-2 あなたの勤務条件に合わせて自動的にシフトを調整するアプリです。
+    p.my-2 簡単な設定で、あなたの勤務スケジュールを最適化し、貴重な時間を節約できます。
+
+    br
+    .content-center
+      =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary m-2 mb-2'
+      =link_to '登録済みの方はこちら', calendar_path, class: 'btn btn-primary m-2 mb-2 login-button'
+    section
+      h2.fs-3.my-4.text-center こんなことありませんか？
+      p.fs-5.my-2.text-center 自分で勤務スケジュールを決めないといけないけれど、１つ１つ入れていると大変
+      .content-center
+        = image_tag('image1.png', alt: '困っている人', class: 'img-thumbnail image')
+    section
+      h2.my-4.fs-4.text-center シルバーカレンダーなら自動でスケジュール入力できます
+      .row.my-4
+        .content-center.col-6
+          = image_tag('image3.png', alt: '条件の作成', class: 'img-thumbnail')
+        p.fs-5.col-6.d-flex.align-items-center
+          | 予定を入れたい期間と日数、曜日ごとの予定を入れます。
+      .row.my-4
+        p.fs-5.col-6.d-flex.align-items-center
+          | 「適用」を押すと予定が入ります。
+        .content-center.col-6
+          = image_tag('demo.gif', alt: '条件を適用', class: 'img-thumbnail')
+      .row.my-4
+        .content-center.col-6
+          = image_tag('image5.png', alt: '手動で調整', class: 'img-thumbnail')
+        p.fs-5.col-6.d-flex.align-items-center
+          | 休日や有給休暇など、予定の変更にも柔軟に対応し、ストレスフリーな勤務管理を実現します。
+      .row.my-4
+        p.fs-5.col-6.d-flex.align-items-center
+          | 作ったカレンダーはGoogleカレンダーに反映できます
+        .content-center.col-6
+          = image_tag('image4.png', alt: 'Googleカレンダー', class: 'img-thumbnail')
+    section
+      h2.fs-4.my-4.text-center シルバーカレンダーで、あなたのスケジュールを調整しましょう
+      .content-center
+        = image_tag('image2.png', alt: 'Googleカレンダー', class: 'img-thumbnail image')
+
+      .my-4.content-center
+        =link_to '無料で新規登録する', new_user_registration_path, class: 'btn btn-primary btn-lg m-2 mb-2'
+
+      section
+        h3.fs-4.mt-4.text-center Googleカレンダーとの連携について
+        p.my-1 カレンダーをGoogleカレンダーに反映させる場合、Googleアカウントの認証が必要です。
+        p.my-1 認証にはGoogleログインを利用するか、アプリ内の「連携」機能から行うことができます。
+        p.my-4 本サービスでは、ユーザーアカウントに紐づくGoogleカレンダーに対し以下の操作を行います。
+        ul
+          li 新しいカレンダーの作成
+          li 本サービスで作成したカレンダーへの予定の追加
+          li 本サービスで作成したカレンダーの削除

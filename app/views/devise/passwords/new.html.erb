@@ -1,21 +1,23 @@
 <% set_meta_tags(title:'パスワード再設定', description:'パスワード再設定画面です。') %>
-<div class="container col-9">
-  <h2 class="fs-4 my-2"><%= t('.forgot_your_password') %></h2>
-
-  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+<section>
+  <div class="container devise_field">
+    <h2 class="fs-4 my-2"><%= t('.forgot_your_password') %></h2>
   
-    <div class="field my-2">
-      <%= f.label :email %><br />
-      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-    </div>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+    
+      <div class="field my-2">
+        <%= f.label :email, class: 'user_form_label' %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'user_form_field' %>
+      </div>
+    
+      <div class="actions content-center my-4">
+        <%= f.submit t('.send_me_reset_password_instructions'), class:"btn btn-primary my-2" %>
+      </div>
+    <% end %>
   
-    <div class="actions">
-      <%= f.submit t('.send_me_reset_password_instructions'), class:"btn btn-primary my-2" %>
+    <div class="my-4">
+      <%= render "devise/shared/links" %>
     </div>
-  <% end %>
-
-  <div class="my-2">
-    <%= render "devise/shared/links" %>
   </div>
-</div>
+</section>
