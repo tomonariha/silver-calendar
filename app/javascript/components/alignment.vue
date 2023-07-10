@@ -29,7 +29,7 @@
         <p class="fs-6 my-2 text-primary">認証済</p>
       </div>
       <div class="exist-calendars-area my-2">
-        <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+        <div v-if="!(props.calendars.length > 0)">カレンダーがまだありません</div>
         <div v-else>
           <div
             class="my-2"
@@ -73,18 +73,15 @@
           </div>
         </div>
       </div>
-      <div class="pagenation my-2">
-        <span
-          class="page-number m-1 fs-5"
-          v-for="(pageNumber, index) in displayPageNumbers"
-          :key="index">
-          <span
-            v-bind:class="{ 'current-page': currentPage === pageNumber }"
-            v-on:click="updatePageNumber(pageNumber, index)">
-            {{ pageNumber }}
-          </span>
-        </span>
-      </div>
+      <Pagenation
+        v-bind:array="props.calendars"
+        v-bind:pageLimit="pageLimit"
+        v-bind:currentPage="currentPage"
+        v-bind:displayRange="displayRange"
+        v-on:updateCurrentPage="updateCurrentPage"
+        v-on:increasePage="increasePage"
+        v-on:decreasePage="decreasePage">
+      </Pagenation>
       <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
         時刻の設定
       </button>
@@ -119,6 +116,7 @@
 import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
+import Pagenation from './pagenation.vue'
 import { useToast } from 'vue-toastification'
 import googleButton from '../../assets/images/btn_google_signin_dark_normal_web.png?url'
 import { FetchRequest } from '@rails/request.js'
@@ -236,50 +234,6 @@ async function fetchUser() {
 onMounted(() => {
   fetchUser()
 })
-// ページング
-const currentPage = ref(1)
-const pageLimit = 5
-const displayRange = 1
-const haveNoCalendars = computed(() => {
-  return !(props.calendars.length > 0)
-})
-const slicedCalendars = computed(() => {
-  let start = (currentPage.value - 1) * pageLimit
-  let end = start + pageLimit
-  return props.calendars.slice(start, end)
-})
-function updatePageNumber(pageNumber, index) {
-  if (typeof pageNumber === 'number') {
-    currentPage.value = pageNumber
-    return
-  }
-  if (index < currentPage.value) {
-    currentPage.value -= displayRange + 1
-    return
-  }
-  currentPage.value += displayRange + 1
-}
-const displayPageNumbers = computed(() => {
-  let pages = []
-  const totalPages = Math.ceil(props.calendars.length / pageLimit)
-  if (totalPages < 2) {
-    return
-  }
-  pages.push(1)
-  if (currentPage.value - displayRange > 2) {
-    pages.push('...')
-  }
-  for (let i = -displayRange; i <= displayRange; i++) {
-    if (currentPage.value + i > 1 && currentPage.value + i < totalPages) {
-      pages.push(currentPage.value + i)
-    }
-  }
-  if (currentPage.value + displayRange < totalPages - 1) {
-    pages.push('...')
-  }
-  pages.push(totalPages)
-  return pages
-})
 // 確認ダイアログ
 const confirmedCalendar = ref(null)
 function confirmDialog(calendar) {
@@ -287,6 +241,24 @@ function confirmDialog(calendar) {
 }
 function cancelConfirm() {
   confirmedCalendar.value = null
+}
+// ページング
+const currentPage = ref(1)
+const pageLimit = 5
+const displayRange = 1
+const slicedCalendars = computed(() => {
+  let start = (currentPage.value - 1) * pageLimit
+  let end = start + pageLimit
+  return props.calendars.slice(start, end)
+})
+function updateCurrentPage(newPage) {
+  currentPage.value = newPage
+}
+function increasePage() {
+  currentPage.value += (displayRange + 1)
+}
+function decreasePage() {
+  currentPage.value -= (displayRange + 1)
 }
 // バリデーション
 const errors = ref([])

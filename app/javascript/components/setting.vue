@@ -36,16 +36,15 @@
           >
         </div>
       </div>
-      <div class="pagenation my-2">
-        <span v-for="(pageNumber, index) in displayPageNumbers" :key="index">
-          <span
-            class="page-number m-1 fs-5"
-            v-bind:class="{ 'current-page': currentPage === pageNumber }"
-            v-on:click="updatePageNumber(pageNumber, index)">
-            {{ pageNumber }}
-          </span>
-        </span>
-      </div>
+      <Pagenation
+        v-bind:array="props.settings"
+        v-bind:pageLimit="pageLimit"
+        v-bind:currentPage="currentPage"
+        v-bind:displayRange="displayRange"
+        v-on:updateCurrentPage="updateCurrentPage"
+        v-on:increasePage="increasePage"
+        v-on:decreasePage="decreasePage">
+      </Pagenation>
       <button class="btn btn-primary my-2" v-on:click="newSetting()">
         新しい条件を作る
       </button>
@@ -173,6 +172,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import Confirm from './confirm.vue'
+import Pagenation from './pagenation.vue'
 import { useToast } from 'vue-toastification'
 import { FetchRequest } from '@rails/request.js'
 
@@ -386,47 +386,6 @@ function nextWeekday() {
     weekdayNumber.value++
   }
 }
-// ページング
-const currentPage = ref(1)
-const pageLimit = 5
-const displayRange = 1
-function updatePageNumber(pageNumber, index) {
-  if (typeof pageNumber === 'number') {
-    currentPage.value = pageNumber
-    return
-  }
-  if (index < currentPage.value) {
-    currentPage.value -= displayRange + 1
-    return
-  }
-  currentPage.value += displayRange + 1
-}
-const slicedSettings = computed(() => {
-  let start = (currentPage.value - 1) * pageLimit
-  let end = start + pageLimit
-  return props.settings.slice(start, end)
-})
-const displayPageNumbers = computed(() => {
-  let pages = []
-  const totalPages = Math.ceil(props.settings.length / pageLimit)
-  if (totalPages < 2) {
-    return
-  }
-  pages.push(1)
-  if (currentPage.value - displayRange > 2) {
-    pages.push('...')
-  }
-  for (let i = -displayRange; i <= displayRange; i++) {
-    if (currentPage.value + i > 1 && currentPage.value + i < totalPages) {
-      pages.push(currentPage.value + i)
-    }
-  }
-  if (currentPage.value + displayRange < totalPages - 1) {
-    pages.push('...')
-  }
-  pages.push(totalPages)
-  return pages
-})
 // 確認ダイアログ
 const confirmedSetting = ref(null)
 function confirmDialog(setting) {
@@ -434,6 +393,24 @@ function confirmDialog(setting) {
 }
 function cancelConfirm() {
   confirmedSetting.value = null
+}
+// ページング
+const currentPage = ref(1)
+const pageLimit = 5
+const displayRange = 1
+const slicedSettings = computed(() => {
+  let start = (currentPage.value - 1) * pageLimit
+  let end = start + pageLimit
+  return props.settings.slice(start, end)
+})
+function updateCurrentPage(newPage) {
+  currentPage.value = newPage
+}
+function increasePage() {
+  currentPage.value += (displayRange + 1)
+}
+function decreasePage() {
+  currentPage.value -= (displayRange + 1)
 }
 // バリデーション
 const errors = ref([])
