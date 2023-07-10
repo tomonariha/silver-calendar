@@ -323,9 +323,11 @@ async function fetchCalendar() {
   const response = await request.perform()
   if(response.ok) {
     const body = await response.json
-    body.forEach((r) => {
-      calendarDays.value.push(r)
-    })
+    if(body) {
+      body.forEach((r) => {
+        calendarDays.value.push(r)
+      })
+    }
     loaded.value = true
   }
 }
@@ -632,9 +634,11 @@ async function fetchSettings() {
   const response = await request.perform()
   if(response.ok) {
     const body = await response.json
-    await body.forEach((r) => {
-      settings.value.push(r)
-    })
+    if(body) {
+      await body.forEach((r) => {
+        settings.value.push(r)
+      })
+    }
     loaded.value = true
     sortSettings()
   }
