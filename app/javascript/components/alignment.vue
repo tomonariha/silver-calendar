@@ -59,7 +59,7 @@
             </p>
           </div>
           <div class="exist-calendars-area my-2 rounded">
-            <div v-if="haveNoCalendars">カレンダーがまだありません</div>
+            <div v-if="props.calendars.length > 0">カレンダーがまだありません</div>
             <div v-else>
               <div
                 class="my-2 alignment-button-area"

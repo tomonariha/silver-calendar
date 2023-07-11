@@ -4,9 +4,6 @@
       v-show="unAutoAdjusted"
       v-bind:year="calendarYear"
       v-bind:settings="settings"
-      v-on:update="updateSetting"
-      v-on:create="createSetting"
-      v-on:delete="deleteSetting"
       v-on:reflect="adjustAndReflect"
       v-on:reflectAll="adjustAndReflectAll">
     </Setting>
@@ -286,7 +283,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, provide } from 'vue'
 import { useToast } from 'vue-toastification'
 import Setting from './components/setting.vue'
 import Day from './components/day.vue'
@@ -670,6 +667,28 @@ function autoAdjustFromAllSettings() {
 }
 //条件設定関連
 const settings = ref([])
+function createToSettings(createdSetting) {
+  createdSetting.period_start_at = formatUpdatedDay(
+    createdSetting.period_start_at
+  )
+  createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
+  settings.value.push(createdSetting)
+  sortSettings()
+}
+function deleteFromSettings(settingId) {
+  const found = settings.value.find(setting => setting.id === settingId)
+  settings.value.splice(settings.value.indexOf(found), 1)
+}
+function updateSettings(updatedSetting) {
+  updatedSetting.period_start_at = formatUpdatedDay(
+    updatedSetting.period_start_at
+  )
+  updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
+  const found = settings.value.find(setting => setting.id === updatedSetting.id)
+  settings.value.splice(settings.value.indexOf(found), 1, updatedSetting)
+  sortSettings()
+}
+provide('settings', { settings, updateSettings, deleteFromSettings, createToSettings })
 async function fetchSettings() {
   settings.value = []
   const request = new FetchRequest('get', `api/v1/calendars/${calendarYear.value}/settings.json`)
@@ -699,27 +718,6 @@ function formatUpdatedDay(updatedDay) {
     '-' +
     formatDay(day.getDate())
   return formatedUpdatedDay
-}
-function createSetting(createdSetting) {
-  createdSetting.period_start_at = formatUpdatedDay(
-    createdSetting.period_start_at
-  )
-  createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
-  settings.value.push(createdSetting)
-  sortSettings()
-}
-function deleteSetting(settingId) {
-  const found = settings.value.find(setting => setting.id === settingId)
-  settings.value.splice(settings.value.indexOf(found), 1)
-}
-function updateSetting(updatedSetting) {
-  updatedSetting.period_start_at = formatUpdatedDay(
-    updatedSetting.period_start_at
-  )
-  updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
-  const found = settings.value.find(setting => setting.id === updatedSetting.id)
-  settings.value.splice(settings.value.indexOf(found), 1, updatedSetting)
-  sortSettings()
 }
 //勤務入力関連
 function updateDay(day) {
