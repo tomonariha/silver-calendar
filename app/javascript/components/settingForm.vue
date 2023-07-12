@@ -155,6 +155,7 @@
 import { ref, computed, watch, toRefs, inject } from 'vue'
 import { useToast } from 'vue-toastification'
 import { FetchRequest } from '@rails/request.js'
+import { format } from 'date-fns'
 import fullTime from '../../assets/images/fulltime.svg?url'
 import morning from '../../assets/images/morning.svg?url'
 import afterNoon from '../../assets/images/afternoon.svg?url'
@@ -385,20 +386,8 @@ function closeForm() {
 }
 // バリデーション
 const errors = ref([])
-function formatMonth(month) {
-  return month.toString().padStart(2, '0')
-}
-function formatDay(day) {
-  return day.toString().padStart(2, '0')
-}
 function formatDate(date) {
-  return (
-    date.getFullYear() +
-    '-' +
-    formatMonth(date.getMonth() + 1) +
-    '-' +
-    formatDay(date.getDate())
-  )
+  return format(date, 'yyyy-MM-dd')
 }
 function periodValidation(startDay, endDay) {
   errors.value = []

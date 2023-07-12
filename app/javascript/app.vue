@@ -650,9 +650,9 @@ function autoAdjustFromAllSettings() {
 const settings = ref([])
 function createToSettings(createdSetting) {
   createdSetting.period_start_at = formatUpdatedDay(
-    createdSetting.period_start_at
+    new Date(createdSetting.period_start_at)
   )
-  createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
+  createdSetting.period_end_at = formatUpdatedDay(new Date(createdSetting.period_end_at))
   settings.value.push(createdSetting)
   sortSettings()
 }
@@ -662,9 +662,9 @@ function deleteFromSettings(settingId) {
 }
 function updateSettings(updatedSetting) {
   updatedSetting.period_start_at = formatUpdatedDay(
-    updatedSetting.period_start_at
+    new Date(updatedSetting.period_start_at)
   )
-  updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
+  updatedSetting.period_end_at = formatUpdatedDay(new Date(updatedSetting.period_end_at))
   const found = settings.value.find(
     (setting) => setting.id === updatedSetting.id
   )
@@ -700,8 +700,8 @@ function sortSettings() {
     a.period_start_at > b.period_start_at ? 1 : -1
   )
 }
-function formatUpdatedDay(day) {
-  return format(day, 'yyyy-MM-dd')
+function formatUpdatedDay(date) {
+  return format(date, 'yyyy-MM-dd')
 }
 //勤務入力関連
 function updateDay(day) {
