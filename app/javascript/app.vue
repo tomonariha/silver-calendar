@@ -266,18 +266,12 @@
           </button>
         </div>
       </div>
-      <div
-        id="overlay"
-        v-show="showAlignmentContent"
-        v-on:click.self="closeAlignmentModal">
-        <div id="content">
-          <Alignment
-            v-bind:calendars="calendarIndexes"
-            v-on:close="closeAlignmentModal"
-            v-on:reflect="reflectGoogleCalendarId">
-          </Alignment>
-        </div>
-      </div>
+      <Alignment
+        v-bind:showAlignmentForm="showAlignmentForm"
+        v-bind:calendars="calendarIndexes"
+        v-on:close="closeAlignmentForm"
+        v-on:reflect="reflectGoogleCalendarId">
+      </Alignment>
     </section>
   </div>
 </template>
@@ -794,13 +788,13 @@ function cancelJustNotConfirm() {
   showJustNotConfirm.value = false
 }
 //外部アプリ連携関連
-const showAlignmentContent = ref(false)
+const showAlignmentForm = ref(false)
 function openAlignmentModal() {
   fetchCalendarIndexes()
-  showAlignmentContent.value = true
+  showAlignmentForm.value = true
 }
-function closeAlignmentModal() {
-  showAlignmentContent.value = false
+function closeAlignmentForm() {
+  showAlignmentForm.value = false
 }
 const calendarIndexes = ref([])
 async function fetchCalendarIndexes() {
@@ -830,12 +824,6 @@ function reflectGoogleCalendarId(calendar) {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-#content {
-  z-index: 2;
-  max-width: 500px;
-  padding: 1em;
-  background: #fff;
 }
 #confirm {
   z-index: 3;
