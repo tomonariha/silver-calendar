@@ -9,17 +9,17 @@ module API
           # Googleカレンダーに新しく作ったカレンダーのIDを取得するための処理。
           calendar = set_calendar
           client = set_calendar_client
-          @result = client.create_calendar(calendar)
+          result = client.create_calendar(calendar)
           calendar_days = calendar.days
-          client.insert_events(calendar_days, @result.id, set_working_times)
-          render json: { google_calendar_id: @result.id }
+          client.insert_events(calendar_days, result.id, set_working_times)
+          render json: { google_calendar_id: result.id }
         end
       
         def destroy
           calendar = set_calendar
           client = set_calendar_client
-          @result = client.delete_calendar(calendar)
-          render json: { result: @result }
+          result = client.delete_calendar(calendar)
+          render json: { result: result }
         end
       
         def update
@@ -28,10 +28,10 @@ module API
           calendar = set_calendar
           client = set_calendar_client
           client.delete_calendar(calendar)
-          @result = client.create_calendar(calendar)
+          result = client.create_calendar(calendar)
           calendar_days = calendar.days
-          client.insert_events(calendar_days, @result.id, set_working_times)
-          render json: { google_calendar_id: @result.id }
+          client.insert_events(calendar_days, result.id, set_working_times)
+          render json: { google_calendar_id: result.id }
         end
       
         private

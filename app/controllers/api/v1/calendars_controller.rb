@@ -5,8 +5,8 @@ module API
     class CalendarsController < ApplicationController
       def show
         calendar = current_calendars.find_by(year: params[:year])
-        @days = calendar&.days
-        render json: @days.to_json
+        days = calendar&.days
+        render json: days.to_json
       end
     
       def update
@@ -25,8 +25,8 @@ module API
       end
     
       def index
-        @calendars = current_calendars.order('year ASC')
-        render json: @calendars.to_json
+        calendars = current_calendars.order('year ASC')
+        render json: calendars.to_json
       end
     
       def destroy
