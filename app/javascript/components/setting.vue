@@ -101,12 +101,9 @@ const { settings, deleteFromSettings } = inject('settings')
 const selectedSetting = ref(null)
 const toast = useToast()
 const props = defineProps({
-  year: Number,
+  year: Number
 })
-const emit = defineEmits([
-  'reflect',
-  'reflectAll'
-])
+const emit = defineEmits(['reflect', 'reflectAll'])
 const showSettingForm = ref(false)
 function closeSettingModal() {
   showSettingForm.value = false
@@ -114,9 +111,12 @@ function closeSettingModal() {
 
 async function deleteSetting(id) {
   cancelConfirm()
-  const request = new FetchRequest('delete', `api/v1/calendars/${props.year}/settings/${id}`)
+  const request = new FetchRequest(
+    'delete',
+    `api/v1/calendars/${props.year}/settings/${id}`
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     toast('削除しました')
     deleteFromSettings(id)
   }
@@ -157,10 +157,10 @@ function updateCurrentPage(newPage) {
   currentPage.value = newPage
 }
 function increasePage() {
-  currentPage.value += (displayRange + 1)
+  currentPage.value += displayRange + 1
 }
 function decreasePage() {
-  currentPage.value -= (displayRange + 1)
+  currentPage.value -= displayRange + 1
 }
 </script>
 

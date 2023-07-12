@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="overlay"
-    v-show="showConfirm"
-    v-on:click.self="emit('cancel')">
+  <div class="overlay" v-show="showConfirm" v-on:click.self="emit('cancel')">
     <div class="confirm">
       <p>{{ props.message }}</p>
       <button class="rounded m-1" v-on:click="emit('execution')">はい</button>

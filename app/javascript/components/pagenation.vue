@@ -44,12 +44,15 @@ const displayedPageNumbers = computed(() => {
   if (props.currentPage.value - props.displayRange > 2) {
     pages.push('...')
   }
-  for (let i = -props.displayRange; i <=props.displayRange; i++) {
-    if (props.currentPage.value + i > 1 && props.currentPage.value + i < totalPages) {
+  for (let i = -props.displayRange; i <= props.displayRange; i++) {
+    if (
+      props.currentPage.value + i > 1 &&
+      props.currentPage.value + i < totalPages
+    ) {
       pages.push(props.currentPage.value + i)
     }
   }
-  if (props.currentPage.value +props.displayRange < totalPages - 1) {
+  if (props.currentPage.value + props.displayRange < totalPages - 1) {
     pages.push('...')
   }
   pages.push(totalPages)

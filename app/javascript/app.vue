@@ -328,11 +328,14 @@ const loaded = ref(null)
 const calendarDays = ref([])
 async function fetchCalendar() {
   calendarDays.value = []
-  const request = new FetchRequest('get', `/api/v1/calendars/${calendarYear.value}.json`)
+  const request = new FetchRequest(
+    'get',
+    `/api/v1/calendars/${calendarYear.value}.json`
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     const body = await response.json
-    if(body) {
+    if (body) {
       body.forEach((r) => {
         calendarDays.value.push(r)
       })
@@ -370,7 +373,7 @@ function calendarDates(month) {
   for (let date = 1; date <= lastDate(month); date++) {
     const result = calendarDays.value.filter((day) =>
       day.date.includes(
-        format(new Date(calendarYear.value, month-1, date), 'yyyy-MM-dd')
+        format(new Date(calendarYear.value, month - 1, date), 'yyyy-MM-dd')
       )
     )
     if (result.length > 0) {
@@ -464,7 +467,10 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formattedDate = format(new Date(date.year, date.month, date.date), 'yyyy-MM-dd')
+  const formattedDate = format(
+    new Date(date.year, date.month, date.date),
+    'yyyy-MM-dd'
+  )
   return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
@@ -601,9 +607,13 @@ function cancelAutoAdjust() {
   targetPeriod = []
 }
 async function saveAdjustedCalendar() {
-  const request = new FetchRequest('put', `api/v1/calendars/${calendarYear.value}`, {
-    body: JSON.stringify({ calendar: adjustedCalendar.value })
-  })
+  const request = new FetchRequest(
+    'put',
+    `api/v1/calendars/${calendarYear.value}`,
+    {
+      body: JSON.stringify({ calendar: adjustedCalendar.value })
+    }
+  )
   const response = await request.perform()
   if (response.ok) {
     const body = await response.json
@@ -647,7 +657,7 @@ function createToSettings(createdSetting) {
   sortSettings()
 }
 function deleteFromSettings(settingId) {
-  const found = settings.value.find(setting => setting.id === settingId)
+  const found = settings.value.find((setting) => setting.id === settingId)
   settings.value.splice(settings.value.indexOf(found), 1)
 }
 function updateSettings(updatedSetting) {
@@ -655,18 +665,28 @@ function updateSettings(updatedSetting) {
     updatedSetting.period_start_at
   )
   updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
-  const found = settings.value.find(setting => setting.id === updatedSetting.id)
+  const found = settings.value.find(
+    (setting) => setting.id === updatedSetting.id
+  )
   settings.value.splice(settings.value.indexOf(found), 1, updatedSetting)
   sortSettings()
 }
-provide('settings', { settings, updateSettings, deleteFromSettings, createToSettings })
+provide('settings', {
+  settings,
+  updateSettings,
+  deleteFromSettings,
+  createToSettings
+})
 async function fetchSettings() {
   settings.value = []
-  const request = new FetchRequest('get', `api/v1/calendars/${calendarYear.value}/settings.json`)
+  const request = new FetchRequest(
+    'get',
+    `api/v1/calendars/${calendarYear.value}/settings.json`
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     const body = await response.json
-    if(body) {
+    if (body) {
       await body.forEach((r) => {
         settings.value.push(r)
       })
@@ -718,11 +738,13 @@ function deleteDay(day) {
   }
 }
 function deleteFromCalendarArray(calendarDays, formattedDay) {
-  const found = calendarDays.find(calendarDay => calendarDay.date === formattedDay)
+  const found = calendarDays.find(
+    (calendarDay) => calendarDay.date === formattedDay
+  )
   if (found) {
     calendarDays.splice(calendarDays.indexOf(found), 1)
     return countWorkingDays(found.schedule)
-  }  
+  }
 }
 // 確認ダイアログ
 const showDeleteConfirm = ref(false)
@@ -736,9 +758,12 @@ function cancelDeleteConfirm() {
   showDeleteConfirm.value = false
 }
 async function deleteCalendar() {
-  const request = new FetchRequest('delete', `api/v1/calendars/${calendarYear.value}`)
+  const request = new FetchRequest(
+    'delete',
+    `api/v1/calendars/${calendarYear.value}`
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     toast('削除しました')
     calendarDays.value = []
     settings.value = []
@@ -747,7 +772,9 @@ async function deleteCalendar() {
   }
 }
 function deleteFromCalendarIndexes() {
-  const found = calendarIndexes.value.find(calendarIndex =>  calendarIndex.year === calendarYear.value)
+  const found = calendarIndexes.value.find(
+    (calendarIndex) => calendarIndex.year === calendarYear.value
+  )
   calendarIndexes.value.splice(calendarIndexes.value.indexOf(found), 1)
 }
 const showJustNotConfirm = ref(false)
@@ -771,13 +798,15 @@ async function fetchCalendarIndexes() {
   calendarIndexes.value = []
   const request = new FetchRequest('get', 'api/v1/calendars.json')
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     const body = await response.json
     calendarIndexes.value = body
   }
 }
 function reflectGoogleCalendarId(calendar) {
-  const found = calendarIndexes.value.find(calendarIndex =>  calendarIndex.year === calendar.year)
+  const found = calendarIndexes.value.find(
+    (calendarIndex) => calendarIndex.year === calendar.year
+  )
   found.google_calendar_id = calendar.google_calendar_id
 }
 </script>

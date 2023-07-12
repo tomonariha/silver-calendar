@@ -1,169 +1,155 @@
 <template>
-<div class="overlay"
-     v-show="showSettingForm"
-     v-on:click.self="closeForm">
-  <div class="form">
-    <div class="form-area">
-      <section class="mb-4">
-        <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
-        <h3 class="fs-5 my-2" v-else>新しい条件の登録</h3>
-        <section>
-          <h4 class="fs-6 my-1 headline">条件を適用する期間</h4>
-          <label for="startAt" class="fs-6 mx-2 my-1">開始日：</label>
-          <select
-            id="start_month_select"
-            name="startAt"
-            v-model="selectedStartMonth">
-            <option v-for="month in 12" :key="month">
-              {{ month }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">月</span>
-          <select id="start_day_select" v-model="selectedStartDay">
-            <option
-              v-for="date in lastDate(selectedStartMonth)"
-              :key="date">
-              {{ date }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">日</span>
-          <br />
-          <label for="endAt" class="fs-6 mx-2 my-1">終了日：</label>
-          <select
-            id="end_month_select"
-            name="endAt"
-            v-model="selectedEndMonth">
-            <option v-for="month in 12" :key="month">
-              {{ month }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">月</span>
-          <select id="end_day_select" v-model="selectedEndDay">
-            <option
-              v-for="date in lastDate(selectedEndMonth)"
-              :key="date">
-              {{ date }}
-            </option>
-          </select>
-          <span class="fs-6 m-1">日</span>
-        </section>
-        <section class="my-2">
-          <h4 class="fs-6 my-1 headline">この期間の勤務日数</h4>
-          <p
-            class="mx-2 my-1 text-primary"
-            v-show="notSpecifiedTotalDays">
-            指定する場合はチェックを外してください
-          </p>
-          <label for="check_specified_total_days" class="mx-2 my-1"
-            >指定しない</label
-          >
-          <input
-            type="checkbox"
-            class="m-2"
-            id="check_specified_total_days"
-            v-model="notSpecifiedTotalDays" />
-          <br />
-          <input
-            id="specified_total_days"
-            class="m-2"
-            type="number"
-            v-show="specifiedTotalDays"
-            v-model="totalWorkingDays" />
-          <span class="m-2" v-show="specifiedTotalDays">日</span>
-        </section>
-        <section class="weekday-nav my-2">
-          <h4 class="fs-6 my-1 headline">曜日毎の勤務予定</h4>
-          <button class="mx-2 my-1" v-on:click="decreaseWeekday">
-            ＜ {{ previousWeekday }}曜日
-          </button>
-          <span class="mx-2 my-1"
-            >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
-          >
-          <button class="mx-2 my-1" v-on:click="increaseWeekday">
-            ＞ {{ nextWeekday }}曜日
-          </button>
-          <div class="mx-2 my-1 weekday-nav__body">
-            <p class="mx-2 my-1 text-primary">
-              期間内のこの曜日全てに下の予定が入ります
+  <div class="overlay" v-show="showSettingForm" v-on:click.self="closeForm">
+    <div class="form">
+      <div class="form-area">
+        <section class="mb-4">
+          <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
+          <h3 class="fs-5 my-2" v-else>新しい条件の登録</h3>
+          <section>
+            <h4 class="fs-6 my-1 headline">条件を適用する期間</h4>
+            <label for="startAt" class="fs-6 mx-2 my-1">開始日：</label>
+            <select
+              id="start_month_select"
+              name="startAt"
+              v-model="selectedStartMonth">
+              <option v-for="month in 12" :key="month">
+                {{ month }}
+              </option>
+            </select>
+            <span class="fs-6 m-1">月</span>
+            <select id="start_day_select" v-model="selectedStartDay">
+              <option v-for="date in lastDate(selectedStartMonth)" :key="date">
+                {{ date }}
+              </option>
+            </select>
+            <span class="fs-6 m-1">日</span>
+            <br />
+            <label for="endAt" class="fs-6 mx-2 my-1">終了日：</label>
+            <select
+              id="end_month_select"
+              name="endAt"
+              v-model="selectedEndMonth">
+              <option v-for="month in 12" :key="month">
+                {{ month }}
+              </option>
+            </select>
+            <span class="fs-6 m-1">月</span>
+            <select id="end_day_select" v-model="selectedEndDay">
+              <option v-for="date in lastDate(selectedEndMonth)" :key="date">
+                {{ date }}
+              </option>
+            </select>
+            <span class="fs-6 m-1">日</span>
+          </section>
+          <section class="my-2">
+            <h4 class="fs-6 my-1 headline">この期間の勤務日数</h4>
+            <p class="mx-2 my-1 text-primary" v-show="notSpecifiedTotalDays">
+              指定する場合はチェックを外してください
             </p>
+            <label for="check_specified_total_days" class="mx-2 my-1"
+              >指定しない</label
+            >
             <input
-              type="radio"
-              id="none"
-              value="None"
-              v-model="schedules[weekdayNumber]" />
-            <label for="none" class="schedule-label">予定なし</label>
-            <img :src="none" alt="none" class="schedule-icon-small" />
+              type="checkbox"
+              class="m-2"
+              id="check_specified_total_days"
+              v-model="notSpecifiedTotalDays" />
             <br />
             <input
-              type="radio"
-              id="full-time"
-              value="full-time"
-              v-model="schedules[weekdayNumber]" />
-            <label for="full-time" class="schedule-label">全日出勤</label>
-            <img
-              :src="fullTime"
-              alt="fullTime"
-              class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="morning"
-              value="morning"
-              v-model="schedules[weekdayNumber]" />
-            <label for="morning" class="schedule-label">午前出勤</label>
-            <img
-              :src="morning"
-              alt="morning"
-              class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="afternoon"
-              value="afternoon"
-              v-model="schedules[weekdayNumber]" />
-            <label for="afternoon" class="schedule-label">午後出勤</label>
-            <img
-              :src="afterNoon"
-              alt="afterNoon"
-              class="schedule-icon-small" />
-            <br />
-            <input
-              type="radio"
-              id="off"
-              value="off"
-              v-model="schedules[weekdayNumber]" />
-            <label for="off" class="schedule-label">休み</label>
-            <img :src="off" alt="off" class="schedule-icon-small" />
-            <br />
-          </div>
-          <button
-            class="btn btn-primary my-2"
-            v-if="settingId"
-            v-on:click="updateSetting(settingId)">
-            変更
-          </button>
-          <button
-            class="btn btn-primary mt-4"
-            v-else
-            v-on:click="createSetting()">
-            登録
-          </button>
+              id="specified_total_days"
+              class="m-2"
+              type="number"
+              v-show="specifiedTotalDays"
+              v-model="totalWorkingDays" />
+            <span class="m-2" v-show="specifiedTotalDays">日</span>
+          </section>
+          <section class="weekday-nav my-2">
+            <h4 class="fs-6 my-1 headline">曜日毎の勤務予定</h4>
+            <button class="mx-2 my-1" v-on:click="decreaseWeekday">
+              ＜ {{ previousWeekday }}曜日
+            </button>
+            <span class="mx-2 my-1"
+              >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
+            >
+            <button class="mx-2 my-1" v-on:click="increaseWeekday">
+              ＞ {{ nextWeekday }}曜日
+            </button>
+            <div class="mx-2 my-1 weekday-nav__body">
+              <p class="mx-2 my-1 text-primary">
+                期間内のこの曜日全てに下の予定が入ります
+              </p>
+              <input
+                type="radio"
+                id="none"
+                value="None"
+                v-model="schedules[weekdayNumber]" />
+              <label for="none" class="schedule-label">予定なし</label>
+              <img :src="none" alt="none" class="schedule-icon-small" />
+              <br />
+              <input
+                type="radio"
+                id="full-time"
+                value="full-time"
+                v-model="schedules[weekdayNumber]" />
+              <label for="full-time" class="schedule-label">全日出勤</label>
+              <img :src="fullTime" alt="fullTime" class="schedule-icon-small" />
+              <br />
+              <input
+                type="radio"
+                id="morning"
+                value="morning"
+                v-model="schedules[weekdayNumber]" />
+              <label for="morning" class="schedule-label">午前出勤</label>
+              <img :src="morning" alt="morning" class="schedule-icon-small" />
+              <br />
+              <input
+                type="radio"
+                id="afternoon"
+                value="afternoon"
+                v-model="schedules[weekdayNumber]" />
+              <label for="afternoon" class="schedule-label">午後出勤</label>
+              <img
+                :src="afterNoon"
+                alt="afterNoon"
+                class="schedule-icon-small" />
+              <br />
+              <input
+                type="radio"
+                id="off"
+                value="off"
+                v-model="schedules[weekdayNumber]" />
+              <label for="off" class="schedule-label">休み</label>
+              <img :src="off" alt="off" class="schedule-icon-small" />
+              <br />
+            </div>
+            <button
+              class="btn btn-primary my-2"
+              v-if="settingId"
+              v-on:click="updateSetting(settingId)">
+              変更
+            </button>
+            <button
+              class="btn btn-primary mt-4"
+              v-else
+              v-on:click="createSetting()">
+              登録
+            </button>
+          </section>
         </section>
-      </section>
+      </div>
+      <div class="error-area rounded" v-if="errors.length > 0">
+        <b>以下のエラーの修正をお願いします:</b>
+        <ul>
+          <li v-for="error in errors" :key="error.id">{{ error }}</li>
+        </ul>
+      </div>
+      <button
+        class="btn btn-sm inconspicuous-button my-2"
+        v-on:click="closeForm">
+        キャンセル
+      </button>
     </div>
-    <div class="error-area rounded" v-if="errors.length > 0">
-      <b>以下のエラーの修正をお願いします:</b>
-      <ul>
-        <li v-for="error in errors" :key="error.id">{{ error }}</li>
-      </ul>
-    </div>
-    <button
-      class="btn btn-sm inconspicuous-button my-2"
-      v-on:click="closeForm">
-      キャンセル
-    </button>
   </div>
-</div>
 </template>
 <script setup>
 import { ref, computed, watch, toRefs, inject } from 'vue'
@@ -296,16 +282,19 @@ async function createSetting() {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  const request = new FetchRequest('post', `api/v1/calendars/${props.year}/settings.json`,
-    {body: JSON.stringify(setting)})
+  const request = new FetchRequest(
+    'post',
+    `api/v1/calendars/${props.year}/settings.json`,
+    { body: JSON.stringify(setting) }
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     toast('作成しました')
     const body = await response.json
     setting['id'] = body.id
     createToSettings(setting)
     closeForm()
-  } 
+  }
 }
 async function updateSetting(settingId) {
   const startDay = new Date(
@@ -336,10 +325,13 @@ async function updateSetting(settingId) {
     schedule_of_friday: schedules.value[5],
     schedule_of_saturday: schedules.value[6]
   }
-  const request = new FetchRequest('put', `api/v1/calendars/${props.year}/settings/${settingId}`,
-    {body: JSON.stringify(setting)})
+  const request = new FetchRequest(
+    'put',
+    `api/v1/calendars/${props.year}/settings/${settingId}`,
+    { body: JSON.stringify(setting) }
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     toast('更新しました')
     setting['id'] = settingId
     updateSettings(setting)

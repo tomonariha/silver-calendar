@@ -5,7 +5,7 @@
     v-on:click.self="emit('close')">
     <div class="content">
       <section>
-        <h3 class="fs-4 my-2">連携機能</h3>       
+        <h3 class="fs-4 my-2">連携機能</h3>
         <Confirm
           v-bind:showConfirm="Boolean(confirmedCalendar)"
           v-bind:message="'削除します。よろしいですか？'"
@@ -57,7 +57,9 @@
               </p>
             </div>
             <div class="exist-calendars-area my-2 rounded">
-              <div v-if="!(props.calendars.length > 0)">カレンダーがまだありません</div>
+              <div v-if="!(props.calendars.length > 0)">
+                カレンダーがまだありません
+              </div>
               <div v-else>
                 <div
                   class="my-2 alignment-button-area"
@@ -169,10 +171,11 @@ async function fetchTimes() {
   if (timesValidation()) {
     return
   }
-  const request = new FetchRequest('put', 'api/v1/times',
-    {body: JSON.stringify(workingTimes.value)})
+  const request = new FetchRequest('put', 'api/v1/times', {
+    body: JSON.stringify(workingTimes.value)
+  })
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     toast(`保存しました`)
   }
 }
@@ -205,10 +208,13 @@ async function fetchGoogleCalendar(calendar, method) {
   }
   isFetching.value = true
   cancelConfirm()
-  const request = new FetchRequest(`${method}`, `api/v1/calendars/${calendar.year}/alignment`,
-    {body: JSON.stringify(workingTimes.value)})
+  const request = new FetchRequest(
+    `${method}`,
+    `api/v1/calendars/${calendar.year}/alignment`,
+    { body: JSON.stringify(workingTimes.value) }
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     const body = await response.json
     if (method === 'delete') {
       calendar['google_calendar_id'] = null
@@ -223,7 +229,7 @@ async function fetchGoogleCalendar(calendar, method) {
 async function fetchUser() {
   const request = new FetchRequest('get', 'api/v1/users')
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     const body = await response.json
     authenticatedGoogle.value = body.authenticate
     Object.assign(workingTimes.value, {
@@ -266,10 +272,10 @@ function updateCurrentPage(newPage) {
   currentPage.value = newPage
 }
 function increasePage() {
-  currentPage.value += (displayRange + 1)
+  currentPage.value += displayRange + 1
 }
 function decreasePage() {
-  currentPage.value -= (displayRange + 1)
+  currentPage.value -= displayRange + 1
 }
 // バリデーション
 const errors = ref([])

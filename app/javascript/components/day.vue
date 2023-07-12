@@ -76,9 +76,12 @@ async function deleteDate() {
     emit('delete', date)
     return
   }
-  const request = new FetchRequest('delete', `api/v1/days/${date.year}/${date.month}/${date.date}`)
+  const request = new FetchRequest(
+    'delete',
+    `api/v1/days/${date.year}/${date.month}/${date.date}`
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     emit('delete', date)
   }
 }
@@ -94,10 +97,13 @@ async function updateCalendar(schedule) {
     emit('update', dateState)
     return
   }
-  const request = new FetchRequest('post', `api/v1/days/${date.year}/${date.month}`,
-    {body: JSON.stringify(dateState)})
+  const request = new FetchRequest(
+    'post',
+    `api/v1/days/${date.year}/${date.month}`,
+    { body: JSON.stringify(dateState) }
+  )
   const response = await request.perform()
-  if(response.ok) {
+  if (response.ok) {
     emit('update', dateState)
   }
 }
