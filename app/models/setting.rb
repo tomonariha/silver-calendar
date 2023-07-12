@@ -13,7 +13,8 @@ class Setting < ApplicationRecord
   private
 
   def schedule_should_be_valid_string
-    return if schedule_of_sunday.in? %w(full-time morning afternoon off None)
+    return if schedule_of_sunday.in? %w[full-time morning afternoon off None]
+
     errors.add(:schedule_of_sunday, '無効な文字列です')
   end
 

@@ -9,28 +9,28 @@ module API
           settings = calendar&.settings
           render json: settings.to_json
         end
-      
+
         def show; end
-      
+
         def create
           calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
           setting = calendar.settings.new(setting_params)
           setting.save!
           render json: { id: setting.id }
         end
-      
+
         def update
           calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
           calendar.settings.find(params[:id]).update!(setting_params)
         end
-      
+
         def destroy
           calendar = current_calendars.find_or_create_by!(year: params[:calendar_year])
           calendar.settings.find(params[:id]).destroy!
         end
-      
+
         private
-      
+
         def setting_params
           params.require(:setting).permit(
             :schedule_of_sunday,
@@ -49,4 +49,3 @@ module API
     end
   end
 end
-    

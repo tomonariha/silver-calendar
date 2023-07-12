@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-  
+
 module API
   module V1
     module Calendars
@@ -14,14 +14,14 @@ module API
           client.insert_events(calendar_days, result.id, set_working_times)
           render json: { google_calendar_id: result.id }
         end
-      
+
         def destroy
           calendar = set_calendar
           client = set_calendar_client
           result = client.delete_calendar(calendar)
-          render json: { result: result }
+          render json: { result: }
         end
-      
+
         def update
           # Googleカレンダーに追加したカレンダーを削除し新しくカレンダーを作り直す
           # 個別に日程の予定を更新するにはevent_idが必要で処理が冗長になるため
@@ -33,17 +33,17 @@ module API
           client.insert_events(calendar_days, result.id, set_working_times)
           render json: { google_calendar_id: result.id }
         end
-      
+
         private
 
         def set_calendar
           current_calendars.find_by(year: params[:calendar_year])
         end
-      
+
         def set_calendar_client
           CalendarClient.new(current_user)
         end
-      
+
         def set_working_times
           params
         end

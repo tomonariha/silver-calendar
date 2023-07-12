@@ -7,9 +7,9 @@ module API
         user = current_user
         user.update!(time_params.transform_keys!(&:underscore))
       end
-    
+
       private
-    
+
       def time_params
         params.require(:time).permit(
           :morningStartHour,
@@ -29,4 +29,3 @@ module API
     end
   end
 end
-    

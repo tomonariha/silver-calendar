@@ -8,7 +8,7 @@ module API
         days = calendar&.days
         render json: days.to_json
       end
-    
+
       def update
         ActiveRecord::Base.transaction do
           calendar = current_calendars.find_or_create_by!(year: params[:year])
@@ -18,20 +18,20 @@ module API
             day = calendar.days.find_or_create_by(date:)
             day.update!(schedule:)
           end
-          render json: { message:'適用しました' }
+          render json: { message: '適用しました' }
         end
-      rescue ActiveRecord::RecordInvalid => e
-        render json: { error_message:'問題が起きたためデータの保存に失敗しました' }
+      rescue ActiveRecord::RecordInvalid
+        render json: { error_message: '問題が起きたためデータの保存に失敗しました' }
       end
-    
+
       def index
         calendars = current_calendars.order('year ASC')
         render json: calendars.to_json
       end
-    
+
       def destroy
         calendar = current_calendars.find_by(year: params[:year])
-        calendar.destroy! unless calendar.nil?
+        calendar&.destroy!
       end
     end
   end

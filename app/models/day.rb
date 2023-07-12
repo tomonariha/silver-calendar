@@ -8,7 +8,8 @@ class Day < ApplicationRecord
   private
 
   def schedule_should_be_valid_string
-    return if schedule.in? %w(full-time morning afternoon off None paidleave)
+    return if schedule.in? %w[full-time morning afternoon off None paidleave]
+
     errors.add(:schedule, '無効な文字列です')
   end
 end
