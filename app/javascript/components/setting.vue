@@ -2,18 +2,12 @@
   <div class="rounded my-2 p-2 settings">
     <section>
       <h2 class="fs-5 my-2">条件から勤務予定を設定する</h2>
-      <div
-        id="overlay"
-        v-show="confirmedSetting"
-        v-on:click.self="cancelConfirm">
-        <div id="confirm">
-          <Confirm
-            v-bind:message="'削除します。よろしいですか？'"
-            v-on:execution="deleteSetting(confirmedSetting.id)"
-            v-on:cancel="cancelConfirm">
-          </Confirm>
-        </div>
-      </div>
+      <Confirm
+        v-bind:showConfirm="Boolean(confirmedSetting)"
+        v-bind:message="'削除します。よろしいですか？'"
+        v-on:execution="deleteSetting(confirmedSetting.id)"
+        v-on:cancel="cancelConfirm">
+      </Confirm>
       <div class="settings-area">
         <span class="have-no-settings" v-show="!(settings.length > 0)"
           >まだ条件がありません
@@ -170,55 +164,11 @@ function decreasePage() {
 }
 </script>
 
-<style>
+<style scoped>
 .settings {
   border: 1px solid black;
   width: 100%;
   min-width: 400px;
-}
-#overlay {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#form {
-  z-index: 2;
-  max-width: 400px;
-  padding: 1em;
-  background: #fff;
-}
-#confirm {
-  z-index: 3;
-  max-width: 400px;
-  padding: 2em;
-  background: #fff;
-}
-.btn.btn-sm.inconspicuous-button {
-  --bs-btn-color: gray;
-  --bs-btn-bg: #fff;
-  --bs-btn-border-color: gray;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: gray;
-  --bs-btn-hover-border-color: #101112;
-  --bs-btn-focus-shadow-rgb: 49, 132, 253;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: rgb(107, 107, 107);
-  --bs-btn-active-border-color: rgb(50, 50, 50);
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: rgb(188, 188, 188);
-  --bs-btn-disabled-border-color: #b0b2b5;
-}
-.delete-button {
-  text-decoration: underline;
-  cursor: pointer;
 }
 .setting-periods {
   display: inline-block;
@@ -231,16 +181,9 @@ function decreasePage() {
 .new-settings-button {
   width: 200px;
 }
-.page-number {
-  text-decoration: underline;
-  cursor: pointer;
-}
 .have-no-settings {
   display: inline-block;
   vertical-align: middle;
-}
-.current-page {
-  font-weight: bold;
 }
 #specified_total_days {
   width: 60px;

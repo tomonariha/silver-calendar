@@ -56,3 +56,13 @@ const displayedPageNumbers = computed(() => {
   return pages
 })
 </script>
+
+<style scoped>
+.page-number {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.current-page {
+  font-weight: bold;
+}
+</style>

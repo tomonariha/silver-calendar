@@ -1,27 +1,21 @@
 <template>
   <div
-    id="overlay"
+    class="overlay"
     v-show="showAlignmentForm"
     v-on:click.self="emit('close')">
-    <div id="content">
+    <div class="content">
       <section>
-        <h3 class="fs-4 my-2">連携機能</h3>
-        <div
-          id="overlay"
-          v-show="confirmedCalendar"
-          v-on:click.self="cancelConfirm">
-          <div id="confirm">
-            <Confirm
-              v-bind:message="'削除します。よろしいですか？'"
-              v-on:execution="
-                fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
-              "
-              v-on:cancel="cancelConfirm">
-            </Confirm>
-          </div>
-        </div>
-        <div id="overlay" v-show="isFetching">
-          <p id="fetching">反映しています。しばらくお待ちください</p>
+        <h3 class="fs-4 my-2">連携機能</h3>       
+        <Confirm
+          v-bind:showConfirm="Boolean(confirmedCalendar)"
+          v-bind:message="'削除します。よろしいですか？'"
+          v-on:execution="
+            fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
+          "
+          v-on:cancel="cancelConfirm">
+        </Confirm>
+        <div class="overlay" v-show="isFetching">
+          <p class="fetching">反映しています。しばらくお待ちください</p>
         </div>
         <div class="time-form">
           <section>
@@ -299,32 +293,14 @@ function timesValidation() {
 }
 </script>
 
-<style>
-#overlay {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#content {
+<style scoped>
+.content {
   z-index: 2;
   max-width: 500px;
   padding: 1em;
   background: #fff;
 }
-#confirm {
-  z-index: 3;
-  max-width: 400px;
-  padding: 2em;
-  background: #fff;
-}
-#fetching {
+.fetching {
   z-index: 4;
   max-width: 400px;
   padding: 1em;
@@ -334,17 +310,6 @@ function timesValidation() {
   border: solid 1px black;
   background: gainsboro;
   min-height: 220px;
-}
-.page-number {
-  text-decoration: underline;
-  cursor: pointer;
-}
-.current-page {
-  font-weight: bold;
-}
-.google-button {
-  width: 192px;
-  cursor: pointer;
 }
 .alignment-button-area {
   display: inline-block;

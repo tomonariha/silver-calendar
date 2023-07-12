@@ -1,8 +1,8 @@
 <template>
-<div id="overlay"
+<div class="overlay"
      v-show="showSettingForm"
      v-on:click.self="closeForm">
-  <div id="form">
+  <div class="form">
     <div class="form-area">
       <section class="mb-4">
         <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
@@ -466,3 +466,12 @@ function totalDaysValidation(startDay, endDay) {
   }
 }
 </script>
+
+<style scoped>
+.form {
+  z-index: 2;
+  max-width: 400px;
+  padding: 1em;
+  background: #fff;
+}
+</style>

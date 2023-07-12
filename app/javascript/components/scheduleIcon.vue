@@ -1,5 +1,5 @@
 <template>
-  <div class="schedule-icon">
+  <div class="schedule-icons">
     <span v-if="props.schedule === 'full-time'">
       <img class="schedule-icon-small" :src="fullTime" alt="fullTime" />
     </span>
@@ -30,12 +30,8 @@ const props = defineProps({
 })
 </script>
 
-<style>
-.schedule-icon-small {
-  width: 20px;
-  height: 20px;
-}
-.schedule-icon {
+<style scoped>
+.schedule-icons {
   display: inline;
 }
 </style>

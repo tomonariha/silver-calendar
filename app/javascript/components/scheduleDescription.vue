@@ -21,9 +21,3 @@ import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 </script>
 
-<style>
-.schedule-icon-small {
-  width: 20px;
-  height: 20px;
-}
-</style>

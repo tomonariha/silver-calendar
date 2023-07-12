@@ -1,0 +1,27 @@
+.google-button {
+  width: 222px;
+  cursor: pointer;
+}
+.google-button:hover {
+  background-color: #8eb8ff;
+}
+.btn.btn-sm.inconspicuous-button {
+  --bs-btn-color: gray;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: gray;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: gray;
+  --bs-btn-hover-border-color: #101112;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: rgb(107, 107, 107);
+  --bs-btn-active-border-color: rgb(50, 50, 50);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgb(188, 188, 188);
+  --bs-btn-disabled-border-color: #b0b2b5;
+}
+.delete-button {
+  text-decoration: underline;
+  cursor: pointer;
+}

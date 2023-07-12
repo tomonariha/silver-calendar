@@ -31,18 +31,12 @@
             (現在の日数){{ numberOfWorkingDays }}
           </p>
         </div>
-        <div
-          id="overlay"
-          v-show="showJustNotConfirm"
-          v-on:click.self="cancelJustNotConfirm">
-          <div id="confirm">
-            <Confirm
-              v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
-              v-on:execution="determineAutoAdjust"
-              v-on:cancel="cancelJustNotConfirm">
-            </Confirm>
-          </div>
-        </div>
+        <Confirm
+          v-bind:showConfirm="Boolean(showJustNotConfirm)"
+          v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
+          v-on:execution="determineAutoAdjust"
+          v-on:cancel="cancelJustNotConfirm">
+        </Confirm>
         <div class="my-2">
           <span v-if="numberOfWorkingDays !== workingDaysRequired">
             <button
@@ -71,18 +65,12 @@
           </button>
         </div>
       </div>
-      <div
-        id="overlay"
-        v-show="showDeleteConfirm"
-        v-on:click.self="cancelDeleteConfirm">
-        <div id="confirm">
-          <Confirm
-            v-bind:message="'削除します。よろしいですか？'"
-            v-on:execution="deleteCalendar"
-            v-on:cancel="cancelDeleteConfirm">
-          </Confirm>
-        </div>
-      </div>
+      <Confirm
+        v-bind:showConfirm="Boolean(showDeleteConfirm)"
+        v-bind:message="'削除します。よろしいですか？'"
+        v-on:execution="deleteCalendar"
+        v-on:cancel="cancelDeleteConfirm">
+      </Confirm>
       <div class="content-center">
         <button
           class="calendar-nav__previous me-1"
@@ -812,24 +800,10 @@ function reflectGoogleCalendarId(calendar) {
 }
 </script>
 
-<style>
-#overlay {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#confirm {
-  z-index: 3;
-  max-width: 400px;
-  padding: 2em;
-  background: #fff;
+<style scoped>
+.calendar-nav__year {
+  background: #e2f3ff;
+  border: 1px solid #0099ff;
 }
 .yeary-calendar__table {
   border: 2px solid black;
@@ -870,9 +844,6 @@ function reflectGoogleCalendarId(calendar) {
 .yeary-calendar__no-schedule {
   width: 16px;
   height: 24px;
-}
-.disabled {
-  pointer-events: none;
 }
 .auto-adjusted {
   background-color: lightskyblue;

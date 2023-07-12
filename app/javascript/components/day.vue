@@ -102,7 +102,7 @@ async function updateCalendar(schedule) {
   }
 }
 </script>
-<style>
+<style scoped>
 .calendar__day-button {
   width: 48px;
   height: 48px;
