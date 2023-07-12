@@ -373,7 +373,7 @@ function calendarDates(month) {
   for (let date = 1; date <= lastDate(month); date++) {
     const result = calendarDays.value.filter((day) =>
       day.date.includes(
-        format(new Date(calendarYear.value, month - 1, date), 'yyyy-MM-dd')
+        formatDate(new Date(calendarYear.value, month - 1, date))
       )
     )
     if (result.length > 0) {
@@ -467,10 +467,7 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formattedDate = format(
-    new Date(date.year, date.month, date.date),
-    'yyyy-MM-dd'
-  )
+  const formattedDate = formatDate(new Date(date.year, date.month - 1, date.date))
   return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
@@ -492,7 +489,7 @@ function autoAdjust(setting) {
   }
   // 期間内の日付オブジェクトを利用可能日の配列へ入れる
   for (let day = startDate; day <= endDate; day.setDate(day.getDate() + 1)) {
-    const formattedDate = format(day, 'yyyy-MM-dd')
+    const formattedDate = formatDate(day)
     availableDays.push(formattedDate)
   }
   targetPeriod.push(...availableDays)
@@ -552,7 +549,7 @@ function equalDays(availableDate, date) {
   return true
 }
 function insertSchedule(day, schedule) {
-  const formattedDate = format(day, 'yyyy-MM-dd')
+  const formattedDate = formatDate(day)
   adjustedCalendar.value.push({
     date: formattedDate,
     schedule: schedule
@@ -649,10 +646,10 @@ function autoAdjustFromAllSettings() {
 //条件設定関連
 const settings = ref([])
 function createToSettings(createdSetting) {
-  createdSetting.period_start_at = formatUpdatedDay(
+  createdSetting.period_start_at = formatDate(
     new Date(createdSetting.period_start_at)
   )
-  createdSetting.period_end_at = formatUpdatedDay(new Date(createdSetting.period_end_at))
+  createdSetting.period_end_at = formatDate(new Date(createdSetting.period_end_at))
   settings.value.push(createdSetting)
   sortSettings()
 }
@@ -661,10 +658,10 @@ function deleteFromSettings(settingId) {
   settings.value.splice(settings.value.indexOf(found), 1)
 }
 function updateSettings(updatedSetting) {
-  updatedSetting.period_start_at = formatUpdatedDay(
+  updatedSetting.period_start_at = formatDate(
     new Date(updatedSetting.period_start_at)
   )
-  updatedSetting.period_end_at = formatUpdatedDay(new Date(updatedSetting.period_end_at))
+  updatedSetting.period_end_at = formatDate(new Date(updatedSetting.period_end_at))
   const found = settings.value.find(
     (setting) => setting.id === updatedSetting.id
   )
@@ -700,13 +697,13 @@ function sortSettings() {
     a.period_start_at > b.period_start_at ? 1 : -1
   )
 }
-function formatUpdatedDay(date) {
+function formatDate(date) {
   return format(date, 'yyyy-MM-dd')
 }
 //勤務入力関連
 function updateDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formattedDay = formatUpdatedDay(date)
+  const formattedDay = formatDate(date)
   const newDay = { date: formattedDay, schedule: day.schedule }
   const diff = updateToCalendarArray(calendarDays.value, newDay)
   if (autoAdjusted.value) {
@@ -730,7 +727,7 @@ function updateToCalendarArray(calendarDays, newDay) {
 }
 function deleteDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formattedDay = formatUpdatedDay(date)
+  const formattedDay = formatDate(date)
   const diffAmount = deleteFromCalendarArray(calendarDays.value, formattedDay)
   if (autoAdjusted.value) {
     numberOfWorkingDays.value -= diffAmount
