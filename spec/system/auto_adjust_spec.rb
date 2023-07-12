@@ -10,7 +10,7 @@ RSpec.describe 'AutoAdjust', type: :system do
     sign_in user
     visit calendar_path
     click_button '新しい条件を作る'
-    within('#form') do
+    within('.form') do
       select '1', from: 'start_month_select'
       select '1', from: 'start_day_select'
       select '12', from: 'end_month_select'
@@ -39,7 +39,7 @@ RSpec.describe 'AutoAdjust', type: :system do
     sign_in user
     visit calendar_path
     click_button '新しい条件を作る'
-    within('#form') do
+    within('.form') do
       select '1', from: 'start_month_select'
       select '3', from: 'start_day_select'
       select '1', from: 'end_month_select'
