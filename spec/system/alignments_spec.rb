@@ -6,7 +6,7 @@ RSpec.describe 'Calendars', type: :system do
   let!(:user) { FactoryBot.create(:user) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id) }
   let!(:day) { FactoryBot.create(:day, calendar_id: calendar.id) }
-  let!(:day2) { FactoryBot.create(:day, :day2, calendar_id: calendar.id) }
+  let!(:full_time) { FactoryBot.create(:day, :full_time, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
   OmniAuth.config.test_mode = true
   OmniAuth.config.silence_get_warning = true
