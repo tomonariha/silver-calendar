@@ -481,8 +481,8 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formatedDate = date.year + '-' + date.month + '-' + date.date
-  return targetPeriod.includes(formatedDate)
+  const formattedDate = date.year + '-' + date.month + '-' + date.date
+  return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
   const startDate = new Date(setting.period_start_at)
@@ -503,9 +503,9 @@ function autoAdjust(setting) {
   }
   // 期間内の日付オブジェクトを利用可能日の配列へ入れる
   for (let day = startDate; day <= endDate; day.setDate(day.getDate() + 1)) {
-    const formatedDate =
+    const formattedDate =
       day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
-    availableDays.push(formatedDate)
+    availableDays.push(formattedDate)
   }
   targetPeriod.push(...availableDays)
   // CalendarDays配列に入っている期間内の日付オブジェクトを抽出し、
@@ -564,14 +564,14 @@ function equalDays(availableDate, date) {
   return true
 }
 function insertSchedule(day, schedule) {
-  const formatedDate =
+  const formattedDate =
     day.getFullYear() +
     '-' +
     formatMonth(day.getMonth() + 1) +
     '-' +
     formatDay(day.getDate())
   adjustedCalendar.value.push({
-    date: formatedDate,
+    date: formattedDate,
     schedule: schedule
   })
 }
@@ -711,19 +711,19 @@ function sortSettings() {
 }
 function formatUpdatedDay(updatedDay) {
   let day = new Date(updatedDay)
-  const formatedUpdatedDay =
+  const formattedUpdatedDay =
     day.getFullYear() +
     '-' +
     formatMonth(day.getMonth() + 1) +
     '-' +
     formatDay(day.getDate())
-  return formatedUpdatedDay
+  return formattedUpdatedDay
 }
 //勤務入力関連
 function updateDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formatedDay = formatUpdatedDay(date)
-  const newDay = { date: formatedDay, schedule: day.schedule }
+  const formattedDay = formatUpdatedDay(date)
+  const newDay = { date: formattedDay, schedule: day.schedule }
   const diff = updateToCalendarArray(calendarDays.value, newDay)
   if (autoAdjusted.value) {
     numberOfWorkingDays.value += diff
@@ -746,15 +746,15 @@ function updateToCalendarArray(calendarDays, newDay) {
 }
 function deleteDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formatedDay = formatUpdatedDay(date)
-  const diffAmount = deleteFromCalendarArray(calendarDays.value, formatedDay)
+  const formattedDay = formatUpdatedDay(date)
+  const diffAmount = deleteFromCalendarArray(calendarDays.value, formattedDay)
   if (autoAdjusted.value) {
     numberOfWorkingDays.value -= diffAmount
-    deleteFromCalendarArray(adjustedCalendar.value, formatedDay)
+    deleteFromCalendarArray(adjustedCalendar.value, formattedDay)
   }
 }
-function deleteFromCalendarArray(calendarDays, formatedDay) {
-  const found = calendarDays.find(calendarDay => calendarDay.date === formatedDay)
+function deleteFromCalendarArray(calendarDays, formattedDay) {
+  const found = calendarDays.find(calendarDay => calendarDay.date === formattedDay)
   if (found) {
     calendarDays.splice(calendarDays.indexOf(found), 1)
     return countWorkingDays(found.schedule)
