@@ -278,6 +278,7 @@ import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
 import paidleave from '../assets/images/paidleave.svg?url'
 import { FetchRequest } from '@rails/request.js'
+import { format } from 'date-fns'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -369,7 +370,7 @@ function calendarDates(month) {
   for (let date = 1; date <= lastDate(month); date++) {
     const result = calendarDays.value.filter((day) =>
       day.date.includes(
-        `${calendarYear.value}-${formatMonth(month)}-${formatDay(date)}`
+        format(new Date(calendarYear.value, month-1, date), 'yyyy-MM-dd')
       )
     )
     if (result.length > 0) {
@@ -463,7 +464,7 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formattedDate = date.year + '-' + date.month + '-' + date.date
+  const formattedDate = format(new Date(date.year, date.month, date.date), 'yyyy-MM-dd')
   return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
@@ -485,8 +486,7 @@ function autoAdjust(setting) {
   }
   // 期間内の日付オブジェクトを利用可能日の配列へ入れる
   for (let day = startDate; day <= endDate; day.setDate(day.getDate() + 1)) {
-    const formattedDate =
-      day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
+    const formattedDate = format(day, 'yyyy-MM-dd')
     availableDays.push(formattedDate)
   }
   targetPeriod.push(...availableDays)
@@ -546,22 +546,11 @@ function equalDays(availableDate, date) {
   return true
 }
 function insertSchedule(day, schedule) {
-  const formattedDate =
-    day.getFullYear() +
-    '-' +
-    formatMonth(day.getMonth() + 1) +
-    '-' +
-    formatDay(day.getDate())
+  const formattedDate = format(day, 'yyyy-MM-dd')
   adjustedCalendar.value.push({
     date: formattedDate,
     schedule: schedule
   })
-}
-function formatMonth(month) {
-  return month.toString().padStart(2, '0')
-}
-function formatDay(day) {
-  return day.toString().padStart(2, '0')
 }
 function reflectAdjustedCalendar() {
   searchAdjustedDay: for (let d of adjustedCalendar.value) {
@@ -691,15 +680,8 @@ function sortSettings() {
     a.period_start_at > b.period_start_at ? 1 : -1
   )
 }
-function formatUpdatedDay(updatedDay) {
-  let day = new Date(updatedDay)
-  const formattedUpdatedDay =
-    day.getFullYear() +
-    '-' +
-    formatMonth(day.getMonth() + 1) +
-    '-' +
-    formatDay(day.getDate())
-  return formattedUpdatedDay
+function formatUpdatedDay(day) {
+  return format(day, 'yyyy-MM-dd')
 }
 //勤務入力関連
 function updateDay(day) {

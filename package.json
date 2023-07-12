@@ -8,6 +8,7 @@
     "@rails/request.js": "^0.0.8",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
+    "date-fns": "^2.30.0",
     "esbuild": "^0.15.13",
     "sass": "^1.56.1",
     "vue": "^3.2.36",

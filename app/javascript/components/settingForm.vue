@@ -324,7 +324,6 @@ async function updateSetting(settingId) {
   if (periodValidation(startDay, endDay)) {
     return
   }
-  console.log('ok')
   const setting = {
     period_start_at: startDay.toDateString(),
     period_end_at: endDay.toDateString(),
