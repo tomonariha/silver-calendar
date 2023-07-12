@@ -81,7 +81,6 @@
         v-bind:showSettingForm="showSettingForm"
         v-bind:year="props.year"
         v-bind:setting="selectedSetting"
-        v-bind:settings="settings"
         v-on:close="closeSettingModal">
       </SettingForm>
     </section>

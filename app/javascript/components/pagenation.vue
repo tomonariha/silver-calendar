@@ -27,7 +27,7 @@ function updatePageNumber(pageNumber, index) {
     emit('updateCurrentPage', pageNumber)
     return
   }
-  if (index < props.currentPage.value) {
+  if (index < props.currentPage) {
     emit('decreasePage')
     return
   } else {
@@ -41,18 +41,18 @@ const displayedPageNumbers = computed(() => {
     return
   }
   pages.push(1)
-  if (props.currentPage.value - props.displayRange > 2) {
+  if (props.currentPage - props.displayRange > 2) {
     pages.push('...')
   }
   for (let i = -props.displayRange; i <= props.displayRange; i++) {
     if (
-      props.currentPage.value + i > 1 &&
-      props.currentPage.value + i < totalPages
+      props.currentPage + i > 1 &&
+      props.currentPage + i < totalPages
     ) {
-      pages.push(props.currentPage.value + i)
+      pages.push(props.currentPage + i)
     }
   }
-  if (props.currentPage.value + props.displayRange < totalPages - 1) {
+  if (props.currentPage + props.displayRange < totalPages - 1) {
     pages.push('...')
   }
   pages.push(totalPages)
