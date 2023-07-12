@@ -9,12 +9,9 @@ RSpec.describe 'Settings', type: :system do
   let!(:full_time) { FactoryBot.create(:day, :full_time, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
 
-  before do
+  scenario 'user create new setting', js: true do
     sign_in user
     visit calendar_path
-  end
-
-  scenario 'user create new setting', js: true do
     click_button '新しい条件を作る'
     within('#form') do
       select '2', from: 'start_month_select'
@@ -39,6 +36,8 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user update setting', js: true do
+    sign_in user
+    visit calendar_path
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
     click_button '編集'
     within('#form') do
@@ -53,6 +52,8 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user apply setting to calendar', js: true do
+    sign_in user
+    visit calendar_path
     click_button '適用'
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
@@ -62,6 +63,8 @@ RSpec.describe 'Settings', type: :system do
   end
 
   scenario 'user delete setting', js: true do
+    sign_in user
+    visit calendar_path
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
     find('.delete-button').click
     click_button 'はい'

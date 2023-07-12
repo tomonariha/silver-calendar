@@ -6,13 +6,10 @@ RSpec.describe 'AutoAdjust', type: :system do
   let!(:user) { FactoryBot.create(:user) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id) }
 
-  before do
+  scenario 'total days is 150', js: true do
     sign_in user
     visit calendar_path
     click_button '新しい条件を作る'
-  end
-
-  scenario 'total days is 150', js: true do
     within('#form') do
       select '1', from: 'start_month_select'
       select '1', from: 'start_day_select'
@@ -39,6 +36,9 @@ RSpec.describe 'AutoAdjust', type: :system do
   end
 
   scenario 'total days is 2', js: true do
+    sign_in user
+    visit calendar_path
+    click_button '新しい条件を作る'
     within('#form') do
       select '1', from: 'start_month_select'
       select '3', from: 'start_day_select'

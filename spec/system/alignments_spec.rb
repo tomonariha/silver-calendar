@@ -21,13 +21,13 @@ RSpec.describe 'Calendars', type: :system do
                                                                      })
 
   before do
-    sign_in user
-    visit calendar_path
     Rails.application.env_config['devise.mapping'] = Devise.mappings[:user]
     Rails.application.env_config['omniauth.auth'] = OmniAuth.config.mock_auth[:google_oauth2]
   end
 
   scenario 'google oauth log in', js: true do
+    sign_in user
+    visit calendar_path
     click_button '連携'
     find('.google-button').click
     click_button '連携'

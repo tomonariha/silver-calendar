@@ -9,12 +9,9 @@ RSpec.describe 'Calendars', type: :system do
   let!(:full_time) { FactoryBot.create(:day, :full_time, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
 
-  before do
+  scenario 'user insert new schedule on day of calendar', js: true do
     sign_in user
     visit calendar_path
-  end
-
-  scenario 'user insert new schedule on day of calendar', js: true do
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
@@ -25,6 +22,8 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user insert paid leave on day of calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
@@ -41,6 +40,8 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user delete schedule on day of calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day2' do
@@ -51,6 +52,8 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user move to selected year and month', js: true do
+    sign_in user
+    visit calendar_path
     select '2022', from: 'selected_calendar_year'
     select '12', from: 'selected_calendar_month'
     click_button '＞'
@@ -58,6 +61,8 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user delete calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
