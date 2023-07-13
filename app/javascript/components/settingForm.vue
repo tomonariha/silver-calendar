@@ -453,5 +453,7 @@ function totalDaysValidation(startDay, endDay) {
   max-width: 400px;
   padding: 1em;
   background: #fff;
+  overflow-y: auto;
+  max-height: 90%;
 }
 </style>
