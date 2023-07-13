@@ -278,7 +278,7 @@ import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
 import paidleave from '../assets/images/paidleave.svg?url'
 import { FetchRequest } from '@rails/request.js'
-import { format } from 'date-fns'
+import { format, isEqual } from 'date-fns'
 
 function showPeriod() {
   if (reflectedSetting.value) {
@@ -499,7 +499,7 @@ function autoAdjust(setting) {
     const date = new Date(day.date)
     availableDays.forEach((availableDay) => {
       const availableDate = new Date(availableDay)
-      if (equalDays(availableDate, date)) {
+      if (isEqual(availableDate, date)) {
         numberOfWorkingDays.value += countWorkingDays(day.schedule)
         availableDays.splice(availableDays.indexOf(availableDay), 1)
       }
@@ -538,15 +538,6 @@ function autoAdjust(setting) {
   }
   reflectedSetting.value = setting
   autoAdjusted.value = true
-}
-function equalDays(availableDate, date) {
-  if (availableDate.getMonth() !== date.getMonth()) {
-    return false
-  }
-  if (availableDate.getDate() !== date.getDate()) {
-    return false
-  }
-  return true
 }
 function insertSchedule(day, schedule) {
   const formattedDate = formatDate(day)
