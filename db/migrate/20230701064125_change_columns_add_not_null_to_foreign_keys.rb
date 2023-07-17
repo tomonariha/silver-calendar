@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeColumnsAddNotNullToForeignKeys < ActiveRecord::Migration[7.0]
   def change
     change_column_null(:calendars, :user_id, false)

@@ -31,4 +31,5 @@ AllCops:
     - storage/**/*
     - tmp/**/*
     - bin/**/*
+  TargetRubyVersion: 3.2.2
     

@@ -1,16 +1,20 @@
+# frozen_string_literal: true
+
 class AddTimeColumnsToUsers < ActiveRecord::Migration[7.0]
   def change
-    add_column :users, :morning_start_hour, :integer, default: 8
-    add_column :users, :morning_start_minit, :integer, default: 0
-    add_column :users, :morning_end_hour, :integer, default: 12
-    add_column :users, :morning_end_minit, :integer, default: 0
-    add_column :users, :after_noon_start_hour, :integer, default: 13
-    add_column :users, :after_noon_start_minit, :integer, default: 0
-    add_column :users, :after_noon_end_hour, :integer, default: 17
-    add_column :users, :after_noon_end_minit, :integer, default: 0
-    add_column :users, :full_time_start_hour, :integer, default: 8
-    add_column :users, :full_time_start_minit, :integer, default: 0
-    add_column :users, :full_time_end_hour, :integer, default: 17
-    add_column :users, :full_time_end_minit, :integer, default: 0
+    change_table :users, bulk: true do |t|
+      t.integer :morning_start_hour, default: 8
+      t.integer :users, :morning_start_minit, default: 0
+      t.integer :users, :morning_end_hour, default: 12
+      t.integer :users, :morning_end_minit, default: 0
+      t.integer :users, :after_noon_start_hour, default: 13
+      t.integer :users, :after_noon_start_minit, default: 0
+      t.integer :users, :after_noon_end_hour, default: 17
+      t.integer :users, :after_noon_end_minit, default: 0
+      t.integer :users, :full_time_start_hour, default: 8
+      t.integer :users, :full_time_start_minit, default: 0
+      t.integer :users, :full_time_end_hour, default: 17
+      t.integer :users, :full_time_end_minit, default: 0
+    end
   end
 end
