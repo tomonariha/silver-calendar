@@ -32,6 +32,7 @@ module API
       def destroy
         calendar = current_calendars.find_by(year: params[:year])
         calendar&.destroy!
+        head :no_content
       end
     end
   end

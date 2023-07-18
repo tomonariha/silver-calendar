@@ -5,6 +5,7 @@ module API
     class TimesController < ApplicationController
       def update
         current_user.update!(time_params.transform_keys!(&:underscore))
+        head :no_content
       end
 
       private

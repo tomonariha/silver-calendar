@@ -6,11 +6,13 @@ module API
       def destroy
         day = set_calendar.days.find_by(date: set_target_day)
         day&.delete
+        head :no_content
       end
 
       def update
         day = set_calendar.days.find_or_create_by!(date: set_target_day)
         day.update!(schedule: params[:schedule])
+        head :no_content
       end
 
       private
