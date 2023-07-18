@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_12_070722) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_18_020211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_12_070722) do
   create_table "days", force: :cascade do |t|
     t.bigint "calendar_id", null: false
     t.date "date", null: false
-    t.string "schedule"
+    t.string "schedule", default: "None"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["calendar_id"], name: "index_days_on_calendar_id"
