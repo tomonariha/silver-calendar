@@ -10,7 +10,7 @@ html
     = vite_client_tag
     = vite_javascript_tag 'application'
   body
-    - until current_page?(root_path)
+    - unless current_page?(root_path)
       = render 'header'
     = yield
     = render 'footer'
