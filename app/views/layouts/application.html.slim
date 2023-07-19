@@ -1,14 +1,16 @@
 doctype html
 html
   head
-    title
-      | WorkingDayDeployer
     meta[name="viewport" content="width=device-width,initial-scale=1"]
     = csrf_meta_tags
     = csp_meta_tag
-    = stylesheet_link_tag "application", "data-turbo-track": "reload"
-    = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
+    = display_meta_tags(default_meta_tags)
+    = favicon_link_tag 'favicon.svg'
+    = vite_stylesheet_tag 'application'
     = vite_client_tag
     = vite_javascript_tag 'application'
   body
+    - unless current_page?(root_path)
+      = render 'header'
     = yield
+    = render 'footer'

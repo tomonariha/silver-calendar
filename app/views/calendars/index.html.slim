@@ -1,1 +1,5 @@
-#app
+- set_meta_tags(title: 'カレンダー', description: 'カレンダー画面です。')
+.container
+  section.main
+    h1.fs-4.my-2 カレンダーの作成
+    #app(data-user-id="#{current_user.id}")

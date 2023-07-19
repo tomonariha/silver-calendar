@@ -1,0 +1,13 @@
+json.authenticate @authenticate
+json.morningStartHour current_user.morning_start_hour
+json.morningStartMinit current_user.morning_start_minit
+json.morningEndHour current_user.morning_end_hour
+json.morningEndMinit current_user.morning_end_minit
+json.afterNoonStartHour current_user.after_noon_start_hour
+json.afterNoonStartMinit current_user.after_noon_start_minit
+json.afterNoonEndHour current_user.after_noon_end_hour
+json.afterNoonEndMinit current_user.after_noon_end_minit
+json.fullTimeStartHour current_user.full_time_start_hour
+json.fullTimeStartMinit current_user.full_time_start_minit
+json.fullTimeEndHour current_user.full_time_end_hour
+json.fullTimeEndMinit current_user.full_time_end_minit

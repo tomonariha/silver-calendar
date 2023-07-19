@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class HomeController < ApplicationController
-  before_action :authenticate_user!
+  skip_before_action :authenticate_user!
   def index; end
+  def privacy_policy; end
+  def tos; end
 end

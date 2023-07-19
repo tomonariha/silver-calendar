@@ -1,0 +1,35 @@
+name: "Lint"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+  
+      - name: Run Rubocop
+        run: bundle exec rubocop
+
+      - name: yarn install
+        run:  yarn install --check-files
+
+      - name: Slim Lint
+        run: bundle exec slim-lint app/views -c config/slim_lint.yml
+
+      - name: JS Lint
+        run: yarn lint:eslint
+
+      - name: Prettier
+        run: yarn lint:prettier
