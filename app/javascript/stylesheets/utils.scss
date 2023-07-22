@@ -60,3 +60,13 @@ em {
 .wrapper {
   background-color: gainsboro;
 }
+.dashed-line {
+  display: inline-block;
+  width: 90px;
+  height: 10px;
+  background-image: linear-gradient(to right, #999, #999 3px, transparent 3px, transparent 8px);
+  background-size: 6px 2px;
+  background-repeat: repeat-x;
+  position: relative;
+  top: 4px;
+}
