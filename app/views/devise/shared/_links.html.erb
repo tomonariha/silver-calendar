@@ -1,6 +1,6 @@
 <%- if devise_mapping.omniauthable? %>
   <div class='content-center'>
-    <p><span class="dashed-line"></span> または <span class="borderline"></span></p>
+    <p><span class="dashed-line"></span> または <span class="dashed-line"></span></p>
     <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post, data: {turbo: false} do %>
       <%= image_tag "btn_google_signin_dark_normal_web.png", alt:"google-login", class:"google-button rounded my-2" %>
     <% end %>

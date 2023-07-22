@@ -1,10 +1,15 @@
 <% set_meta_tags(title:'ログイン', description:'ログイン画面です。') %>
 <section>
   <div class="container devise_field">
+    <div class="content-center">
+      <%= link_to root_path, data: {turbo: false} do %>
+        <%= image_tag "title-black.svg", alt:"タイトル", class:"title-top rounded my-2" %>
+      <% end %>
+    </div>
     <h2 class="fs-4 my-2"><%= t('.sign_in') %></h2>
   
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-      <div class="field my-4">
+      <div class="field my-2">
         <%= f.label :email, class: 'user_form_label' %><br />
         <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: 'silver-calendar@example.com', class: 'user_form_field' %>
       </div>

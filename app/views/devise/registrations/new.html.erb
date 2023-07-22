@@ -1,6 +1,11 @@
 <% set_meta_tags(title:'サインアップ', description:'ユーザー登録画面です。') %>
 <section>  
   <div class="container devise_field">
+    <div class="content-center">
+      <%= link_to root_path, data: {turbo: false} do %>
+        <%= image_tag "title-black.svg", alt:"タイトル", class:"title-top rounded my-2" %>
+      <% end %>
+    </div>
     <h2 class="fs-4 my-2"><%= t('.sign_up') %></h2>
   
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
