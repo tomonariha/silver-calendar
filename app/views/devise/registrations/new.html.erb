@@ -20,6 +20,7 @@
         <div class="field my-2">
           <%= f.label :password, class: 'user_form_label' %>
           <% if @minimum_password_length %>
+          <br>
           <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
           <% end %><br />
           <%= f.password_field :password, autocomplete: "new-password", class: 'user_form_field' %>
