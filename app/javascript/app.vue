@@ -870,8 +870,6 @@ function reflectGoogleCalendarId(calendar) {
 .monthly-calendar__table {
   border: 2px solid black;
   text-align: center;
-  width: 100%;
-  max-width: 500px;
 }
 .monthly-calendar__header {
   border: 2px solid black;

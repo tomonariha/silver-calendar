@@ -1,64 +1,62 @@
 - set_meta_tags(title: 'トップ', description: 'ホーム画面です。')
-.wrapper
-  .container.bg-primary.p-2
-    .content-center.m-2
-      = image_tag('title.svg', alt: 'タイトルロゴ', class: 'title-top')
-    .p.text-white.content-center.my-4
-      | 勤務条件に合わせて自動的にシフトを調整。
+.container.bg-primary.p-2
+  .content-center.m-2
+    = image_tag('title.svg', alt: 'タイトルロゴ', class: 'title-top')
+  .p.text-white.content-center.my-4
+    | 勤務条件に合わせて自動的にシフトを調整。
+    br
+    | 簡単な設定をするだけで、短時間で勤務スケジュールを
+    br
+    | Googleカレンダーに登録できます。
+  .p.text-white.button-label.content-center
+     | 無料で使えます
+  .content-center
+    =link_to '登録して使用開始', new_user_registration_path, class: 'btn btn-warning btn-lg m-2'
+  .content-center
+    =link_to '登録済みの方はこちらからログイン', calendar_path, class: 'btn btn-primary mb-4 login-button'
+    
+.container.bg-white.p-4
+  section
+    h1.fs-3.text-center
+      | 勤務スケジュールを手動で登録するのが
       br
-      | 簡単な設定をするだけで、短時間で勤務スケジュールを
-      br
-      | Googleカレンダーに登録できます。
-    .p.text-white.button-label.content-center
-       | 無料で使えます
+      | 大変な問題を解決！
     .content-center
-      =link_to '登録して使用開始', new_user_registration_path, class: 'btn btn-warning btn-lg m-2'
-    .content-center
-      =link_to '登録済みの方はこちらからログイン', calendar_path, class: 'btn btn-primary mb-4 login-button'
-      
-  .container.bg-white.p-4
-    section
-      h1.fs-3.text-center
-        | 勤務スケジュールを手動で登録するのが
+      = image_tag('image1.png', alt: '困っている人', class: 'image')    
+    .row.my-5
+      .content-center.col-6
+        = image_tag('image3.png', alt: '条件の作成', class: 'demo-image')
+      p.fs-5.col-6
+        | 曜日ごとに、前日、午前、午後
         br
-        | 大変な問題を解決！
-      .content-center
-        = image_tag('image1.png', alt: '困っている人', class: 'image')    
-      .row.my-5
-        .content-center.col-6
-          = image_tag('image3.png', alt: '条件の作成', class: 'demo-image')
-        p.fs-5.col-6
-          | 曜日ごとに、前日、午前、午後
-          br
-          | もしくは休みの予定を登録すると
-      .row.my-5
-        .content-center.col-6
-          = image_tag('demo.gif', alt: '条件を適用', class: 'demo-image')
-        p.fs-5.col-6
-          | カレンダーに一括で反映されます。
-          br
-          | また、その月の出勤日数も一目瞭然。
-          br
-          | 休日、有給休暇など日毎に個別に
-      .row.my-5
-        .content-center.col-6
-          = image_tag('image5.png', alt: '手動で調整', class: 'demo-image')
-        p.fs-5.col-6
-          | 一括反映した後に、休日、有給休暇などを
-          br
-          | 手動調整することも可能です。
-      .row.my-5
-        .content-center.col-6
-          = image_tag('image4.png', alt: 'Googleカレンダー', class: 'demo-image')
-        p.fs-5.col-6
-          | 登録したデータはGoogleカレンダーに
-          br
-          | ワンクリックで反映できます。
-  
-      section
-        h2.fs-4.my-5.text-center シルバーカレンダーで、問題解決しよう！
-        .p.content-center.button-label
-          | 無料で使えます
-        .m-2.content-center
-          =link_to '登録して使用開始', new_user_registration_path, class: 'btn btn-warning btn-lg mb-4'
-  
+        | もしくは休みの予定を登録すると
+    .row.my-5
+      .content-center.col-6
+        = image_tag('demo.gif', alt: '条件を適用', class: 'demo-image')
+      p.fs-5.col-6
+        | カレンダーに一括で反映されます。
+        br
+        | また、その月の出勤日数も一目瞭然。
+        br
+        | 休日、有給休暇など日毎に個別に
+    .row.my-5
+      .content-center.col-6
+        = image_tag('image5.png', alt: '手動で調整', class: 'demo-image')
+      p.fs-5.col-6
+        | 一括反映した後に、休日、有給休暇などを
+        br
+        | 手動調整することも可能です。
+    .row.my-5
+      .content-center.col-6
+        = image_tag('image4.png', alt: 'Googleカレンダー', class: 'demo-image')
+      p.fs-5.col-6
+        | 登録したデータはGoogleカレンダーに
+        br
+        | ワンクリックで反映できます。
+
+    section
+      h2.fs-4.my-5.text-center シルバーカレンダーで、問題解決しよう！
+      .p.content-center.button-label
+        | 無料で使えます
+      .m-2.content-center
+        =link_to '登録して使用開始', new_user_registration_path, class: 'btn btn-warning btn-lg mb-4'

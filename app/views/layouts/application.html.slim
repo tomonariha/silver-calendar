@@ -9,7 +9,8 @@ html
     = vite_client_tag
     = vite_javascript_tag 'application'
   body
-    - unless (current_page?(root_path) || current_page?(new_user_registration_path) || current_page?(new_user_session_path))
-      = render 'header'
-    = yield
-    = render 'footer'
+    .container-wrapper
+      - unless (current_page?(root_path) || current_page?(new_user_registration_path) || current_page?(new_user_session_path))
+        = render 'header'
+      = yield
+      = render 'footer'

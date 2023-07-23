@@ -73,7 +73,7 @@
           v-on:click="newSetting()">
           新しい条件を作る
         </button>
-        <button class="btn btn-primary m-2" v-on:click="reflectAllSettings()">
+        <button class="btn btn-primary reflect-all-setting-button m-2" v-on:click="reflectAllSettings()">
           条件を一括適用
         </button>
       </div>
@@ -167,7 +167,6 @@ function decreasePage() {
 .settings {
   border: 1px solid black;
   width: 100%;
-  min-width: 400px;
 }
 .setting-periods {
   display: inline-block;
@@ -199,5 +198,8 @@ function decreasePage() {
 }
 .setting-button-area {
   display: inline-block;
+}
+.reflect-all-setting-button {
+  width: 180px;
 }
 </style>

@@ -9,7 +9,7 @@
     <img class="schedule-icon-small" :src="off" alt="off" />
     <span>休日</span>
     <img class="schedule-icon-small" :src="paidleave" alt="paidleave" />
-    <span>年次有給休暇</span>
+    <span>年休</span>
   </div>
 </template>
 
