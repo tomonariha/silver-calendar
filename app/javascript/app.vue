@@ -103,7 +103,7 @@
           class="btn btn-secondary my-2 mx-4"
           v-on:click="toYearyCalendar"
           v-if="monthly">
-          年間カレンダー
+          この年のカレンダーを一覧表示
         </button>
         <p class="my-2 text-primary" v-else>
           月のカレンダーをクリックすると月間カレンダーになります
