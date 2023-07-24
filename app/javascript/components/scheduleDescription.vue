@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-2">
     <img class="schedule-icon-small" :src="fullTime" alt="fullTime" />
     <span>全日勤務</span>
     <img class="schedule-icon-small" :src="morning" alt="morning" />

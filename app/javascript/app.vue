@@ -73,13 +73,14 @@
       </Confirm>
       <div class="content-center">
         <button
-          class="calendar-nav__previous button-border me-1"
+          class="calendar-nav__previous button-border me-1 my-2"
           v-show="monthly"
           @click="previousMonth">
           ＜
         </button>
         <select
           id="selected_calendar_year"
+          class="my-2"
           v-model.number="calendarYear"
           @change="cancelAutoAdjust">
           <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
@@ -93,20 +94,20 @@
         </select>
         <span class="mx-1" v-show="monthly">月</span>
         <button
-          class="calendar-nav__next  button-border me-1"
+          class="calendar-nav__next  button-border me-1 my-2"
           v-show="monthly"
           @click="nextMonth">
           ＞
         </button>
         <button
-          class="btn btn-secondary my-1 mx-4"
+          class="btn btn-secondary my-2 mx-4"
           v-on:click="toYearyCalendar"
           v-if="monthly">
           年間カレンダー
         </button>
-        <span class="my-1 mx-4 text-primary" v-else>
+        <p class="my-2 text-primary" v-else>
           月のカレンダーをクリックすると月間カレンダーになります
-        </span>
+        </p>
       </div>
       <div class="my-2 content-center" v-if="monthly">
         <div class="calendar-nav__year my-2">
