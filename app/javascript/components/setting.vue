@@ -12,7 +12,7 @@
         <span class="have-no-settings" v-show="!(settings.length > 0)"
           >まだ条件がありません
         </span>
-        <div v-for="setting in slicedSettings" :key="setting.id">
+        <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
           <span
             class="setting-periods m-2 fs-6 rounded"
             v-bind:class="{ selected: selectedSetting === setting }">
@@ -164,17 +164,12 @@ function decreasePage() {
 </script>
 
 <style scoped>
-.settings {
-  border: 1px solid black;
-  width: 100%;
+.each-setting {
+  border: solid 1px lightgray;
 }
 .setting-periods {
   display: inline-block;
   width: 220px;
-}
-.settings-area {
-  min-height: 220px;
-  background-color: gainsboro;
 }
 .new-settings-button {
   width: 200px;
