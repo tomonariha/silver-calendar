@@ -1,7 +1,7 @@
 <template>
   <Popper arrow>
     <button
-      class="calendar__day-button"
+      class="calendar__day-button button-border"
       v-bind:class="{
         'auto-adjusted': autoAdjusted && props.exist
       }">

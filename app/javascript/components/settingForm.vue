@@ -65,13 +65,13 @@
           </section>
           <section class="weekday-nav my-2">
             <h4 class="fs-6 my-1 headline">曜日毎の勤務予定</h4>
-            <button class="mx-2 my-1" v-on:click="decreaseWeekday">
+            <button class="button-border mx-2 my-1" v-on:click="decreaseWeekday">
               ＜ {{ previousWeekday }}曜日
             </button>
             <span class="mx-2 my-1"
               >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
             >
-            <button class="mx-2 my-1" v-on:click="increaseWeekday">
+            <button class="button-border mx-2 my-1" v-on:click="increaseWeekday">
               ＞ {{ nextWeekday }}曜日
             </button>
             <div class="mx-2 my-1 weekday-nav__body">

@@ -73,7 +73,7 @@
       </Confirm>
       <div class="content-center">
         <button
-          class="calendar-nav__previous me-1"
+          class="calendar-nav__previous button-border me-1"
           v-show="monthly"
           @click="previousMonth">
           ＜
@@ -93,7 +93,7 @@
         </select>
         <span class="mx-1" v-show="monthly">月</span>
         <button
-          class="calendar-nav__next me-1"
+          class="calendar-nav__next  button-border me-1"
           v-show="monthly"
           @click="nextMonth">
           ＞
