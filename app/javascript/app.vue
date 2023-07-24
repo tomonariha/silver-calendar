@@ -244,7 +244,7 @@
     </section>
     <section>
       <div class="my-4 rounded alignment-area" v-show="unAutoAdjusted">
-        <h2 class="fs-6 m-2">Googleカレンダーに反映するのはこちらから</h2>
+        <h2 class="fs-6 m-2 content-center">Googleカレンダーに反映するのはこちらから</h2>
         <div class="d-flex justify-content-center">
           <button
             type="button"
