@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-2">
     <Setting
       v-show="unAutoAdjusted"
       v-bind:year="calendarYear"
@@ -8,7 +8,7 @@
       v-on:reflectAll="adjustAndReflectAll">
     </Setting>
     <section>
-      <h2 class="fs-5 mt-4">日毎に予定を入力する</h2>
+      <h2 class="h2 fs-5 my-4">日毎に予定を入力する</h2>
       <div class="my-2 content-center" v-show="autoAdjusted">
         <div class="auto-adjust-info rounded" v-if="autoAdjustAll">
           <p>条件を一括適用しました</p>

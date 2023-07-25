@@ -1,7 +1,7 @@
 <template>
-  <div class="rounded my-2 p-2 settings">
+  <div class="rounded my-2 settings">
     <section>
-      <h2 class="fs-5 my-2">条件から勤務予定を設定する</h2>
+      <h2 class="h2 fs-5 my-4">条件から勤務予定を設定する</h2>
       <Confirm
         v-bind:showConfirm="Boolean(confirmedSetting)"
         v-bind:message="'削除します。よろしいですか？'"
