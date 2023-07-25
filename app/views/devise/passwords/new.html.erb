@@ -2,7 +2,7 @@
 <div class="container bg-white">
   <div class="devise_field bg-white p-2">
     <section>
-      <h2 class="fs-4 my-2"><%= t('.forgot_your_password') %></h2>
+      <h2 class="headline-lg"><%= t('.forgot_your_password') %></h2>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>

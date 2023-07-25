@@ -5,7 +5,7 @@
     v-on:click.self="emit('close')">
     <div class="content">
       <section>
-        <h3 class="fs-4 my-2">外部カレンダーに反映する</h3>
+        <h3 class="headline-lg">外部カレンダーに反映する</h3>
         <Confirm
           v-bind:showConfirm="Boolean(confirmedCalendar)"
           v-bind:message="'削除します。よろしいですか？'"
@@ -19,7 +19,7 @@
         </div>
         <div class="time-form">
           <section>
-            <h4 class="headline fs-6 my-2">時刻の設定</h4>
+            <h4 class="headline-md">時刻の設定</h4>
             <p class="m-2">
               Googleカレンダーに反映する際の時刻を設定します
             </p>
@@ -41,7 +41,7 @@
         </div>
         <div class="google-calendar my-2">
           <section>
-            <h4 class="headline fs-6 my-2">予定をGoogleカレンダーへ反映する</h4>
+            <h4 class="headline-md">予定をGoogleカレンダーへ反映する</h4>
             <div class="my-2" v-if="notAuthenticatedGoogle">
               <p class="fs-6 m-2">
                 Googleカレンダーに反映するにはGoogle認証が必要です

@@ -3,10 +3,10 @@
     <div class="form">
       <div class="form-area">
         <section class="mb-4">
-          <h3 class="fs-5 my-2" v-if="settingId">条件の編集</h3>
-          <h3 class="fs-5 my-2" v-else>新しい条件の登録</h3>
+          <h3 class="headline-lg" v-if="settingId">条件の編集</h3>
+          <h3 class="headline-lg" v-else>新しい条件の登録</h3>
           <section>
-            <h4 class="fs-6 my-1 headline">条件を適用する期間</h4>
+            <h4 class="headline-md">条件を適用する期間</h4>
             <label for="startAt" class="fs-6 mx-2 my-1">開始日：</label>
             <select
               id="start_month_select"
@@ -42,7 +42,7 @@
             <span class="fs-6 m-1">日</span>
           </section>
           <section class="my-2">
-            <h4 class="fs-6 my-1 headline">この期間の勤務日数</h4>
+            <h4 class="headline-md">この期間の勤務日数</h4>
             <p class="mx-2 my-1" v-show="notSpecifiedTotalDays">
               指定する場合はチェックを外してください
             </p>
@@ -64,18 +64,18 @@
             <span class="m-2" v-show="specifiedTotalDays">日</span>
           </section>
           <section class="weekday-nav my-2">
-            <h4 class="fs-6 my-1 headline">曜日毎の勤務予定</h4>
-            <button class="button-border mx-2 my-1" v-on:click="decreaseWeekday">
+            <h4 class="headline-md">曜日毎の勤務予定</h4>
+            <button class="button-border m-2" v-on:click="decreaseWeekday">
               ＜ {{ previousWeekday }}曜日
             </button>
             <span class="mx-2 my-1"
               >{{ weekdayJp[weekdayNumber] }}曜日の予定</span
             >
-            <button class="button-border mx-2 my-1" v-on:click="increaseWeekday">
+            <button class="button-border m-2" v-on:click="increaseWeekday">
               ＞ {{ nextWeekday }}曜日
             </button>
-            <div class="mx-2 my-1 weekday-nav__body">
-              <p class="mx-2 my-1">
+            <div class="m-2weekday-nav__body">
+              <p class="m-2">
                 期間内のこの曜日全てに下の予定が入ります
               </p>
               <input

@@ -49,10 +49,16 @@ em {
   padding: 0px;
   text-decoration: underline;
 }
-.headline {
-  background: #e2f3ff;
-  border: 1px solid #0099ff;
-  padding: 4px;
+.headline-lg {
+  text-align: center;
+  font-size: 24px;
+  margin: 32px 0 20px 0;
+}
+.headline-md {
+  border-left: solid 6px #0d6efd;
+  padding: 4px 0 4px 8px;
+  font-size: 20px;
+  margin: 16px 0;
 }
 .disabled {
   pointer-events: none;
@@ -69,8 +75,4 @@ em {
   background-repeat: repeat-x;
   position: relative;
   top: 4px;
-}
-.h2 {
-  border-left: solid 6px #0d6efd;
-  padding: 4px 0 4px 8px;
 }
