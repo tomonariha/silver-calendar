@@ -95,13 +95,13 @@
         </select>
         <span class="my-2 mx-1" v-show="monthly">月</span>
         <button
-          class="calendar-nav__next  button-border me-1 my-2"
+          class="calendar-nav__next button-border me-1 my-2"
           v-show="monthly"
           @click="nextMonth">
           ＞
         </button>
         <button
-          class="btn btn-secondary my-2 mx-4"
+          class="btn simple-button my-2 mx-4"
           v-on:click="toYearyCalendar"
           v-if="monthly">
           この年のカレンダーを一覧表示
