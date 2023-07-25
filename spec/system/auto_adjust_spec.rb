@@ -9,7 +9,7 @@ RSpec.describe 'AutoAdjust', type: :system do
   scenario 'total days is 150', js: true do
     sign_in user
     visit calendar_path
-    click_button '新しい条件を作る'
+    click_button '条件を作る'
     within('.form') do
       select '1', from: 'start_month_select'
       select '1', from: 'start_day_select'
@@ -38,7 +38,7 @@ RSpec.describe 'AutoAdjust', type: :system do
   scenario 'total days is 2', js: true do
     sign_in user
     visit calendar_path
-    click_button '新しい条件を作る'
+    click_button '条件を作る'
     within('.form') do
       select '1', from: 'start_month_select'
       select '3', from: 'start_day_select'
