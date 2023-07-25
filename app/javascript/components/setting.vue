@@ -9,73 +9,83 @@
         v-on:cancel="cancelConfirm">
       </Confirm>
       <div class="settings-area">
-        <span class="have-no-settings" v-show="!(settings.length > 0)"
-          >まだ条件がありません
-        </span>
-        <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
-          <span
-            class="setting-periods m-2 fs-6 rounded"
-            v-bind:class="{ selected: selectedSetting === setting }">
-            {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
-          </span>
-          <div class="schedules-view m-2">
-            <span>日:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_sunday">
-            </ScheduleIcon>
-            <span>月:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_monday">
-            </ScheduleIcon>
-            <span>火:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_tuesday">
-            </ScheduleIcon>
-            <span>水:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_wednesday">
-            </ScheduleIcon>
-            <span>木:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_thursday">
-            </ScheduleIcon>
-            <span>金:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_friday">
-            </ScheduleIcon>
-            <span>土:</span>
-            <ScheduleIcon v-bind:schedule="setting.schedule_of_saturday">
-            </ScheduleIcon>
+        <div class="content-center my-2" v-if="!(settings.length > 0)">
+          <p class="have-no-settings my-2 fs-5 text-primary">
+            まだ条件がありません。条件を作成しましょう。
+          </p>
+          <br>
+          <button
+            class="btn btn-primary m-2 new-settings-button"
+            v-on:click="newSetting()">
+            条件を作る
+          </button>
+        </div>
+        <div v-else>
+          <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
+            <span
+              class="setting-periods m-2 fs-6 rounded"
+              v-bind:class="{ selected: selectedSetting === setting }">
+              {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+            </span>
+            <div class="schedules-view m-2">
+              <span>日:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_sunday">
+              </ScheduleIcon>
+              <span>月:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_monday">
+              </ScheduleIcon>
+              <span>火:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_tuesday">
+              </ScheduleIcon>
+              <span>水:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_wednesday">
+              </ScheduleIcon>
+              <span>木:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_thursday">
+              </ScheduleIcon>
+              <span>金:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_friday">
+              </ScheduleIcon>
+              <span>土:</span>
+              <ScheduleIcon v-bind:schedule="setting.schedule_of_saturday">
+              </ScheduleIcon>
+            </div>
+            <div class="setting-button-area m-2">
+              <button
+                v-on:click="editSetting(setting)"
+                class="btn btn-sm inconspicuous-button ms-1">
+                編集
+              </button>
+              <button
+                v-on:click="reflectSetting(setting)"
+                class="btn btn-sm btn-primary ms-1">
+                適用
+              </button>
+              <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+                >削除</span
+              >
+            </div>
           </div>
-          <div class="setting-button-area m-2">
+          <Pagenation
+            v-bind:array="settings"
+            v-bind:pageLimit="pageLimit"
+            v-bind:currentPage="currentPage"
+            v-bind:displayRange="displayRange"
+            v-on:updateCurrentPage="updateCurrentPage"
+            v-on:increasePage="increasePage"
+            v-on:decreasePage="decreasePage">
+          </Pagenation>
+          <div class="d-flex justify-content-center">
             <button
-              v-on:click="editSetting(setting)"
-              class="btn btn-sm inconspicuous-button ms-1">
-              編集
+              class="btn btn-primary m-2 new-settings-button"
+              v-on:click="newSetting()">
+              新しい条件を作る
             </button>
-            <button
-              v-on:click="reflectSetting(setting)"
-              class="btn btn-sm btn-primary ms-1">
-              適用
+            <button class="btn btn-primary reflect-all-setting-button m-2" v-on:click="reflectAllSettings()">
+              条件を一括適用
             </button>
-            <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
-              >削除</span
-            >
           </div>
         </div>
-      </div>
-      <Pagenation
-        v-bind:array="settings"
-        v-bind:pageLimit="pageLimit"
-        v-bind:currentPage="currentPage"
-        v-bind:displayRange="displayRange"
-        v-on:updateCurrentPage="updateCurrentPage"
-        v-on:increasePage="increasePage"
-        v-on:decreasePage="decreasePage">
-      </Pagenation>
-      <div class="d-flex justify-content-center">
-        <button
-          class="btn btn-primary m-2 new-settings-button"
-          v-on:click="newSetting()">
-          新しい条件を作る
-        </button>
-        <button class="btn btn-primary reflect-all-setting-button m-2" v-on:click="reflectAllSettings()">
-          条件を一括適用
-        </button>
       </div>
       <SettingForm
         v-bind:showSettingForm="showSettingForm"
