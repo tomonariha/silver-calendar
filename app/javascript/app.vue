@@ -251,7 +251,7 @@
             type="button"
             class="btn btn-primary my-2 alignment-button"
             v-on:click="openAlignmentModal">
-            連携
+            反映する
           </button>
         </div>
       </div>
