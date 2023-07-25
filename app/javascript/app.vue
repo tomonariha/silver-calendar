@@ -239,7 +239,7 @@
         <span
           class="delete-calendar m-2 d-flex justify-content-end"
           v-on:click="confirmDeleteCalendar"
-          >この年のカレンダーの条件と予定を全て削除する
+          >この年のカレンダーの条件と予定を全て削除
         </span>
       </div>
     </section>
