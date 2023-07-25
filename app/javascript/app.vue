@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2">
+  <div>
     <Setting
       v-show="unAutoAdjusted"
       v-bind:year="calendarYear"

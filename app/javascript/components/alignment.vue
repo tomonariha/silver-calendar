@@ -307,7 +307,7 @@ function timesValidation() {
   padding: 1em;
   background: #fff;
   overflow-y: auto;
-  max-height: 90%;
+  max-height: 94%;
 }
 .fetching {
   z-index: 4;

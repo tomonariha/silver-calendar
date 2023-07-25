@@ -2,9 +2,9 @@
   <div class="overlay" v-show="showSettingForm" v-on:click.self="closeForm">
     <div class="form">
       <div class="form-area">
-        <section class="mb-4">
-          <h3 class="headline-lg" v-if="settingId">条件の編集</h3>
-          <h3 class="headline-lg" v-else>新しい条件の登録</h3>
+        <section>
+          <h3 class="headline-lg mt-2" v-if="settingId">条件の編集</h3>
+          <h3 class="headline-lg mt-2" v-else>新しい条件の登録</h3>
           <section>
             <h4 class="headline-md">条件を適用する期間</h4>
             <label for="startAt" class="fs-6 mx-2 my-1">開始日：</label>
@@ -454,6 +454,6 @@ function totalDaysValidation(startDay, endDay) {
   padding: 1em;
   background: #fff;
   overflow-y: auto;
-  max-height: 90%;
+  max-height: 94%;
 }
 </style>
