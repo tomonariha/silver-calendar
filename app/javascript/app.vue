@@ -105,7 +105,7 @@
           v-if="monthly">
           この年のカレンダーを一覧表示
         </button>
-        <p class="my-2 text-primary" v-else>
+        <p class="my-2" v-else>
           月のカレンダーをクリックすると月間カレンダーになります
         </p>
       </div>

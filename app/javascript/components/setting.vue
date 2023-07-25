@@ -10,7 +10,7 @@
       </Confirm>
       <div class="settings-area">
         <div class="content-center my-2" v-if="!(settings.length > 0)">
-          <p class="have-no-settings my-2 fs-5 text-primary">
+          <p class="have-no-settings my-2 fs-5">
             まだ条件がありません。条件を作成しましょう。
           </p>
           <br>
