@@ -22,11 +22,11 @@
         </div>
         <div v-else>
           <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
-            <span
+            <p
               class="setting-periods m-2 fs-6 rounded"
               v-bind:class="{ selected: selectedSetting === setting }">
               {{ toJapaneseDate(setting.period_start_at) }} 〜 {{ toJapaneseDate(setting.period_end_at) }}
-            </span>
+            </p>
             <div class="schedules-view m-2">
               <span>日:</span>
               <ScheduleIcon v-bind:schedule="setting.schedule_of_sunday">
@@ -178,10 +178,6 @@ function decreasePage() {
 .each-setting {
   border: solid 1px lightgray;
 }
-.setting-periods {
-  display: inline-block;
-  width: 220px;
-}
 .new-settings-button {
   width: 200px;
 }
@@ -198,12 +194,6 @@ function decreasePage() {
 .error-area {
   background: #ffbeda;
   border: 1px solid #ff5192;
-}
-.schedules-view {
-  display: inline-block;
-}
-.setting-button-area {
-  display: inline-block;
 }
 .reflect-all-setting-button {
   width: 180px;
