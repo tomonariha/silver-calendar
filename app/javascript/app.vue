@@ -85,14 +85,15 @@
           @change="cancelAutoAdjust">
           <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
         </select>
-        <span class="mx-1">年</span>
+        <span class="my-2 mx-1">年</span>
         <select
           id="selected_calendar_month"
+          class="my-2"
           v-show="monthly"
           v-model.number="calendarMonth">
           <option v-for="month in 12" :key="month">{{ month }}</option>
         </select>
-        <span class="mx-1" v-show="monthly">月</span>
+        <span class="my-2 mx-1" v-show="monthly">月</span>
         <button
           class="calendar-nav__next  button-border me-1 my-2"
           v-show="monthly"
