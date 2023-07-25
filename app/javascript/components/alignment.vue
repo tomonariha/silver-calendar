@@ -50,19 +50,20 @@
                 <img :src="googleButton" alt="google-login" />
               </div>
             </div>
-            <div class="my-2" v-else>
-              <p class="fs-6 my-2 text-primary">Google認証完了</p>
-              <p class="fs-6 m-2 text-primary">
+            <div class="my-2 content-center" v-else>
+              <span class="auth-completed my-2 fs-6 text-primary rounded">Google認証完了</span>
+              <p class="fs-6 m-2 text-primary" v-show="props.calendars.length > 0">
                 「追加」ボタンでGoogleカレンダーへ反映できます
               </p>
             </div>
             <div class="exist-calendars-area my-2 rounded">
-              <div v-if="!(props.calendars.length > 0)">
-                カレンダーがまだありません
+              <div class="have-no-calendar content-center p-2 my-2 rounded" v-if="!(props.calendars.length > 0)">
+                <p class="text-primary fs-5 my-2">連携できるカレンダーがまだありません。</p>
+                <p class="text-primary fs-5 my-2">カレンダーに勤務予定を入れてください。</p>
               </div>
               <div v-else>
                 <div
-                  class="my-2 alignment-button-area"
+                  class="my-2 alignment-button-area p-2 rounded"
                   v-for="(calendar, index) in slicedCalendars"
                   :key="index">
                   <span class="calendar_year__body m-2"
@@ -314,13 +315,17 @@ function timesValidation() {
   padding: 1em;
   background: #fff;
 }
-.exist-calendars-area {
-  border: solid 1px black;
-  background: gainsboro;
-  min-height: 220px;
-}
 .alignment-button-area {
   display: inline-block;
   text-align: end;
+  border: solid 1px lightgray;
+}
+.have-no-calendar {
+  border: solid 1px lightgray;
+}
+.auth-completed {
+  display: inline-block;
+  border: solid 2px #0d6efd;
+  padding: 4px;
 }
 </style>
