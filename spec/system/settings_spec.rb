@@ -13,7 +13,7 @@ RSpec.describe 'Settings', type: :system do
     sign_in user
     visit calendar_path
     click_button '新しい条件を作る'
-    within('#form') do
+    within('.settings') do
       select '2', from: 'start_month_select'
       select '1', from: 'start_day_select'
       select '2', from: 'end_month_select'
@@ -40,7 +40,7 @@ RSpec.describe 'Settings', type: :system do
     visit calendar_path
     expect(page).to have_content('2023-01-01 〜 2023-01-31')
     click_button '編集'
-    within('#form') do
+    within('.settings') do
       select '3', from: 'start_month_select'
       select '3', from: 'start_day_select'
       select '3', from: 'end_month_select'
