@@ -244,7 +244,7 @@
       </div>
     </section>
     <section>
-      <div class="my-4 rounded alignment-area" v-show="unAutoAdjusted">
+      <div class="alignment-area rounded my-4" v-show="unAutoAdjusted">
         <h2 class="fs-6 m-2 content-center">Googleカレンダーに反映するのはこちらから</h2>
         <div class="d-flex justify-content-center">
           <button
@@ -877,6 +877,9 @@ function reflectGoogleCalendarId(calendar) {
 .alignment-area {
   background: #e2f3ff;
   border: 1px solid #0099ff;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 8px 0;
 }
 .monthly-calendar__table {
   border: 2px solid black;
