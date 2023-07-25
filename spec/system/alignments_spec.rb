@@ -28,9 +28,9 @@ RSpec.describe 'Calendars', type: :system do
   scenario 'google oauth log in', js: true do
     sign_in user
     visit calendar_path
-    click_button '連携'
+    click_button '反映する'
     find('.google-button').click
-    click_button '連携'
+    click_button '反映する'
     expect(page).to have_content('Google認証完了')
   end
 end

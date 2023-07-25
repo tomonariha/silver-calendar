@@ -5,7 +5,7 @@
     v-on:click.self="emit('close')">
     <div class="content">
       <section>
-        <h3 class="fs-4 my-2">連携機能</h3>
+        <h3 class="fs-4 my-2">外部カレンダーに反映する</h3>
         <Confirm
           v-bind:showConfirm="Boolean(confirmedCalendar)"
           v-bind:message="'削除します。よろしいですか？'"
@@ -44,7 +44,7 @@
             <h4 class="headline fs-6 my-2">予定をGoogleカレンダーへ反映する</h4>
             <div class="my-2" v-if="notAuthenticatedGoogle">
               <p class="fs-6 m-2 text-primary">
-                Googleカレンダーと連携するにはGoogle認証が必要です
+                Googleカレンダーに反映するにはGoogle認証が必要です
               </p>
               <div v-on:click="redirectOAuth" class="google-button">
                 <img :src="googleButton" alt="google-login" />
@@ -58,7 +58,7 @@
             </div>
             <div class="exist-calendars-area my-2 rounded">
               <div class="have-no-calendar content-center p-2 my-2 rounded" v-if="!(props.calendars.length > 0)">
-                <p class="text-primary fs-5 my-2">連携できるカレンダーがまだありません。</p>
+                <p class="text-primary fs-5 my-2">反映できるカレンダーがまだありません。</p>
                 <p class="text-primary fs-5 my-2">カレンダーに勤務予定を入れてください。</p>
               </div>
               <div v-else>
