@@ -25,7 +25,7 @@
             <span
               class="setting-periods m-2 fs-6 rounded"
               v-bind:class="{ selected: selectedSetting === setting }">
-              {{ setting.period_start_at }} 〜 {{ setting.period_end_at }}
+              {{ toJapaneseDate(setting.period_start_at) }} 〜 {{ toJapaneseDate(setting.period_end_at) }}
             </span>
             <div class="schedules-view m-2">
               <span>日:</span>
@@ -107,6 +107,7 @@ import ScheduleIcon from './scheduleIcon.vue'
 import SettingForm from './settingForm.vue'
 
 const { settings, deleteFromSettings } = inject('settings')
+const { toJapaneseDate } = inject('dateMethods')
 const selectedSetting = ref(null)
 const toast = useToast()
 const props = defineProps({

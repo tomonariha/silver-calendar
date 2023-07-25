@@ -283,7 +283,7 @@ import { format, isEqual } from 'date-fns'
 
 function showPeriod() {
   if (reflectedSetting.value) {
-    const periodOfReflectedSetting = `${reflectedSetting.value.period_start_at} ~ ${reflectedSetting.value.period_end_at}`
+    const periodOfReflectedSetting = `${toJapaneseDate(reflectedSetting.value.period_start_at)} ~ ${toJapaneseDate(reflectedSetting.value.period_end_at)}`
     return periodOfReflectedSetting
   }
 }
@@ -635,6 +635,16 @@ function autoAdjustFromAllSettings() {
   autoAdjustAll.value = true
   monthly.value = false
 }
+function toJapaneseDate(dateString) {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${year}年${month}月${day}日`
+}
+provide('dateMethods', {
+  toJapaneseDate
+})
 //条件設定関連
 const settings = ref([])
 function createToSettings(createdSetting) {
