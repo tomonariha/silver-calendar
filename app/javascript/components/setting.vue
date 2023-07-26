@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded my-2 settings">
+  <div class="settings my-2 rounded">
     <section>
       <h2 class="headline-md">条件から勤務予定を設定する</h2>
       <Confirm
@@ -23,7 +23,7 @@
         <div v-else>
           <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
             <p
-              class="setting-periods m-2 fs-6 rounded"
+              class="setting-periods m-2 fs-5 rounded"
               v-bind:class="{ selected: selectedSetting === setting }">
               {{ toJapaneseDate(setting.period_start_at) }} 〜 {{ toJapaneseDate(setting.period_end_at) }}
             </p>
@@ -53,7 +53,7 @@
             <div class="setting-button-area m-2">
               <button
                 v-on:click="editSetting(setting)"
-                class="btn btn-sm inconspicuous-button ms-1">
+                class="btn btn-sm inconspicuous-button">
                 編集
               </button>
               <button

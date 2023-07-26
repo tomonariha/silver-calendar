@@ -5,7 +5,7 @@
     v-on:click.self="emit('close')">
     <div class="content">
       <section>
-        <h3 class="headline-lg">外部カレンダーに反映する</h3>
+        <h3 class="headline-lg mt-2">外部カレンダーに反映する</h3>
         <Confirm
           v-bind:showConfirm="Boolean(confirmedCalendar)"
           v-bind:message="'削除します。よろしいですか？'"
