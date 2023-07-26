@@ -12,6 +12,7 @@
 }
 .container {
   max-width: 768px;
+  padding: 16px 20px;
 }
 .content-center {
   text-align: center;
@@ -75,4 +76,9 @@ em {
   background-repeat: repeat-x;
   position: relative;
   top: 4px;
+}
+@media (max-width: 400px) {
+  .container {
+    padding: 16px 8px;
+  }
 }

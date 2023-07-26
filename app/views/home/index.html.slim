@@ -1,5 +1,5 @@
 - set_meta_tags(title: 'トップ', description: 'ホーム画面です。')
-.container.bg-primary.p-2
+.container.bg-primary
   .content-center.m-2
     = image_tag('title.svg', alt: 'タイトルロゴ', class: 'title-top')
   .p.text-white.content-center.my-4
@@ -15,7 +15,7 @@
   .content-center
     =link_to '登録済みの方はこちらからログイン', calendar_path, class: 'btn btn-primary mb-4 login-button'
     
-.container.bg-white.p-4
+.container.bg-white
   section
     h1.fs-3.text-center
       | 勤務スケジュールを手動で登録するのが
