@@ -21,7 +21,7 @@
           </button>
         </div>
         <div v-else>
-          <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded">
+          <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded content-center">
             <p
               class="setting-periods m-2 fs-5 rounded"
               v-bind:class="{ selected: selectedSetting === setting }">
