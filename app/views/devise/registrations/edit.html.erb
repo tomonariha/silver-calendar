@@ -16,7 +16,7 @@
           <div><%= t('.currently_waiting_confirmation_for_email', email: resource.unconfirmed_email) %></div>
         <% end %>
       
-        <div class="field my-2">
+        <div class="field my-4">
           <%= f.label :password, class: 'user_form_label' %> <em>(<%= t('.leave_blank_if_you_don_t_want_to_change_it') %>)</em><br />
           <%= f.password_field :password, autocomplete: "new-password", class: 'user_form_field' %>
           <% if @minimum_password_length %>
@@ -25,7 +25,7 @@
           <% end %>
         </div>
       
-        <div class="field my-2">
+        <div class="field my-4">
           <%= f.label :password_confirmation, class: 'user_form_label' %><br />
           <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'user_form_field' %>
           <div class="form-text">パスワードの確認のため、再度パスワードを入力してください。</div>
@@ -42,17 +42,17 @@
       <% end %>
   
       <section class='text-right my-4'>
-        <h3 class="fs-5 my-2"><%= t('.cancel_my_account') %></h3>
+        <h3 class="headline-md"><%= t('.cancel_my_account') %></h3>
         
         <%= button_to t('.cancel_my_account'),
           registration_path(resource_name),
           data: { confirm: t('.are_you_sure') },
           method: :delete,
-          class:"rounded mb-2 text-link"
+          class:"rounded my-2 text-link"
         %><br />
       </section>
   
-      <div class="my-4">
+      <div class="my-4 fs-5">
         <%= link_to t('devise.shared.links.back'), :back %>
       </div>
     </section>
