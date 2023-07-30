@@ -68,12 +68,12 @@ RSpec.describe 'Calendars', type: :system do
     within '#day1' do
       expect(find('.calendar__day-button')).to have_selector("img[alt='off']")
     end
-    expect(page).to have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to have_content('2023年1月1日 〜 2023年1月31日')
     find('.delete-calendar').click
     click_button 'はい'
     within '#day1' do
       expect(find('.calendar__day-button')).to_not have_selector("img[alt='off']")
     end
-    expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to_not have_content('2023年1月1日 〜 2023年1月31日')
   end
 end

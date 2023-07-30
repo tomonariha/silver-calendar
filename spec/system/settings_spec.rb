@@ -32,13 +32,13 @@ RSpec.describe 'Settings', type: :system do
       choose '全日出勤'
       click_button '登録'
     end
-    expect(page).to have_content('2023-02-01 〜 2023-02-28')
+    expect(page).to have_content('2023年2月1日 〜 2023年2月28日')
   end
 
   scenario 'user update setting', js: true do
     sign_in user
     visit calendar_path
-    expect(page).to have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to have_content('2023年1月1日 〜 2023年1月31日')
     click_button '編集'
     within('.settings') do
       select '3', from: 'start_month_select'
@@ -47,8 +47,8 @@ RSpec.describe 'Settings', type: :system do
       select '30', from: 'end_day_select'
       click_button '変更'
     end
-    expect(page).to have_content('2023-03-03 〜 2023-03-30')
-    expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to have_content('2023年3月3日 〜 2023年3月30日')
+    expect(page).to_not have_content('2023年1月1日 〜 2023年1月31日')
   end
 
   scenario 'user apply setting to calendar', js: true do
@@ -65,9 +65,9 @@ RSpec.describe 'Settings', type: :system do
   scenario 'user delete setting', js: true do
     sign_in user
     visit calendar_path
-    expect(page).to have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to have_content('2023年1月1日 〜 2023年1月31日')
     find('.delete-button').click
     click_button 'はい'
-    expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to_not have_content('2023年1月1日 〜 2023年1月31日')
   end
 end
