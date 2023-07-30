@@ -75,9 +75,7 @@
               ＞ {{ nextWeekday }}曜日
             </button>
             <div class="m-2weekday-nav__body">
-              <p class="m-2">
-                期間内のこの曜日全てに下の予定が入ります
-              </p>
+              <p class="m-2">期間内のこの曜日全てに下の予定が入ります</p>
               <input
                 type="radio"
                 id="none"

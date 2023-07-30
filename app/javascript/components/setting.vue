@@ -13,7 +13,7 @@
           <p class="have-no-settings my-2 fs-5">
             まだ条件がありません。条件を作成しましょう。
           </p>
-          <br>
+          <br />
           <button
             class="btn btn-primary m-2 new-settings-button"
             v-on:click="newSetting()">
@@ -21,11 +21,15 @@
           </button>
         </div>
         <div v-else>
-          <div v-for="setting in slicedSettings" :key="setting.id" class="each-setting my-2 rounded content-center">
+          <div
+            v-for="setting in slicedSettings"
+            :key="setting.id"
+            class="each-setting my-2 rounded content-center">
             <p
               class="setting-periods m-2 fs-5 rounded"
               v-bind:class="{ selected: selectedSetting === setting }">
-              {{ toJapaneseDate(setting.period_start_at) }} 〜 {{ toJapaneseDate(setting.period_end_at) }}
+              {{ toJapaneseDate(setting.period_start_at) }} 〜
+              {{ toJapaneseDate(setting.period_end_at) }}
             </p>
             <div class="schedules-view m-2">
               <span>日:</span>
@@ -61,7 +65,9 @@
                 class="btn btn-sm btn-primary ms-1">
                 適用
               </button>
-              <span v-on:click="confirmDialog(setting)" class="delete-button ms-1"
+              <span
+                v-on:click="confirmDialog(setting)"
+                class="delete-button ms-1"
                 >削除</span
               >
             </div>
@@ -81,7 +87,9 @@
               v-on:click="newSetting()">
               新しい条件を作る
             </button>
-            <button class="btn btn-primary reflect-all-setting-button m-2" v-on:click="reflectAllSettings()">
+            <button
+              class="btn btn-primary reflect-all-setting-button m-2"
+              v-on:click="reflectAllSettings()">
               条件を一括適用
             </button>
           </div>

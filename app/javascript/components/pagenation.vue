@@ -45,10 +45,7 @@ const displayedPageNumbers = computed(() => {
     pages.push('...')
   }
   for (let i = -props.displayRange; i <= props.displayRange; i++) {
-    if (
-      props.currentPage + i > 1 &&
-      props.currentPage + i < totalPages
-    ) {
+    if (props.currentPage + i > 1 && props.currentPage + i < totalPages) {
       pages.push(props.currentPage + i)
     }
   }

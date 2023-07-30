@@ -246,7 +246,9 @@
     </section>
     <section>
       <div class="alignment-area rounded my-4" v-show="unAutoAdjusted">
-        <h2 class="fs-6 my-2 content-center">Googleカレンダーに反映するのはこちらから</h2>
+        <h2 class="fs-6 my-2 content-center">
+          Googleカレンダーに反映するのはこちらから
+        </h2>
         <div class="d-flex justify-content-center">
           <button
             type="button"
@@ -284,7 +286,9 @@ import { format, isEqual } from 'date-fns'
 
 function showPeriod() {
   if (reflectedSetting.value) {
-    const periodOfReflectedSetting = `${toJapaneseDate(reflectedSetting.value.period_start_at)} ~ ${toJapaneseDate(reflectedSetting.value.period_end_at)}`
+    const periodOfReflectedSetting = `${toJapaneseDate(
+      reflectedSetting.value.period_start_at
+    )} ~ ${toJapaneseDate(reflectedSetting.value.period_end_at)}`
     return periodOfReflectedSetting
   }
 }
@@ -469,7 +473,9 @@ function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formattedDate = formatDate(new Date(date.year, date.month - 1, date.date))
+  const formattedDate = formatDate(
+    new Date(date.year, date.month - 1, date.date)
+  )
   return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
@@ -652,7 +658,9 @@ function createToSettings(createdSetting) {
   createdSetting.period_start_at = formatDate(
     new Date(createdSetting.period_start_at)
   )
-  createdSetting.period_end_at = formatDate(new Date(createdSetting.period_end_at))
+  createdSetting.period_end_at = formatDate(
+    new Date(createdSetting.period_end_at)
+  )
   settings.value.push(createdSetting)
   sortSettings()
 }
@@ -664,7 +672,9 @@ function updateSettings(updatedSetting) {
   updatedSetting.period_start_at = formatDate(
     new Date(updatedSetting.period_start_at)
   )
-  updatedSetting.period_end_at = formatDate(new Date(updatedSetting.period_end_at))
+  updatedSetting.period_end_at = formatDate(
+    new Date(updatedSetting.period_end_at)
+  )
   const found = settings.value.find(
     (setting) => setting.id === updatedSetting.id
   )

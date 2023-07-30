@@ -2,8 +2,12 @@
   <div class="overlay" v-show="showConfirm" v-on:click.self="emit('cancel')">
     <div class="confirm">
       <p>{{ props.message }}</p>
-      <button class="button-border m-1" v-on:click="emit('execution')">はい</button>
-      <button class="button-border m-1" v-on:click="emit('cancel')">いいえ</button>
+      <button class="button-border m-1" v-on:click="emit('execution')">
+        はい
+      </button>
+      <button class="button-border m-1" v-on:click="emit('cancel')">
+        いいえ
+      </button>
     </div>
   </div>
 </template>
