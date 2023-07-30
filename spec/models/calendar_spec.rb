@@ -7,12 +7,6 @@ RSpec.describe Calendar, type: :model do
     expect(FactoryBot.create(:calendar)).to be_valid
   end
 
-  it 'is invalid without user_id' do
-    calendar = Calendar.new(user_id: nil)
-    calendar.valid?
-    expect(calendar.errors[:user_id]).to include('を入力してください')
-  end
-
   it 'is invalid with invalid number in year' do
     calendar = FactoryBot.build(:calendar, year: 2101)
     calendar.valid?

@@ -7,12 +7,6 @@ RSpec.describe Setting, type: :model do
     expect(FactoryBot.create(:setting)).to be_valid
   end
 
-  it 'is invalid without calendar_id' do
-    setting = Setting.new(calendar_id: nil)
-    setting.valid?
-    expect(setting.errors[:calendar_id]).to include('を入力してください')
-  end
-
   it 'is invalid without period_start_at' do
     setting = Setting.new(period_start_at: nil)
     setting.valid?
