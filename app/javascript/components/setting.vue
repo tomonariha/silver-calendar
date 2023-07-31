@@ -40,7 +40,7 @@
               <div class="each-schedule-description">
                 <span class="fs-5">月</span>
                 <ScheduleIcon v-bind:schedule="setting.schedule_of_monday">
-                </ScheduleIcon> 
+                </ScheduleIcon>
               </div>
               <div class="each-schedule-description">
                 <span class="fs-5">火</span>
