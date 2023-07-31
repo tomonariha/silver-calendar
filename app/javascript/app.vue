@@ -111,11 +111,12 @@
         </p>
       </div>
       <div class="my-2 content-center" v-if="monthly">
-        <div class="calendar-nav__year my-2">
-          {{ calendarYear }}年{{ calendarMonth }}月 合計:{{
+        <div class="calendar-nav__year">
+          <p class="current-year">{{ calendarYear }}年{{ calendarMonth }}月</p>
+          <p>合計勤務日数:{{
             totalWorkingDays[calendarMonth]
           }}
-          有給：{{ totalPaidLeaves[calendarMonth] }}
+          有給：{{ totalPaidLeaves[calendarMonth] }}</p>
         </div>
         <ScheduleDescription></ScheduleDescription>
         <div class="monthly-calendar">
@@ -158,10 +159,12 @@
         </div>
       </div>
       <div class="content-center" v-else>
-        <div class="calendar-nav__year my-2">
-          {{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }} 有給：{{
+        <div class="calendar-nav__year">
+          <p class="current-year">{{ calendarYear }}年</p>
+          <p>合計勤務日数:{{ yearyTotalWorkingDays() }}
+          有給：{{
             yearyTotalPaidLeaves()
-          }}
+          }}</p>
         </div>
         <ScheduleDescription></ScheduleDescription>
         <div
@@ -169,7 +172,7 @@
           v-for="month in 12"
           :key="month"
           v-on:click="toMonthlyCalendar(month)">
-          {{ month }}月 合計:{{ totalWorkingDays[month] }} 有給：{{
+          {{ month }}月 勤務日数:{{ totalWorkingDays[month] }} 有給：{{
             totalPaidLeaves[month]
           }}
           <table class="yeary-calendar__table">
@@ -822,10 +825,6 @@ function reflectGoogleCalendarId(calendar) {
 </script>
 
 <style scoped>
-.calendar-nav__year {
-  background: #e2f3ff;
-  border: 1px solid #0099ff;
-}
 .yeary-calendar__table {
   border: 2px solid black;
   text-align: center;

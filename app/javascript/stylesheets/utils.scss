@@ -80,6 +80,11 @@ em {
 .line-height-middle {
   line-height: 1.5;
 }
+.current-year {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 12px 0 0 0;
+}
 @media (max-width: 400px) {
   .container {
     padding: 16px 8px;
