@@ -68,7 +68,7 @@
                 </ScheduleIcon>
               </div>
             </div>
-            <div class="setting-button-area m-2">
+            <div class="setting-button-area my-2">
               <button
                 v-on:click="editSetting(setting)"
                 class="btn btn-sm inconspicuous-button">

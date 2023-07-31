@@ -11,7 +11,7 @@
       <h2 class="headline-md">日毎に予定を入力する</h2>
       <div class="my-2 content-center" v-show="autoAdjusted">
         <div class="auto-adjust-info rounded" v-if="autoAdjustAll">
-          <p>条件を一括適用しました</p>
+          <p class="fs-5">条件を一括適用しました</p>
         </div>
         <div
           class="auto-adjust-info rounded"
@@ -19,15 +19,15 @@
           v-bind:class="{
             'not-just': numberOfWorkingDays !== workingDaysRequired
           }">
-          <p>期間:{{ showPeriod() }}</p>
-          <p class="current-working-days">
+          <p class="fs-5">期間:{{ showPeriod() }}</p>
+          <p class="current-working-days fs-5">
             (現在の日数){{ numberOfWorkingDays }} /
             {{ workingDaysRequired }}(必要日数)
           </p>
         </div>
         <div class="auto-adjust-info rounded" v-else>
-          <p>期間:{{ showPeriod() }}</p>
-          <p class="current-working-days rounded">
+          <p class="fs-5">期間:{{ showPeriod() }}</p>
+          <p class="current-working-days rounded fs-5">
             (現在の日数){{ numberOfWorkingDays }}
           </p>
         </div>
