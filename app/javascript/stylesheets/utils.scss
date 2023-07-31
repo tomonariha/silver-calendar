@@ -90,3 +90,9 @@ em {
     padding: 16px 8px;
   }
 }
+@media (max-width: 600px) {
+  .footer-items {
+    display: flex;
+    flex-direction: column;
+  }
+}
