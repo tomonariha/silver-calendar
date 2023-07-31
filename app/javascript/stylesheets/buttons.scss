@@ -32,6 +32,10 @@
   border: solid 1px #959595;
   border-radius: 4px;
 }
+.button-wide {
+  width: 260px;
+  max-width: 100%;
+}
 .simple-button {
   --bs-btn-color: black;
   --bs-btn-bg: #fff;
