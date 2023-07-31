@@ -31,28 +31,42 @@
               {{ toJapaneseDate(setting.period_start_at) }} 〜
               {{ toJapaneseDate(setting.period_end_at) }}
             </p>
-            <div class="schedules-view m-2">
-              <span>日:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_sunday">
-              </ScheduleIcon>
-              <span>月:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_monday">
-              </ScheduleIcon>
-              <span>火:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_tuesday">
-              </ScheduleIcon>
-              <span>水:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_wednesday">
-              </ScheduleIcon>
-              <span>木:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_thursday">
-              </ScheduleIcon>
-              <span>金:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_friday">
-              </ScheduleIcon>
-              <span>土:</span>
-              <ScheduleIcon v-bind:schedule="setting.schedule_of_saturday">
-              </ScheduleIcon>
+            <div class="schedule-descriptions m-2">
+              <div class="each-schedule-description">
+                <span class="fs-5">日</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_sunday">
+                </ScheduleIcon>
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">月</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_monday">
+                </ScheduleIcon> 
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">火</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_tuesday">
+                </ScheduleIcon>
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">水</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_wednesday">
+                </ScheduleIcon>
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">木</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_thursday">
+                </ScheduleIcon>
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">金</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_friday">
+                </ScheduleIcon>
+              </div>
+              <div class="each-schedule-description">
+                <span class="fs-5">土</span>
+                <ScheduleIcon v-bind:schedule="setting.schedule_of_saturday">
+                </ScheduleIcon>
+              </div>
             </div>
             <div class="setting-button-area m-2">
               <button

@@ -29,9 +29,3 @@ const props = defineProps({
   schedule: String
 })
 </script>
-
-<style scoped>
-.schedule-icons {
-  display: inline;
-}
-</style>

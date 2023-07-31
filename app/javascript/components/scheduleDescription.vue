@@ -30,20 +30,3 @@ import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 </script>
-
-<style scoped>
-.schedule-descriptions {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-.each-schedule-description {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 62px;
-  font-size: 14px;
-  line-height: 1.2;
-  gap: 4px;
-}
-</style>

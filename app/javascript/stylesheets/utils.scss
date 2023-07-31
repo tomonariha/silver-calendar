@@ -88,6 +88,20 @@ em {
 .add-colon::after {
   content: ':';
 }
+.schedule-descriptions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.each-schedule-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 62px;
+  font-size: 14px;
+  line-height: 1.2;
+  gap: 4px;
+}
 @media (max-width: 400px) {
   .container {
     padding: 16px 8px;
