@@ -36,7 +36,7 @@ RSpec.describe 'Calendars', type: :system do
       click_button 'paidleave'
     end
 
-    expect(page).to have_content('2023年1月 合計:2 有給：2')
+    expect(page).to have_content('合計勤務日数2有給2')
   end
 
   scenario 'user delete schedule on day of calendar', js: true do
