@@ -1,6 +1,6 @@
 <template>
   <div class="m-2">
-    <span>{{ schedules[props.dayOfSchedule] }}</span>
+    <span class="add-colon me-2">{{ schedules[props.dayOfSchedule] }}</span>
     <select v-model.number="workingTimes[`${props.dayOfSchedule}StartHour`]">
       <option
         v-for="hour in 24"
@@ -51,7 +51,7 @@ import { inject } from 'vue'
 const props = defineProps({
   dayOfSchedule: String
 })
-const schedules = { morning: '午前: ', afterNoon: '午後: ', fullTime: '全日: ' }
+const schedules = { morning: '午前', afterNoon: '午後', fullTime: '全日' }
 const workingTimes = inject('workingTimes')
 const minits = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
 function formatTimeNumber(i) {

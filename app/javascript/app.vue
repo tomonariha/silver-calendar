@@ -113,10 +113,10 @@
       <div class="my-2 content-center" v-if="monthly">
         <div class="calendar-nav__year">
           <p class="current-year">{{ calendarYear }}年{{ calendarMonth }}月</p>
-          <p>合計勤務日数:{{
-            totalWorkingDays[calendarMonth]
-          }}
-          有給：{{ totalPaidLeaves[calendarMonth] }}</p>
+          <span class="add-colon">合計勤務日数</span>
+          <span class="mx-1">{{ totalWorkingDays[calendarMonth] }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ totalPaidLeaves[calendarMonth] }}</span>
         </div>
         <ScheduleDescription></ScheduleDescription>
         <div class="monthly-calendar">
@@ -161,10 +161,10 @@
       <div class="content-center" v-else>
         <div class="calendar-nav__year">
           <p class="current-year">{{ calendarYear }}年</p>
-          <p>合計勤務日数:{{ yearyTotalWorkingDays() }}
-          有給：{{
-            yearyTotalPaidLeaves()
-          }}</p>
+          <span class="add-colon">合計勤務日数</span>
+          <span class="mx-1">{{ yearyTotalWorkingDays() }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ yearyTotalPaidLeaves() }}</span>
         </div>
         <ScheduleDescription></ScheduleDescription>
         <div
@@ -172,9 +172,10 @@
           v-for="month in 12"
           :key="month"
           v-on:click="toMonthlyCalendar(month)">
-          {{ month }}月 勤務日数:{{ totalWorkingDays[month] }} 有給：{{
-            totalPaidLeaves[month]
-          }}
+          <span class="add-colon">{{ month }}月 勤務日数</span>
+          <span class="mx-1">{{ totalWorkingDays[month] }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ totalPaidLeaves[month] }}</span>
           <table class="yeary-calendar__table">
             <thead class="yeary-calendar__header">
               <tr>

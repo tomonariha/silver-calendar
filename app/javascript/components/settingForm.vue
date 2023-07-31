@@ -7,7 +7,7 @@
           <h3 class="headline-lg mt-2" v-else>新しい条件の登録</h3>
           <section>
             <h4 class="headline-md">条件を適用する期間</h4>
-            <label for="startAt" class="fs-6 mx-2 my-1">開始日：</label>
+            <label for="startAt" class="add-colon fs-6 mx-2 my-1">開始日</label>
             <select
               id="start_month_select"
               name="startAt"
@@ -24,7 +24,7 @@
             </select>
             <span class="fs-6 m-1">日</span>
             <br />
-            <label for="endAt" class="fs-6 mx-2 my-1">終了日：</label>
+            <label for="endAt" class="add-colon fs-6 mx-2 my-1">終了日</label>
             <select
               id="end_month_select"
               name="endAt"
