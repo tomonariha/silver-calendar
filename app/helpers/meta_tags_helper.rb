@@ -4,8 +4,8 @@ module MetaTagsHelper
   # rubocop:disable Metrics/MethodLength
   def default_meta_tags
     {
-      site: 'SilverCalendar',
-      title: 'SilverCalendar',
+      site: 'シルバーカレンダー',
+      title: 'シルバーカレンダー',
       reverse: true,
       charset: 'utf-8',
       description: '勤務日程自動調整アプリ',
@@ -13,9 +13,9 @@ module MetaTagsHelper
       separator: '|',
       viewport: 'width=device-width, initial-scale=1.0',
       og: {
-        title: 'SilverCalendar',
+        title: 'シルバーカレンダー',
         type: 'website',
-        site_name: 'SilverCalendar',
+        site_name: 'シルバーカレンダー',
         description: '勤務日程自動調整アプリ',
         image: image_url('ogp.png'),
         url: 'https://silver-calendar.com',
