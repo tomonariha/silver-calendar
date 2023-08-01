@@ -1,105 +1,35 @@
 <template>
-  <div>
-    <h2 class="fs-4 my-2">連携機能</h2>
-    <div id="overlay" v-show="confirmedCalendar">
-      <div id="confirm">
+  <div
+    class="overlay"
+    v-show="showAlignmentForm"
+    v-on:click.self="emit('close')">
+    <div class="content">
+      <section>
+        <h3 class="headline-lg mt-2">外部カレンダーに反映する</h3>
         <Confirm
+          v-bind:showConfirm="Boolean(confirmedCalendar)"
           v-bind:message="'削除します。よろしいですか？'"
           v-on:execution="
             fetchGoogleCalendar(confirmedCalendar, requestMethods['delete'])
           "
           v-on:cancel="cancelConfirm">
         </Confirm>
-      </div>
-    </div>
-    <div id="overlay" v-show="isFetching">
-      <p id="fetching">反映しています。しばらくお待ちください</p>
-    </div>
-    <div class="google-calendar my-2">
-      <h3 class="fs-5 my-2">Googleカレンダー</h3>
-      <div class="my-2" v-if="notAuthenticatedGoogle">
-        <p class="fs-6 my-2 text-info">
-          Googleカレンダーと連携するにはGoogle認証が必要です
-        </p>
-        <div v-on:click="redirectOAuth" class="google-button">
-          <img :src="googleButton" alt="google-login" />
+        <div class="overlay" v-show="isFetching">
+          <p class="fetching">反映しています。しばらくお待ちください</p>
         </div>
-      </div>
-      <div class="my-2" v-else>
-        <p class="fs-6 my-2 text-primary">認証済</p>
-      </div>
-      <div class="exist-calendars-area my-2">
-        <div v-if="haveNoCalendars">カレンダーがまだありません</div>
-        <div v-else>
-          <div
-            class="my-2"
-            v-for="(calendar, index) in slicedCalendars"
-            :key="index">
-            <span class="calendar_year__body me-3">{{ calendar.year }}年</span>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                calendar.google_calendar_id ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="
-                fetchGoogleCalendar(calendar, requestMethods['create'])
-              ">
-              追加
-            </button>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                notExistsGoogleId(calendar.google_calendar_id) ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="
-                fetchGoogleCalendar(calendar, requestMethods['update'])
-              ">
-              更新
-            </button>
-            <button
-              class="btn btn-dark ms-1"
-              v-bind:disabled="
-                notExistsGoogleId(calendar.google_calendar_id) ||
-                isFetching ||
-                notAuthenticatedGoogle
-              "
-              v-on:click="confirmDialog(calendar)">
-              削除
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="pagenation my-2">
-        <span
-          class="page-number m-1 fs-5"
-          v-for="(pageNumber, index) in displayPageNumbers"
-          :key="index">
-          <span
-            v-bind:class="{ 'current-page': currentPage === pageNumber }"
-            v-on:click="updatePageNumber(pageNumber, index)">
-            {{ pageNumber }}
-          </span>
-        </span>
-      </div>
-      <button class="btn btn-primary my-2" v-on:click="showTimeForm = true">
-        時刻の設定
-      </button>
-    </div>
-    <button class="btn btn-dark my-2" v-on:click="emit('close')">閉じる</button>
-    <div id="overlay" v-show="showTimeForm">
-      <div id="time">
         <div class="time-form">
-          <h3 class="fs-5 my-2">時刻の設定</h3>
-          <Time v-bind:dayOfSchedule="'morning'"> </Time>
-          <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
-          <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
-          <button class="btn btn-primary my-2" v-on:click="fetchTimes">
-            保存
-          </button>
+          <section>
+            <h4 class="headline-md">時刻の設定</h4>
+            <p class="m-2">Googleカレンダーに反映する際の時刻を設定します</p>
+            <Time v-bind:dayOfSchedule="'morning'"> </Time>
+            <Time v-bind:dayOfSchedule="'afterNoon'"> </Time>
+            <Time v-bind:dayOfSchedule="'fullTime'"> </Time>
+            <div class="content-center">
+              <button class="btn btn-primary my-2" v-on:click="fetchTimes">
+                時刻を保存
+              </button>
+            </div>
+          </section>
         </div>
         <div v-show="errors.length > 0">
           <b>以下のエラーの修正をお願いします:</b>
@@ -107,10 +37,94 @@
             <li v-for="error in errors" :key="error.id">{{ error }}</li>
           </ul>
         </div>
-        <button class="btn btn-dark my-2" v-on:click="showTimeForm = false">
-          閉じる
+        <div class="google-calendar my-2">
+          <section>
+            <h4 class="headline-md">予定をGoogleカレンダーへ反映する</h4>
+            <div class="my-2" v-if="notAuthenticatedGoogle">
+              <p class="fs-6 m-2">
+                Googleカレンダーに反映するにはGoogle認証が必要です
+              </p>
+              <div v-on:click="redirectOAuth" class="google-button">
+                <img :src="googleButton" alt="google-login" />
+              </div>
+            </div>
+            <div class="my-2 content-center" v-else>
+              <span class="auth-completed my-2 fs-6 text-primary rounded"
+                >Google認証完了</span
+              >
+              <p class="fs-6 m-2" v-show="props.calendars.length > 0">
+                「追加」ボタンでGoogleカレンダーへ反映できます
+              </p>
+            </div>
+            <div class="exist-calendars-area my-2 rounded">
+              <div
+                class="have-no-calendar content-center p-2 my-2 rounded"
+                v-if="!(props.calendars.length > 0)">
+                <p class="fs-5 my-2">反映できるカレンダーがまだありません。</p>
+                <p class="fs-5 my-2">カレンダーに勤務予定を入れてください。</p>
+              </div>
+              <div v-else>
+                <div
+                  class="my-2 alignment-button-area p-2 rounded"
+                  v-for="(calendar, index) in slicedCalendars"
+                  :key="index">
+                  <span class="calendar_year__body m-2"
+                    >{{ calendar.year }}年</span
+                  >
+                  <button
+                    class="btn btn-primary ms-1"
+                    v-bind:disabled="
+                      calendar.google_calendar_id ||
+                      isFetching ||
+                      notAuthenticatedGoogle
+                    "
+                    v-on:click="
+                      fetchGoogleCalendar(calendar, requestMethods['create'])
+                    ">
+                    追加
+                  </button>
+                  <button
+                    class="btn btn-primary ms-1"
+                    v-bind:disabled="
+                      notExistsGoogleId(calendar.google_calendar_id) ||
+                      isFetching ||
+                      notAuthenticatedGoogle
+                    "
+                    v-on:click="
+                      fetchGoogleCalendar(calendar, requestMethods['update'])
+                    ">
+                    更新
+                  </button>
+                  <button
+                    class="btn btn-sm ms-1 inconspicuous-button"
+                    v-bind:disabled="
+                      notExistsGoogleId(calendar.google_calendar_id) ||
+                      isFetching ||
+                      notAuthenticatedGoogle
+                    "
+                    v-on:click="confirmDialog(calendar)">
+                    削除
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Pagenation
+              v-bind:array="props.calendars"
+              v-bind:pageLimit="pageLimit"
+              v-bind:currentPage="currentPage"
+              v-bind:displayRange="displayRange"
+              v-on:updateCurrentPage="updateCurrentPage"
+              v-on:increasePage="increasePage"
+              v-on:decreasePage="decreasePage">
+            </Pagenation>
+          </section>
+        </div>
+        <button
+          class="btn btn-sm inconspicuous-button my-2"
+          v-on:click="emit('close')">
+          キャンセル
         </button>
-      </div>
+      </section>
     </div>
   </div>
 </template>
@@ -119,16 +133,17 @@
 import { ref, computed, onMounted, provide } from 'vue'
 import Confirm from './confirm.vue'
 import Time from './time.vue'
+import Pagenation from './pagenation.vue'
 import { useToast } from 'vue-toastification'
 import googleButton from '../../assets/images/btn_google_signin_dark_normal_web.png?url'
+import { FetchRequest } from '@rails/request.js'
 
 const toast = useToast()
 const props = defineProps({
+  showAlignmentForm: Boolean,
   calendars: Array
 })
-const emit = defineEmits(['close', 'delete', 'create', 'update'])
-const showTimeForm = ref(false)
-// 時刻設定用
+const emit = defineEmits(['close', 'reflect'])
 const morningStartHour = ref(8)
 const morningStartMinit = ref(0)
 const morningEndHour = ref(12)
@@ -155,26 +170,17 @@ const workingTimes = ref({
   fullTimeEndHour,
   fullTimeEndMinit
 })
-function fetchTimes() {
+async function fetchTimes() {
   if (timesValidation()) {
     return
   }
-  fetch('api/times', {
-    method: 'PUT',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(workingTimes.value),
-    credentials: 'same-origin'
+  const request = new FetchRequest('put', 'api/v1/times', {
+    body: JSON.stringify(workingTimes.value)
   })
-    .then(() => {
-      toast(`保存しました`)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  const response = await request.perform()
+  if (response.ok) {
+    toast(`保存しました`)
+  }
 }
 provide('workingTimes', workingTimes)
 // Google
@@ -188,135 +194,65 @@ function redirectOAuth() {
 function notExistsGoogleId(google_calendar_id) {
   return !google_calendar_id
 }
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
 const requestMethods = {
-  create: 'POST',
-  delete: 'DELETE',
-  update: 'PUT'
+  create: 'post',
+  delete: 'delete',
+  update: 'put'
 }
 const toActionString = {
-  POST: '作成',
-  DELETE: '削除',
-  PUT: '更新'
+  post: '作成',
+  delete: '削除',
+  put: '更新'
 }
 const isFetching = ref(false)
-function fetchGoogleCalendar(calendar, method) {
-  if (method != 'DELETE' && timesValidation()) {
+async function fetchGoogleCalendar(calendar, method) {
+  if (method != 'delete' && timesValidation()) {
     return
   }
   isFetching.value = true
   cancelConfirm()
-  fetch(`api/calendars/${calendar.year}/alignment`, {
-    method: method,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(workingTimes.value),
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      if (method === 'DELETE') {
-        calendar['google_calendar_id'] = null
-      } else {
-        calendar['google_calendar_id'] = json.google_calendar_id
-      }
-      toast(`${toActionString[method]}しました`)
-      emit(method, calendar)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-    .finally(() => {
-      isFetching.value = false
-    })
+  const request = new FetchRequest(
+    `${method}`,
+    `api/v1/calendars/${calendar.year}/alignment`,
+    { body: JSON.stringify(workingTimes.value) }
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    if (method === 'delete') {
+      calendar['google_calendar_id'] = null
+    } else {
+      calendar['google_calendar_id'] = body.google_calendar_id
+    }
+    toast(`${toActionString[method]}しました`)
+    emit('reflect', calendar)
+  }
+  isFetching.value = false
 }
-function fetchUser() {
-  fetch('api/users', {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
+async function fetchUser() {
+  const request = new FetchRequest('get', 'api/v1/users')
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    authenticatedGoogle.value = body.authenticate
+    Object.assign(workingTimes.value, {
+      morningStartHour: body.morningStartHour,
+      morningStartMinit: body.morningStartMinit,
+      morningEndHour: body.morningEndHour,
+      morningEndMinit: body.morningEndMinit,
+      afterNoonStartHour: body.afterNoonStartHour,
+      afterNoonStartMinit: body.afterNoonStartMinit,
+      afterNoonEndHour: body.afterNoonEndHour,
+      afterNoonEndMinit: body.afterNoonEndMinit,
+      fullTimeStartHour: body.fullTimeStartHour,
+      fullTimeStartMinit: body.fullTimeStartMinit,
+      fullTimeEndHour: body.fullTimeEndHour,
+      fullTimeEndMinit: body.fullTimeEndMinit
     })
-    .then((json) => {
-      authenticatedGoogle.value = json.authenticate
-      Object.assign(workingTimes.value, {
-        morningStartHour: json.morningStartHour,
-        morningStartMinit: json.morningStartMinit,
-        morningEndHour: json.morningEndHour,
-        morningEndMinit: json.morningEndMinit,
-        afterNoonStartHour: json.afterNoonStartHour,
-        afterNoonStartMinit: json.afterNoonStartMinit,
-        afterNoonEndHour: json.afterNoonEndHour,
-        afterNoonEndMinit: json.afterNoonEndMinit,
-        fullTimeStartHour: json.fullTimeStartHour,
-        fullTimeStartMinit: json.fullTimeStartMinit,
-        fullTimeEndHour: json.fullTimeEndHour,
-        fullTimeEndMinit: json.fullTimeEndMinit
-      })
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  }
 }
 onMounted(() => {
   fetchUser()
-})
-// ページング
-const currentPage = ref(1)
-const pageLimit = 5
-const displayRange = 1
-const haveNoCalendars = computed(() => {
-  return !(props.calendars.length > 0)
-})
-const slicedCalendars = computed(() => {
-  let start = (currentPage.value - 1) * pageLimit
-  let end = start + pageLimit
-  return props.calendars.slice(start, end)
-})
-function updatePageNumber(pageNumber, index) {
-  if (typeof pageNumber === 'number') {
-    currentPage.value = pageNumber
-    return
-  }
-  if (index < currentPage.value) {
-    currentPage.value -= displayRange + 1
-    return
-  }
-  currentPage.value += displayRange + 1
-}
-const displayPageNumbers = computed(() => {
-  let pages = []
-  const totalPages = Math.ceil(props.calendars.length / pageLimit)
-  if (totalPages < 2) {
-    return
-  }
-  pages.push(1)
-  if (currentPage.value - displayRange > 2) {
-    pages.push('...')
-  }
-  for (let i = -displayRange; i <= displayRange; i++) {
-    if (currentPage.value + i > 1 && currentPage.value + i < totalPages) {
-      pages.push(currentPage.value + i)
-    }
-  }
-  if (currentPage.value + displayRange < totalPages - 1) {
-    pages.push('...')
-  }
-  pages.push(totalPages)
-  return pages
 })
 // 確認ダイアログ
 const confirmedCalendar = ref(null)
@@ -325,6 +261,24 @@ function confirmDialog(calendar) {
 }
 function cancelConfirm() {
   confirmedCalendar.value = null
+}
+// ページング
+const currentPage = ref(1)
+const pageLimit = 5
+const displayRange = 1
+const slicedCalendars = computed(() => {
+  let start = (currentPage.value - 1) * pageLimit
+  let end = start + pageLimit
+  return props.calendars.slice(start, end)
+})
+function updateCurrentPage(newPage) {
+  currentPage.value = newPage
+}
+function increasePage() {
+  currentPage.value += displayRange + 1
+}
+function decreasePage() {
+  currentPage.value -= displayRange + 1
 }
 // バリデーション
 const errors = ref([])
@@ -348,50 +302,32 @@ function timesValidation() {
 }
 </script>
 
-<style>
-#overlay {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#time {
+<style scoped>
+.content {
   z-index: 2;
-  width: 60%;
+  max-width: 500px;
   padding: 1em;
   background: #fff;
+  overflow-y: auto;
+  max-height: 94%;
 }
-#confirm {
-  z-index: 3;
-  width: 60%;
-  padding: 2em;
-  background: #fff;
-}
-#fetching {
+.fetching {
   z-index: 4;
-  width: 60%;
+  max-width: 400px;
   padding: 1em;
   background: #fff;
 }
-.exist-calendars-area {
-  width: 600px;
-  height: 220px;
+.alignment-button-area {
+  display: inline-block;
+  text-align: end;
+  border: solid 1px lightgray;
 }
-.page-number {
-  text-decoration: underline;
-  cursor: pointer;
+.have-no-calendar {
+  border: solid 1px lightgray;
 }
-.current-page {
-  font-weight: bold;
-}
-.google-button {
-  width: 192px;
-  cursor: pointer;
+.auth-completed {
+  display: inline-block;
+  border: solid 2px #0d6efd;
+  padding: 4px;
 }
 </style>

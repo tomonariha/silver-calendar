@@ -6,7 +6,7 @@ RSpec.describe 'Calendars', type: :system do
   let!(:user) { FactoryBot.create(:user) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id) }
   let!(:day) { FactoryBot.create(:day, calendar_id: calendar.id) }
-  let!(:day2) { FactoryBot.create(:day, :day2, calendar_id: calendar.id) }
+  let!(:full_time) { FactoryBot.create(:day, :full_time, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
   OmniAuth.config.test_mode = true
   OmniAuth.config.silence_get_warning = true
@@ -21,16 +21,16 @@ RSpec.describe 'Calendars', type: :system do
                                                                      })
 
   before do
-    sign_in user
-    visit calendar_path
     Rails.application.env_config['devise.mapping'] = Devise.mappings[:user]
     Rails.application.env_config['omniauth.auth'] = OmniAuth.config.mock_auth[:google_oauth2]
   end
 
   scenario 'google oauth log in', js: true do
-    click_button '連携'
+    sign_in user
+    visit calendar_path
+    click_button '反映する'
     find('.google-button').click
-    click_button '連携'
-    expect(page).to have_content('認証済')
+    click_button '反映する'
+    expect(page).to have_content('Google認証完了')
   end
 end

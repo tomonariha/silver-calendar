@@ -6,15 +6,12 @@ RSpec.describe 'Calendars', type: :system do
   let!(:user) { FactoryBot.create(:user) }
   let!(:calendar) { FactoryBot.create(:calendar, user_id: user.id) }
   let!(:day) { FactoryBot.create(:day, calendar_id: calendar.id) }
-  let!(:day2) { FactoryBot.create(:day, :day2, calendar_id: calendar.id) }
+  let!(:full_time) { FactoryBot.create(:day, :full_time, calendar_id: calendar.id) }
   let!(:setting) { FactoryBot.create(:setting, calendar_id: calendar.id) }
 
-  before do
+  scenario 'user insert new schedule on day of calendar', js: true do
     sign_in user
     visit calendar_path
-  end
-
-  scenario 'user insert new schedule on day of calendar', js: true do
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
@@ -25,6 +22,8 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user insert paid leave on day of calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
@@ -37,10 +36,12 @@ RSpec.describe 'Calendars', type: :system do
       click_button 'paidleave'
     end
 
-    expect(page).to have_content('2023年1月 合計:2 有給：2')
+    expect(page).to have_content('合計勤務日数2有給2')
   end
 
   scenario 'user delete schedule on day of calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day2' do
@@ -51,27 +52,28 @@ RSpec.describe 'Calendars', type: :system do
   end
 
   scenario 'user move to selected year and month', js: true do
+    sign_in user
+    visit calendar_path
     select '2022', from: 'selected_calendar_year'
     select '12', from: 'selected_calendar_month'
     click_button '＞'
-    expect(find('.calendar-nav__year--month')).to have_content('2023年1月')
+    expect(find('.calendar-nav__year')).to have_content('2023年1月')
   end
 
   scenario 'user delete calendar', js: true do
+    sign_in user
+    visit calendar_path
     select '2023', from: 'selected_calendar_year'
     select '1', from: 'selected_calendar_month'
     within '#day1' do
       expect(find('.calendar__day-button')).to have_selector("img[alt='off']")
     end
-    click_button '条件の入力'
-    expect(page).to have_content('2023-01-01 〜 2023-01-31')
-    click_button '閉じる'
+    expect(page).to have_content('2023年1月1日 〜 2023年1月31日')
     find('.delete-calendar').click
     click_button 'はい'
     within '#day1' do
       expect(find('.calendar__day-button')).to_not have_selector("img[alt='off']")
     end
-    click_button '条件の入力'
-    expect(page).to_not have_content('2023-01-01 〜 2023-01-31')
+    expect(page).to_not have_content('2023年1月1日 〜 2023年1月31日')
   end
 end

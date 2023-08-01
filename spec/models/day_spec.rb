@@ -7,12 +7,6 @@ RSpec.describe Day, type: :model do
     expect(FactoryBot.create(:day)).to be_valid
   end
 
-  it 'is invalid without calendar_id' do
-    day = Day.new(calendar_id: nil)
-    day.valid?
-    expect(day.errors[:calendar_id]).to include('を入力してください')
-  end
-
   it 'is invalid without date' do
     day = Day.new(date: nil)
     day.valid?

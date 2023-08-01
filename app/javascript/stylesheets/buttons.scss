@@ -1,0 +1,54 @@
+.google-button {
+  width: 192px;
+  cursor: pointer;
+}
+.google-button:hover {
+  background-color: #8eb8ff;
+}
+.btn.btn-sm.inconspicuous-button {
+  --bs-btn-color: gray;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: gray;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: gray;
+  --bs-btn-hover-border-color: #101112;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: rgb(107, 107, 107);
+  --bs-btn-active-border-color: rgb(50, 50, 50);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: rgb(188, 188, 188);
+  --bs-btn-disabled-border-color: #b0b2b5;
+}
+.delete-button {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.button-label {
+  font-size: small;
+}
+.button-border {
+  border: solid 1px #959595;
+  border-radius: 4px;
+}
+.button-wide {
+  width: 260px;
+  max-width: 100%;
+}
+.simple-button {
+  --bs-btn-color: black;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: black;
+  --bs-btn-hover-color: black;
+  --bs-btn-hover-bg: gainsboro;
+  --bs-btn-hover-border-color: black;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: black;
+  --bs-btn-active-bg: #fff;
+  --bs-btn-active-border-color: black;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  --bs-btn-disabled-color: gray;
+  --bs-btn-disabled-bg: #fff;
+  --bs-btn-disabled-border-color: black;
+}

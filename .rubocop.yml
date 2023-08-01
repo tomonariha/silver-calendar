@@ -6,7 +6,6 @@ inherit_gem:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
-    - app/models/calendar_client.rb
 
 Metrics/ClassLength:
   Exclude:
@@ -14,8 +13,7 @@ Metrics/ClassLength:
 
 Metrics/MethodLength:
   Exclude:
-    - app/models/calendar_client.rb
-    - app/helpers/meta_tags_helper.rb
+    - spec/**/*
 
 Lint/UselessAssignment:
   Exclude:
@@ -29,9 +27,9 @@ AllCops:
     - config/**/*
     - config.ru
     - node_modules/**/*
-    - db/migrate/*
     - db/schema.rb
     - storage/**/*
     - tmp/**/*
     - bin/**/*
+  TargetRubyVersion: 3.2.2
     

@@ -1,9 +1,9 @@
 <template>
   <Popper arrow>
     <button
-      class="calendar__day-button"
+      class="calendar__day-button button-border"
       v-bind:class="{
-        'auto-adjusted': autoAdjusted && !$attrs.class.includes('disabled')
+        'auto-adjusted': autoAdjusted && props.exist
       }">
       <span v-if="props.date.schedule === 'full-time'">
         <img :src="fullTime" alt="fullTime" class="schedule-icon" />
@@ -53,16 +53,14 @@ import afterNoon from '../../assets/images/afternoon.svg?url'
 import off from '../../assets/images/off.svg?url'
 import paidleave from '../../assets/images/paidleave.svg?url'
 import none from '../../assets/images/none.svg?url'
+import { FetchRequest } from '@rails/request.js'
 
 const props = defineProps({
   date: Object,
-  autoAdjusted: Boolean
+  autoAdjusted: Boolean,
+  exist: Boolean
 })
 const emit = defineEmits(['update', 'delete'])
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
 const dayOfSchedule = ref('')
 function changeSchedule(schedule) {
   if (schedule === 'none') {
@@ -72,28 +70,22 @@ function changeSchedule(schedule) {
   }
   dayOfSchedule.value = schedule
 }
-function deleteDate() {
+async function deleteDate() {
   const date = props.date
   if (props.autoAdjusted) {
     emit('delete', date)
     return
   }
-  fetch(`api/days/${date.year}/${date.month}/${date.date}`, {
-    method: 'DELETE',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      emit('delete', date)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  const request = new FetchRequest(
+    'delete',
+    `api/v1/days/${date.year}/${date.month}/${date.date}`
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    emit('delete', date)
+  }
 }
-function updateCalendar(schedule) {
+async function updateCalendar(schedule) {
   const date = props.date
   const dateState = {
     year: date.year,
@@ -105,33 +97,27 @@ function updateCalendar(schedule) {
     emit('update', dateState)
     return
   }
-  fetch(`api/days/${date.year}/${date.month}`, {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(dateState),
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      emit('update', dateState)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+  const request = new FetchRequest(
+    'post',
+    `api/v1/days/${date.year}/${date.month}`,
+    { body: JSON.stringify(dateState) }
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    emit('update', dateState)
+  }
 }
 </script>
-<style>
+<style scoped>
 .calendar__day-button {
-  width: 48px;
-  height: 48px;
-  padding: 1px;
+  width: calc((100vw - 89px) / 7);
+  max-width: 44px;
+  height: 44px;
+  padding: 0.5px;
 }
 .schedule-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
 }
 .auto-adjusted {
   background-color: lightskyblue;

@@ -3,7 +3,6 @@
 class Setting < ApplicationRecord
   belongs_to :calendar
   with_options presence: true do
-    validates :calendar_id
     validates :period_start_at
     validates :period_end_at
   end
@@ -14,13 +13,9 @@ class Setting < ApplicationRecord
   private
 
   def schedule_should_be_valid_string
-    unless (schedule_of_sunday == 'full-time') ||
-           (schedule_of_sunday == 'morning') ||
-           (schedule_of_sunday == 'afternoon') ||
-           (schedule_of_sunday == 'off') ||
-           (schedule_of_sunday == 'None')
-      errors.add(:schedule_of_sunday, '無効な文字列です')
-    end
+    return if schedule_of_sunday.in? %w[full-time morning afternoon off None]
+
+    errors.add(:schedule_of_sunday, '無効な文字列です')
   end
 
   def period_start_at_should_be_before_period_end_at

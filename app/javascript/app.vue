@@ -1,280 +1,298 @@
 <template>
   <div>
-    <div class="my-2">
-      <select
-        id="selected_calendar_year"
-        v-model.number="calendarYear"
-        @change="cancelAutoAdjust">
-        <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
-      </select>
-      <span class="mx-1">年</span>
-      <select
-        id="selected_calendar_month"
-        v-show="monthly"
-        v-model.number="calendarMonth">
-        <option v-for="month in 12" :key="month">{{ month }}</option>
-      </select>
-      <span class="mx-1" v-show="monthly">月</span>
-      <button
-        class="calendar-nav__previous me-1"
-        v-show="monthly"
-        @click="previousMonth">
-        ＜
-      </button>
-      <button
-        class="calendar-nav__next me-1"
-        v-show="monthly"
-        @click="nextMonth">
-        ＞
-      </button>
-    </div>
-    <div class="my-2" v-show="autoAdjusted">
-      <div
-        class="auto-adjust-info rounded"
-        v-if="workingDaysRequired"
-        v-bind:class="{
-          'not-just': numberOfWorkingDays !== workingDaysRequired
-        }">
-        <p>期間:{{ showPeriod() }}</p>
-        <p class="current-working-days">
-          (現在の日数){{ numberOfWorkingDays }} /
-          {{ workingDaysRequired }}(必要日数)
-        </p>
-      </div>
-      <div class="auto-adjust-info rounded" v-else>
-        <p>期間:{{ showPeriod() }}</p>
-        <p class="current-working-days rounded">
-          (現在の日数){{ numberOfWorkingDays }}
-        </p>
-      </div>
-    </div>
-    <div id="overlay" v-show="showJustNotConfirm">
-      <div id="confirm">
+    <Setting
+      v-show="unAutoAdjusted"
+      v-bind:year="calendarYear"
+      v-bind:settings="settings"
+      v-on:reflect="adjustAndReflect"
+      v-on:reflectAll="adjustAndReflectAll">
+    </Setting>
+    <section>
+      <h2 class="headline-md">日毎に予定を入力する</h2>
+      <div class="my-2 content-center" v-show="autoAdjusted">
+        <div class="auto-adjust-info rounded" v-if="autoAdjustAll">
+          <p class="fs-5">条件を一括適用しました</p>
+        </div>
+        <div
+          class="auto-adjust-info rounded"
+          v-else-if="workingDaysRequired"
+          v-bind:class="{
+            'not-just': numberOfWorkingDays !== workingDaysRequired
+          }">
+          <p class="fs-5">期間:{{ showPeriod() }}</p>
+          <p class="current-working-days fs-5">
+            (現在の日数){{ numberOfWorkingDays }} /
+            {{ workingDaysRequired }}(必要日数)
+          </p>
+        </div>
+        <div class="auto-adjust-info rounded" v-else>
+          <p class="fs-5">期間:{{ showPeriod() }}</p>
+          <p class="current-working-days rounded fs-5">
+            (現在の日数){{ numberOfWorkingDays }}
+          </p>
+        </div>
         <Confirm
+          v-bind:showConfirm="Boolean(showJustNotConfirm)"
           v-bind:message="'日数に過不足がありますが、確定してよろしいですか？'"
           v-on:execution="determineAutoAdjust"
           v-on:cancel="cancelJustNotConfirm">
         </Confirm>
+        <div class="my-2">
+          <span v-if="numberOfWorkingDays !== workingDaysRequired">
+            <button
+              type="button"
+              class="btn btn-success my-2 me-2"
+              v-show="autoAdjusted"
+              v-on:click="confirmJustNot">
+              確定
+            </button>
+          </span>
+          <span v-else>
+            <button
+              type="button"
+              class="btn btn-success my-2 me-2"
+              v-show="autoAdjusted"
+              v-on:click="determineAutoAdjust">
+              確定
+            </button>
+          </span>
+          <button
+            type="button"
+            class="btn btn-secondary my-2 me-2"
+            v-show="autoAdjusted"
+            v-on:click="cancelAutoAdjust">
+            キャンセル
+          </button>
+        </div>
       </div>
-    </div>
-    <div id="overlay" v-show="showDeleteConfirm">
-      <div id="confirm">
-        <Confirm
-          v-bind:message="'削除します。よろしいですか？'"
-          v-on:execution="deleteCalendar"
-          v-on:cancel="cancelDeleteConfirm">
-        </Confirm>
+      <Confirm
+        v-bind:showConfirm="Boolean(showDeleteConfirm)"
+        v-bind:message="'削除します。よろしいですか？'"
+        v-on:execution="deleteCalendar"
+        v-on:cancel="cancelDeleteConfirm">
+      </Confirm>
+      <div class="content-center">
+        <button
+          class="calendar-nav__previous button-border me-1 my-2"
+          v-show="monthly"
+          @click="previousMonth">
+          ＜
+        </button>
+        <select
+          id="selected_calendar_year"
+          class="my-2"
+          v-model.number="calendarYear"
+          @change="cancelAutoAdjust">
+          <option v-for="year in rangeOfYears" :key="year">{{ year }}</option>
+        </select>
+        <span class="my-2 mx-1">年</span>
+        <select
+          id="selected_calendar_month"
+          class="my-2"
+          v-show="monthly"
+          v-model.number="calendarMonth">
+          <option v-for="month in 12" :key="month">{{ month }}</option>
+        </select>
+        <span class="my-2 mx-1" v-show="monthly">月</span>
+        <button
+          class="calendar-nav__next button-border me-1 my-2"
+          v-show="monthly"
+          @click="nextMonth">
+          ＞
+        </button>
+        <button
+          class="btn simple-button my-2 mx-4"
+          v-on:click="toYearyCalendar"
+          v-if="monthly">
+          この年のカレンダーを一覧表示
+        </button>
+        <p class="my-2" v-else>
+          月のカレンダーをクリックすると月間カレンダーになります
+        </p>
       </div>
-    </div>
-    <div class="my-2" v-if="monthly">
-      <div class="calendar-nav__year--month">
-        {{ calendarYear }}年{{ calendarMonth }}月 合計:{{
-          totalWorkingDays[calendarMonth]
-        }}
-        有給：{{ totalPaidLeaves[calendarMonth] }}
+      <div class="my-2 content-center" v-if="monthly">
+        <div class="calendar-nav__year">
+          <p class="current-year">{{ calendarYear }}年{{ calendarMonth }}月</p>
+          <span class="add-colon">合計勤務日数</span>
+          <span class="mx-1">{{ totalWorkingDays[calendarMonth] }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ totalPaidLeaves[calendarMonth] }}</span>
+        </div>
+        <ScheduleDescription></ScheduleDescription>
+        <div class="monthly-calendar">
+          <table class="monthly-calendar__table">
+            <thead class="monthly-calendar__header">
+              <tr>
+                <th class="monthly-calendar__header-day">日</th>
+                <th class="monthly-calendar__header-day">月</th>
+                <th class="monthly-calendar__header-day">火</th>
+                <th class="monthly-calendar__header-day">水</th>
+                <th class="monthly-calendar__header-day">木</th>
+                <th class="monthly-calendar__header-day">金</th>
+                <th class="monthly-calendar__header-day">土</th>
+              </tr>
+            </thead>
+            <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
+              <tr class="monthly-calendar__week">
+                <td
+                  class="monthly-calendar__day"
+                  v-for="date in week.value"
+                  :key="date.date"
+                  :id="'day' + date.date">
+                  <div class="monthly-calendar__day-label">{{ date.date }}</div>
+                  <Day
+                    v-bind:date="date"
+                    v-bind:autoAdjusted="autoAdjusted"
+                    v-bind:exist="existInPeriod(date)"
+                    v-bind:class="{
+                      disabled:
+                        !autoAdjustAll && autoAdjusted && !existInPeriod(date)
+                    }"
+                    v-if="date.date"
+                    v-on:update="updateDay"
+                    v-on:delete="deleteDay">
+                  </Day>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <button class="btn btn-secondary my-2" v-on:click="toYearyCalendar">
-        年間カレンダー
-      </button>
-      <table class="monthly-calendar">
-        <thead class="monthly-calendar__header">
-          <tr>
-            <th class="monthly-calendar__header-day">日</th>
-            <th class="monthly-calendar__header-day">月</th>
-            <th class="monthly-calendar__header-day">火</th>
-            <th class="monthly-calendar__header-day">水</th>
-            <th class="monthly-calendar__header-day">木</th>
-            <th class="monthly-calendar__header-day">金</th>
-            <th class="monthly-calendar__header-day">土</th>
-          </tr>
-        </thead>
-        <tbody v-for="week in calendarWeeks(calendarMonth)" :key="week.id">
-          <tr class="monthly-calendar__week">
-            <td
-              class="monthly-calendar__day"
-              v-for="date in week.value"
-              :key="date.date"
-              :id="'day' + date.date">
-              <div class="monthly-calendar__day-label">{{ date.date }}</div>
-              <Day
-                v-bind:date="date"
-                v-bind:autoAdjusted="autoAdjusted"
-                v-bind:class="{
-                  disabled:
-                    autoAdjusted && outsideWithinPeriod(date, reflectedSetting)
-                }"
-                v-if="date.date"
-                v-on:update="updateDay"
-                v-on:delete="deleteDay">
-              </Day>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-else>
-      <div class="calendar-nav__year">
-        {{ calendarYear }}年 合計:{{ yearyTotalWorkingDays() }} 有給：{{
-          yearyTotalPaidLeaves()
-        }}
+      <div class="content-center" v-else>
+        <div class="calendar-nav__year">
+          <p class="current-year">{{ calendarYear }}年</p>
+          <span class="add-colon">合計勤務日数</span>
+          <span class="mx-1">{{ yearyTotalWorkingDays() }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ yearyTotalPaidLeaves() }}</span>
+        </div>
+        <ScheduleDescription></ScheduleDescription>
+        <div
+          class="yeary-calendar rounded p-1 me-2 my-1"
+          v-for="month in 12"
+          :key="month"
+          v-on:click="toMonthlyCalendar(month)">
+          <span class="add-colon">{{ month }}月 勤務日数</span>
+          <span class="mx-1">{{ totalWorkingDays[month] }}</span>
+          <span class="add-colon">有給</span>
+          <span class="mx-1">{{ totalPaidLeaves[month] }}</span>
+          <table class="yeary-calendar__table">
+            <thead class="yeary-calendar__header">
+              <tr>
+                <th class="yeary-calendar__header-day">日</th>
+                <th class="yeary-calendar__header-day">月</th>
+                <th class="yeary-calendar__header-day">火</th>
+                <th class="yeary-calendar__header-day">水</th>
+                <th class="yeary-calendar__header-day">木</th>
+                <th class="yeary-calendar__header-day">金</th>
+                <th class="yeary-calendar__header-day">土</th>
+              </tr>
+            </thead>
+            <tbody v-for="week in calendarWeeks(month)" :key="week.id">
+              <tr class="yeary-calendar__week">
+                <td
+                  class="yeary-calendar__day"
+                  v-for="date in week.value"
+                  :key="date.date"
+                  :id="'day' + date.date">
+                  <div class="yeary-calendar__day-label">{{ date.date }}</div>
+                  <div
+                    v-show="date.date"
+                    class="yeary-calendar__day-body"
+                    v-bind:class="{
+                      'auto-adjusted': autoAdjusted && existInPeriod(date)
+                    }">
+                    <span v-if="date.schedule === 'full-time'">
+                      <img
+                        class="yeary-calendar__schedule-icon"
+                        :src="fullTime"
+                        alt="fullTime" />
+                    </span>
+                    <span v-else-if="date.schedule === 'morning'">
+                      <img
+                        class="yeary-calendar__schedule-icon"
+                        :src="morning"
+                        alt="morning" />
+                    </span>
+                    <span v-else-if="date.schedule === 'afternoon'">
+                      <img
+                        class="yeary-calendar__schedule-icon"
+                        :src="afterNoon"
+                        alt="afternoon" />
+                    </span>
+                    <span v-else-if="date.schedule === 'off'">
+                      <img
+                        class="yeary-calendar__schedule-icon"
+                        :src="off"
+                        alt="off" />
+                    </span>
+                    <span v-else-if="date.schedule === 'paidleave'">
+                      <img
+                        class="yeary-calendar__schedule-icon"
+                        :src="paidleave"
+                        alt="paidleave" />
+                    </span>
+                    <div v-else class="yeary-calendar__no-schedule"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div
-        class="yeary-calendar-month rounded p-1 me-2 my-1"
-        v-for="month in 12"
-        :key="month"
-        v-on:click="toMonthlyCalendar(month)">
-        {{ month }}月 合計:{{ totalWorkingDays[month] }} 有給：{{
-          totalPaidLeaves[month]
-        }}
-        <table class="yeary-calendar">
-          <thead class="yeary-calendar__header">
-            <tr>
-              <th class="yeary-calendar__header-day">日</th>
-              <th class="yeary-calendar__header-day">月</th>
-              <th class="yeary-calendar__header-day">火</th>
-              <th class="yeary-calendar__header-day">水</th>
-              <th class="yeary-calendar__header-day">木</th>
-              <th class="yeary-calendar__header-day">金</th>
-              <th class="yeary-calendar__header-day">土</th>
-            </tr>
-          </thead>
-          <tbody v-for="week in calendarWeeks(month)" :key="week.id">
-            <tr class="yeary-calendar__week">
-              <td
-                class="yeary-calendar__day"
-                v-for="date in week.value"
-                :key="date.date"
-                :id="'day' + date.date">
-                <div class="yeary-calendar__day-label">{{ date.date }}</div>
-                <div
-                  v-show="date.date"
-                  class="yeary-calendar__day-body"
-                  v-bind:class="{
-                    'auto-adjusted':
-                      autoAdjusted &&
-                      !outsideWithinPeriod(date, reflectedSetting)
-                  }">
-                  <span v-if="date.schedule === 'full-time'">
-                    <img
-                      :src="fullTime"
-                      alt="fullTime"
-                      width="16"
-                      height="16" />
-                  </span>
-                  <span v-else-if="date.schedule === 'morning'">
-                    <img :src="morning" alt="morning" width="16" height="16" />
-                  </span>
-                  <span v-else-if="date.schedule === 'afternoon'">
-                    <img
-                      :src="afterNoon"
-                      alt="afternoon"
-                      width="16"
-                      height="16" />
-                  </span>
-                  <span v-else-if="date.schedule === 'off'">
-                    <img :src="off" alt="off" width="16" height="16" />
-                  </span>
-                  <span v-else-if="date.schedule === 'paidleave'">
-                    <img
-                      :src="paidleave"
-                      alt="paidleave"
-                      width="16"
-                      height="16" />
-                  </span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="delete-calendar-a my-2" v-show="unAutoAdjusted">
+        <span
+          class="delete-calendar m-2 d-flex justify-content-end"
+          v-on:click="confirmDeleteCalendar"
+          >この年のカレンダーの条件と予定を全て削除
+        </span>
       </div>
-    </div>
-    <button
-      class="btn btn-primary my-2 me-2"
-      v-show="unAutoAdjusted"
-      v-on:click="openModal">
-      条件の入力
-    </button>
-    <div id="overlay" v-show="showContent">
-      <div id="content">
-        <Setting
-          v-bind:year="calendarYear"
-          v-bind:settings="settings"
-          v-on:close="closeModal"
-          v-on:update="updateSetting"
-          v-on:create="createSetting"
-          v-on:delete="deleteSetting"
-          v-on:reflect="adjustAndReflect">
-        </Setting>
+    </section>
+    <section>
+      <div class="alignment-area rounded my-4" v-show="unAutoAdjusted">
+        <h2 class="fs-6 my-2 content-center">
+          Googleカレンダーに反映するのはこちらから
+        </h2>
+        <div class="d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-primary my-2 alignment-button"
+            v-on:click="openAlignmentModal">
+            反映する
+          </button>
+        </div>
       </div>
-    </div>
-    <span v-if="numberOfWorkingDays !== workingDaysRequired">
-      <button
-        type="button"
-        class="btn btn-success my-2 me-2"
-        v-show="autoAdjusted"
-        v-on:click="confirmJustNot">
-        確定
-      </button>
-    </span>
-    <span v-else>
-      <button
-        type="button"
-        class="btn btn-success my-2 me-2"
-        v-show="autoAdjusted"
-        v-on:click="determineAutoAdjust">
-        確定
-      </button>
-    </span>
-    <button
-      type="button"
-      class="btn btn-secondary my-2 me-2"
-      v-show="autoAdjusted"
-      v-on:click="cancelAutoAdjust">
-      キャンセル
-    </button>
-    <button
-      type="button"
-      class="btn btn-primary my-2"
-      v-show="unAutoAdjusted"
-      v-on:click="openAlignmentModal">
-      連携
-    </button>
-    <div id="overlay" v-show="showAlignmentContent">
-      <div id="content">
-        <Alignment
-          v-bind:calendars="calendarsIndex"
-          v-on:close="closeAlignmentModal"
-          v-on:create="createAlignment"
-          v-on:delete="deleteAlignment"
-          v-on:update="updateAlignment">
-        </Alignment>
-      </div>
-    </div>
-    <span
-      class="delete-calendar m-2"
-      v-show="unAutoAdjusted"
-      v-on:click="confirmDeleteCalendar"
-      >削除する
-    </span>
+      <Alignment
+        v-bind:showAlignmentForm="showAlignmentForm"
+        v-bind:calendars="calendarIndexes"
+        v-on:close="closeAlignmentForm"
+        v-on:reflect="reflectGoogleCalendarId">
+      </Alignment>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, provide } from 'vue'
 import { useToast } from 'vue-toastification'
 import Setting from './components/setting.vue'
 import Day from './components/day.vue'
 import Alignment from './components/alignment.vue'
 import Confirm from './components/confirm.vue'
+import ScheduleDescription from './components/scheduleDescription.vue'
 import fullTime from '../assets/images/fulltime.svg?url'
 import morning from '../assets/images/morning.svg?url'
 import afterNoon from '../assets/images/afternoon.svg?url'
 import off from '../assets/images/off.svg?url'
 import paidleave from '../assets/images/paidleave.svg?url'
+import { FetchRequest } from '@rails/request.js'
+import { format, isEqual } from 'date-fns'
 
 function showPeriod() {
   if (reflectedSetting.value) {
-    const periodOfReflectedSetting = `${reflectedSetting.value.period_start_at} ~ ${reflectedSetting.value.period_end_at}`
+    const periodOfReflectedSetting = `${toJapaneseDate(
+      reflectedSetting.value.period_start_at
+    )} ~ ${toJapaneseDate(reflectedSetting.value.period_end_at)}`
     return periodOfReflectedSetting
   }
 }
@@ -283,7 +301,7 @@ onMounted(() => {
   fetchCalendar().then(function () {
     fetchSettings()
   })
-  fetchCalendarsIndex()
+  fetchCalendarIndexes()
 })
 //カレンダー表示関連
 const calendarYear = ref(getCurrentYear())
@@ -316,37 +334,24 @@ function nextMonth() {
   }
   nextTick(() => (loaded.value = true))
 }
-function token() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : ''
-}
 const loaded = ref(null)
 const calendarDays = ref([])
-function fetchCalendar() {
-  return new Promise(function (resolve) {
-    calendarDays.value = []
-    fetch(`/api/calendars/${calendarYear.value}.json`, {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': token()
-      },
-      credentials: 'same-origin'
-    })
-      .then((response) => {
-        return response.json()
+async function fetchCalendar() {
+  calendarDays.value = []
+  const request = new FetchRequest(
+    'get',
+    `/api/v1/calendars/${calendarYear.value}.json`
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    if (body) {
+      body.forEach((r) => {
+        calendarDays.value.push(r)
       })
-      .then((json) => {
-        json.forEach((r) => {
-          calendarDays.value.push(r)
-        })
-        loaded.value = true
-      })
-      .catch((error) => {
-        console.warn(error)
-      })
-    resolve()
-  })
+    }
+    loaded.value = true
+  }
 }
 function calendarWeeks(month) {
   const weeksAry = []
@@ -378,7 +383,7 @@ function calendarDates(month) {
   for (let date = 1; date <= lastDate(month); date++) {
     const result = calendarDays.value.filter((day) =>
       day.date.includes(
-        `${calendarYear.value}-${formatMonth(month)}-${formatDay(date)}`
+        formatDate(new Date(calendarYear.value, month - 1, date))
       )
     )
     if (result.length > 0) {
@@ -463,22 +468,19 @@ const autoAdjusted = ref(false)
 const unAutoAdjusted = computed(() => {
   return !autoAdjusted.value
 })
+const autoAdjustAll = ref(false)
+let targetPeriod = new Array()
 const workingDaysRequired = ref(null)
 const numberOfWorkingDays = ref(0)
 const reflectedSetting = ref(null)
-function outsideWithinPeriod(date, setting) {
+function existInPeriod(date) {
   if (!date.date) {
     return false
   }
-  const formatedDate =
-    date.year + '-' + formatMonth(date.month) + '-' + formatDay(date.date)
-  if (formatedDate < setting.period_start_at) {
-    return true
-  }
-  if (formatedDate > setting.period_end_at) {
-    return true
-  }
-  return false
+  const formattedDate = formatDate(
+    new Date(date.year, date.month - 1, date.date)
+  )
+  return targetPeriod.includes(formattedDate)
 }
 function autoAdjust(setting) {
   const startDate = new Date(setting.period_start_at)
@@ -499,17 +501,17 @@ function autoAdjust(setting) {
   }
   // 期間内の日付オブジェクトを利用可能日の配列へ入れる
   for (let day = startDate; day <= endDate; day.setDate(day.getDate() + 1)) {
-    const formatedDate =
-      day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
-    availableDays.push(formatedDate)
+    const formattedDate = formatDate(day)
+    availableDays.push(formattedDate)
   }
+  targetPeriod.push(...availableDays)
   // CalendarDays配列に入っている期間内の日付オブジェクトを抽出し、
   // その日付の勤務予定の日数をカウントし、利用可能日の配列から取り除く
   extractCalendarDaysWithinPeriod(startDate, endDate).forEach((day) => {
     const date = new Date(day.date)
     availableDays.forEach((availableDay) => {
       const availableDate = new Date(availableDay)
-      if (equalDays(availableDate, date)) {
+      if (isEqual(availableDate, date)) {
         numberOfWorkingDays.value += countWorkingDays(day.schedule)
         availableDays.splice(availableDays.indexOf(availableDay), 1)
       }
@@ -549,32 +551,12 @@ function autoAdjust(setting) {
   reflectedSetting.value = setting
   autoAdjusted.value = true
 }
-function equalDays(availableDate, date) {
-  if (availableDate.getMonth() !== date.getMonth()) {
-    return false
-  }
-  if (availableDate.getDate() !== date.getDate()) {
-    return false
-  }
-  return true
-}
 function insertSchedule(day, schedule) {
-  const formatedDate =
-    day.getFullYear() +
-    '-' +
-    formatMonth(day.getMonth() + 1) +
-    '-' +
-    formatDay(day.getDate())
+  const formattedDate = formatDate(day)
   adjustedCalendar.value.push({
-    date: formatedDate,
+    date: formattedDate,
     schedule: schedule
   })
-}
-function formatMonth(month) {
-  return month.toString().padStart(2, '0')
-}
-function formatDay(day) {
-  return day.toString().padStart(2, '0')
 }
 function reflectAdjustedCalendar() {
   searchAdjustedDay: for (let d of adjustedCalendar.value) {
@@ -610,8 +592,9 @@ function extractCalendarDaysWithinPeriod(startDate, endDate) {
 function determineAutoAdjust() {
   cancelJustNotConfirm()
   saveAdjustedCalendar()
-  toast('適用しました')
   autoAdjusted.value = false
+  autoAdjustAll.value = false
+  targetPeriod = []
 }
 function cancelAutoAdjust() {
   adjustedCalendar.value = []
@@ -620,114 +603,125 @@ function cancelAutoAdjust() {
   })
   reflectedSetting.value = null
   autoAdjusted.value = false
+  autoAdjustAll.value = false
+  targetPeriod = []
 }
-function saveAdjustedCalendar() {
-  fetch(`api/calendars/${calendarYear.value}`, {
-    method: 'PUT',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token(),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ calendar: adjustedCalendar.value }),
-    credentials: 'same-origin'
-  }).catch((error) => {
-    console.warn(error)
-  })
-  adjustedCalendar.value = []
+async function saveAdjustedCalendar() {
+  const request = new FetchRequest(
+    'put',
+    `api/v1/calendars/${calendarYear.value}`,
+    {
+      body: JSON.stringify({ calendar: adjustedCalendar.value })
+    }
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    adjustedCalendar.value = []
+    if (body.error_message) {
+      toast.error(body.error_message)
+      return
+    }
+    toast(body.message)
+  }
 }
 function adjustAndReflect(setting) {
   async function doAdjustAndReflect() {
-    await closeModal()
     await autoAdjust(setting)
     await reflectAdjustedCalendar()
   }
   doAdjustAndReflect()
 }
+function adjustAndReflectAll() {
+  async function doAdjustAndReflectAll() {
+    await autoAdjustFromAllSettings()
+    await reflectAdjustedCalendar()
+  }
+  doAdjustAndReflectAll()
+}
+function autoAdjustFromAllSettings() {
+  for (let setting of settings.value) {
+    autoAdjust(setting)
+  }
+  autoAdjustAll.value = true
+  monthly.value = false
+}
+function toJapaneseDate(dateString) {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${year}年${month}月${day}日`
+}
+provide('dateMethods', {
+  toJapaneseDate
+})
 //条件設定関連
 const settings = ref([])
-function fetchSettings() {
+function createToSettings(createdSetting) {
+  createdSetting.period_start_at = formatDate(
+    new Date(createdSetting.period_start_at)
+  )
+  createdSetting.period_end_at = formatDate(
+    new Date(createdSetting.period_end_at)
+  )
+  settings.value.push(createdSetting)
+  sortSettings()
+}
+function deleteFromSettings(settingId) {
+  const found = settings.value.find((setting) => setting.id === settingId)
+  settings.value.splice(settings.value.indexOf(found), 1)
+}
+function updateSettings(updatedSetting) {
+  updatedSetting.period_start_at = formatDate(
+    new Date(updatedSetting.period_start_at)
+  )
+  updatedSetting.period_end_at = formatDate(
+    new Date(updatedSetting.period_end_at)
+  )
+  const found = settings.value.find(
+    (setting) => setting.id === updatedSetting.id
+  )
+  settings.value.splice(settings.value.indexOf(found), 1, updatedSetting)
+  sortSettings()
+}
+provide('settings', {
+  settings,
+  updateSettings,
+  deleteFromSettings,
+  createToSettings
+})
+async function fetchSettings() {
   settings.value = []
-  fetch(`api/calendars/${calendarYear.value}/settings.json`, {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      json.forEach((r) => {
+  const request = new FetchRequest(
+    'get',
+    `api/v1/calendars/${calendarYear.value}/settings.json`
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    if (body) {
+      await body.forEach((r) => {
         settings.value.push(r)
       })
-      loaded.value = true
-    })
-    .then(() => {
-      sortSettings()
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
+    }
+    loaded.value = true
+    sortSettings()
+  }
 }
 function sortSettings() {
   settings.value.sort((a, b) =>
     a.period_start_at > b.period_start_at ? 1 : -1
   )
 }
-const showContent = ref(false)
-function openModal() {
-  showContent.value = true
-}
-function closeModal() {
-  showContent.value = false
-}
-function formatUpdatedDay(updatedDay) {
-  let day = new Date(updatedDay)
-  const formatedUpdatedDay =
-    day.getFullYear() +
-    '-' +
-    formatMonth(day.getMonth() + 1) +
-    '-' +
-    formatDay(day.getDate())
-  return formatedUpdatedDay
-}
-function createSetting(createdSetting) {
-  createdSetting.period_start_at = formatUpdatedDay(
-    createdSetting.period_start_at
-  )
-  createdSetting.period_end_at = formatUpdatedDay(createdSetting.period_end_at)
-  settings.value.push(createdSetting)
-  sortSettings()
-}
-function deleteSetting(settingId) {
-  for (let setting of settings.value) {
-    if (setting.id === settingId) {
-      settings.value.splice(settings.value.indexOf(setting), 1)
-      break
-    }
-  }
-}
-function updateSetting(updatedSetting) {
-  updatedSetting.period_start_at = formatUpdatedDay(
-    updatedSetting.period_start_at
-  )
-  updatedSetting.period_end_at = formatUpdatedDay(updatedSetting.period_end_at)
-  for (let setting of settings.value) {
-    if (setting.id === updatedSetting.id) {
-      settings.value.splice(settings.value.indexOf(setting), 1, updatedSetting)
-      break
-    }
-  }
-  sortSettings()
+function formatDate(date) {
+  return format(date, 'yyyy-MM-dd')
 }
 //勤務入力関連
 function updateDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formatedDay = formatUpdatedDay(date)
-  const newDay = { date: formatedDay, schedule: day.schedule }
+  const formattedDay = formatDate(date)
+  const newDay = { date: formattedDay, schedule: day.schedule }
   const diff = updateToCalendarArray(calendarDays.value, newDay)
   if (autoAdjusted.value) {
     numberOfWorkingDays.value += diff
@@ -735,7 +729,7 @@ function updateDay(day) {
   }
 }
 function updateToCalendarArray(calendarDays, newDay) {
-  for (let calendarDay of calendarDays) {
+  calendarDays.forEach((calendarDay) => {
     if (calendarDay.date === newDay.date) {
       countWorkingDays(calendarDay.schedule) - countWorkingDays(newDay.schedule)
       calendarDays.splice(calendarDays.indexOf(calendarDay), 1, newDay)
@@ -744,25 +738,26 @@ function updateToCalendarArray(calendarDays, newDay) {
         countWorkingDays(calendarDay.schedule)
       )
     }
-  }
+  })
   calendarDays.push(newDay)
   return countWorkingDays(newDay.schedule)
 }
 function deleteDay(day) {
   const date = new Date(day.year, day.month - 1, day.date)
-  const formatedDay = formatUpdatedDay(date)
-  const diffAmount = deleteFromCalendarArray(calendarDays.value, formatedDay)
+  const formattedDay = formatDate(date)
+  const diffAmount = deleteFromCalendarArray(calendarDays.value, formattedDay)
   if (autoAdjusted.value) {
     numberOfWorkingDays.value -= diffAmount
-    deleteFromCalendarArray(adjustedCalendar.value, formatedDay)
+    deleteFromCalendarArray(adjustedCalendar.value, formattedDay)
   }
 }
-function deleteFromCalendarArray(calendarDays, formatedDay) {
-  for (let calendarDay of calendarDays) {
-    if (calendarDay.date === formatedDay) {
-      calendarDays.splice(calendarDays.indexOf(calendarDay), 1)
-      return countWorkingDays(calendarDay.schedule)
-    }
+function deleteFromCalendarArray(calendarDays, formattedDay) {
+  const found = calendarDays.find(
+    (calendarDay) => calendarDay.date === formattedDay
+  )
+  if (found) {
+    calendarDays.splice(calendarDays.indexOf(found), 1)
+    return countWorkingDays(found.schedule)
   }
 }
 // 確認ダイアログ
@@ -776,33 +771,25 @@ function confirmDeleteCalendar() {
 function cancelDeleteConfirm() {
   showDeleteConfirm.value = false
 }
-function deleteCalendar() {
-  fetch(`api/calendars/${calendarYear.value}`, {
-    method: 'DELETE',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then(() => {
-      toast('削除しました')
-      calendarDays.value = []
-      settings.value = []
-      deleteFromCalendarsIndex()
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-  cancelDeleteConfirm()
-}
-function deleteFromCalendarsIndex() {
-  for (let calendar of calendarsIndex.value) {
-    if (calendarYear.value === calendar.year) {
-      calendarsIndex.value.splice(calendarsIndex.value.indexOf(calendar), 1)
-      break
-    }
+async function deleteCalendar() {
+  const request = new FetchRequest(
+    'delete',
+    `api/v1/calendars/${calendarYear.value}`
+  )
+  const response = await request.perform()
+  if (response.ok) {
+    toast('削除しました')
+    calendarDays.value = []
+    settings.value = []
+    deleteFromCalendarIndexes()
+    cancelDeleteConfirm()
   }
+}
+function deleteFromCalendarIndexes() {
+  const found = calendarIndexes.value.find(
+    (calendarIndex) => calendarIndex.year === calendarYear.value
+  )
+  calendarIndexes.value.splice(calendarIndexes.value.indexOf(found), 1)
 }
 const showJustNotConfirm = ref(false)
 function confirmJustNot() {
@@ -812,92 +799,34 @@ function cancelJustNotConfirm() {
   showJustNotConfirm.value = false
 }
 //外部アプリ連携関連
-const showAlignmentContent = ref(false)
+const showAlignmentForm = ref(false)
 function openAlignmentModal() {
-  fetchCalendarsIndex()
-  showAlignmentContent.value = true
+  fetchCalendarIndexes()
+  showAlignmentForm.value = true
 }
-function closeAlignmentModal() {
-  showAlignmentContent.value = false
+function closeAlignmentForm() {
+  showAlignmentForm.value = false
 }
-const calendarsIndex = ref([])
-function fetchCalendarsIndex() {
-  calendarsIndex.value = []
-  fetch('api/calendars', {
-    method: 'GET',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token()
-    },
-    credentials: 'same-origin'
-  })
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      json.forEach((r) => {
-        calendarsIndex.value.push(r)
-      })
-    })
-    .then(() => {
-      calendarsIndex.value.sort((a, b) => a.year - b.year)
-    })
-    .catch((error) => {
-      console.warn(error)
-    })
-}
-function createAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = calendar.google_calendar_id
-      break
-    }
+const calendarIndexes = ref([])
+async function fetchCalendarIndexes() {
+  calendarIndexes.value = []
+  const request = new FetchRequest('get', 'api/v1/calendars.json')
+  const response = await request.perform()
+  if (response.ok) {
+    const body = await response.json
+    calendarIndexes.value = body
   }
 }
-function deleteAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = null
-      break
-    }
-  }
-}
-function updateAlignment(calendar) {
-  for (let calendarIndex of calendarsIndex.value) {
-    if (calendarIndex.year === calendar.year) {
-      calendarIndex.google_calendar_id = calendar.google_calendar_id
-      break
-    }
-  }
+function reflectGoogleCalendarId(calendar) {
+  const found = calendarIndexes.value.find(
+    (calendarIndex) => calendarIndex.year === calendar.year
+  )
+  found.google_calendar_id = calendar.google_calendar_id
 }
 </script>
 
-<style>
-#overlay {
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#content {
-  z-index: 2;
-  width: 70%;
-  padding: 1em;
-  background: #fff;
-}
-#confirm {
-  z-index: 3;
-  width: 60%;
-  padding: 2em;
-  background: #fff;
-}
-.yeary-calendar {
+<style scoped>
+.yeary-calendar__table {
   border: 2px solid black;
   text-align: center;
 }
@@ -917,11 +846,11 @@ function updateAlignment(calendar) {
   border: 1px solid black;
   padding: 1px;
 }
-.yeary-calendar-month {
+.yeary-calendar {
   display: inline-block;
   height: 350px;
 }
-.yeary-calendar-month:hover {
+.yeary-calendar:hover {
   box-shadow: 0px 0px 0px 4px #0099ff;
 }
 .yeary-calendar__day-body {
@@ -929,28 +858,43 @@ function updateAlignment(calendar) {
   display: table-cell;
   vertical-align: middle;
 }
-.disabled {
-  pointer-events: none;
+.yeary-calendar__schedule-icon {
+  width: 16px;
+  height: 16px;
+}
+.yeary-calendar__no-schedule {
+  width: 16px;
+  height: 24px;
 }
 .auto-adjusted {
   background-color: lightskyblue;
 }
 .auto-adjust-info {
-  width: 240px;
-  box-shadow: 0px 0px 0px 4px lightgreen;
+  background: rgb(207, 250, 207);
+  border: 1px solid greenyellow;
 }
 .not-just {
-  box-shadow: 0px 0px 0px 4px #ff6600;
+  background: #ffbeda;
+  border: 1px solid #ff5192;
 }
 .delete-calendar {
   text-decoration: underline;
   cursor: pointer;
 }
-.monthly-calendar {
+.calendar-area {
+  display: inline-block;
+  text-align: center;
+}
+.alignment-area {
+  background: #e2f3ff;
+  border: 1px solid #0099ff;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+.monthly-calendar__table {
   border: 2px solid black;
   text-align: center;
-  width: 100%;
-  max-width: 500px;
 }
 .monthly-calendar__header {
   border: 2px solid black;
@@ -978,5 +922,8 @@ th:first-child {
 th:nth-child(7) {
   background: #e2f3ff;
   color: #78a2e6;
+}
+.monthly-calendar {
+  display: inline-block;
 }
 </style>

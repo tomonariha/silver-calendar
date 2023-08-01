@@ -1,34 +1,53 @@
-<% set_meta_tags(title:'サインアップ', description:'ユーザー登録画面です。') %>
-<div class="container col-9">
-  <h2 class="fs-4 my-2"><%= t('.sign_up') %></h2>
-
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
-  
-    <div class="field my-2">
-      <%= f.label :email %><br />
-      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+<% set_meta_tags(title:'ユーザー登録', description:'ユーザー登録画面です。') %>
+<div class="container bg-white">
+  <div class="container devise_field bg-white p-2">
+    <div class="content-center my-2">
+      <%= link_to root_path, data: {turbo: false} do %>
+        <%= image_tag "title-black.svg", alt:"タイトル", class:"title-top rounded my-2" %>
+      <% end %>
     </div>
-  
-    <div class="field my-2">
-      <%= f.label :password %>
-      <% if @minimum_password_length %>
-      <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
-      <% end %><br />
-      <%= f.password_field :password, autocomplete: "new-password" %>
-    </div>
-  
-    <div class="field my-2">
-      <%= f.label :password_confirmation %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-    </div>
-  
-    <div class="actions">
-      <%= f.submit t('.sign_up'), class:"btn btn-primary my-2" %>
-    </div>
-  <% end %>
-
-  <div class="my-2">
-    <%= render "devise/shared/links" %>
+    <section>
+      <h2 class="headline-lg"><%= t('.sign_up') %></h2>
+    
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+      
+        <div class="field my-2">
+          <%= f.label :email, class: 'user_form_label' %><br />
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'user_form_field' %>
+        </div>
+      
+        <div class="field my-2">
+          <%= f.label :password, class: 'user_form_label' %>
+          <% if @minimum_password_length %>
+          <br>
+          <em><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></em>
+          <% end %><br />
+          <%= f.password_field :password, autocomplete: "new-password", class: 'user_form_field' %>
+        </div>
+      
+        <div class="field my-2">
+          <%= f.label :password_confirmation, class: 'user_form_label' %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'user_form_field' %>
+          <div class="form-text">パスワードの確認のため、再度パスワードを入力してください。</div>
+        </div>
+      
+        <div class="actions content-center mb-4">
+          <%= f.submit t('.sign_up'), class:"btn btn-primary my-4" %>
+          <div class="legal-text">
+            上のボタンを押すことで
+            <%= link_to "利用規約", privacy_policy_path %>
+            および
+            <br>
+            <%= link_to "プライバシー規約", tos_path %>
+            に同意するものとします。
+          </div>
+        </div>
+      <% end %>
+    
+      <div class="my-4">
+        <%= render "devise/shared/links" %>
+      </div>
+    </section>
   </div>
 </div>
